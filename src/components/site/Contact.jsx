@@ -55,7 +55,7 @@ export default function Contact() {
                 <span className="text-acid">→</span> hello@neuralis.studio
               </div>
               <div className="flex gap-3 text-muted-foreground">
-                <span className="text-acid">→</span> Milano · Remoto · Worldwide
+                <span className="text-acid">→</span> Torino · Remoto · Worldwide
               </div>
               <div className="flex gap-3 text-muted-foreground">
                 <span className="text-acid">→</span> Risposta media: 14h

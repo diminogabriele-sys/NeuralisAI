@@ -54,8 +54,8 @@ export default function Footer() {
               // Coordinate
             </div>
             <div className="font-mono text-sm text-muted-foreground space-y-1">
-              <div>45.4642° N, 9.1900° E</div>
-              <div>Milano · Italia</div>
+              <div>45.0703° N, 7.6869° E</div>
+              <div>Torino · Italia</div>
               <div className="text-acid">UPTIME: {time} UTC</div>
             </div>
           </div>
