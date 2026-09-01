@@ -1,0 +1,24 @@
+import React from "react";
+import Nav from "@/components/site/Nav";
+import Hero from "@/components/site/Hero";
+import Services from "@/components/site/Services";
+import CaseStudies from "@/components/site/CaseStudies";
+import Protocol from "@/components/site/Protocol";
+import Contact from "@/components/site/Contact";
+import Footer from "@/components/site/Footer";
+
+export default function Home() {
+  return (
+    <div className="relative bg-obsidian min-h-screen">
+      <Nav />
+      <main>
+        <Hero />
+        <Services />
+        <CaseStudies />
+        <Protocol />
+        <Contact />
+      </main>
+      <Footer />
+    </div>
+  );
+}
