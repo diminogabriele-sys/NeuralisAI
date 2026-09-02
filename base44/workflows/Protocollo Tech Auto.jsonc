@@ -1,0 +1,44 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * *",
+      "one_time_date": null,
+      "timezone": "Europe/Rome",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "protocollo_tech_auto",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "generate": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "generateTechNews"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Genera nota tech",
+            "description": "Notizie del giorno \u2192 TechNote"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Protocollo Tech Auto",
+  "description": "Genera automaticamente una nota tecnica dalle ultime notizie tech ogni giorno"
+}
