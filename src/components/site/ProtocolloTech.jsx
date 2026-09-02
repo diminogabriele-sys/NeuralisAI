@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
@@ -61,7 +62,7 @@ export default function ProtocolloTech() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.6, delay: (i % 3) * 0.08 }}
-                className="group relative p-8 border-steel hover:bg-secondary/30 transition-colors cursor-pointer"
+                className="group relative p-8 border-steel hover:bg-secondary/30 transition-colors"
               >
                 <div className="flex items-center justify-between mb-6">
                   <span className={`font-mono text-[10px] uppercase tracking-[0.25em] ${categoryColors[n.category] || "text-acid"}`}>
@@ -94,7 +95,12 @@ export default function ProtocolloTech() {
                   {n.excerpt}
                 </p>
 
-                <div className="mt-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-acid opacity-0 group-hover:opacity-100 transition-opacity">
+                <Link
+                  to={`/tech/${n.id}`}
+                  className="absolute inset-0 z-10"
+                  aria-label={`Leggi: ${n.title}`}
+                />
+                <div className="mt-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-acid opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                   <span>Leggi</span>
                   <span className="w-8 h-px bg-acid" />
                 </div>
