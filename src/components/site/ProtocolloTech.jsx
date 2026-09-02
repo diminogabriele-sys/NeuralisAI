@@ -54,7 +54,7 @@ export default function ProtocolloTech() {
             Nessuna nota pubblicata. Torna presto.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px border-t border-steel">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-l border-steel">
             {notes.map((n, i) => (
               <motion.article
                 key={n.id}
@@ -62,7 +62,7 @@ export default function ProtocolloTech() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.6, delay: (i % 3) * 0.08 }}
-                className="group relative p-8 border-steel hover:bg-secondary/30 transition-colors"
+                className="group relative flex flex-col p-8 border-b border-r border-steel hover:bg-secondary/30 transition-colors"
               >
                 <div className="flex items-center justify-between mb-6">
                   <span className={`font-mono text-[10px] uppercase tracking-[0.25em] ${categoryColors[n.category] || "text-acid"}`}>
@@ -73,6 +73,7 @@ export default function ProtocolloTech() {
                       ? new Date(n.published_date).toLocaleDateString("it-IT", {
                           day: "2-digit",
                           month: "short",
+                          year: "numeric",
                         })
                       : ""}
                   </span>
@@ -88,22 +89,23 @@ export default function ProtocolloTech() {
                   </div>
                 )}
 
-                <h3 className="font-display italic text-3xl text-titanium group-hover:text-acid transition-colors leading-tight mb-3">
+                <h3 className="font-display italic text-2xl text-titanium group-hover:text-acid transition-colors leading-tight mb-3">
                   {n.title}
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-6">
                   {n.excerpt}
                 </p>
+
+                <div className="mt-auto flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-acid transition-colors pointer-events-none">
+                  <span className="w-6 h-px bg-current" />
+                  <span>Leggi nota</span>
+                </div>
 
                 <Link
                   to={`/tech/${n.id}`}
                   className="absolute inset-0 z-10"
                   aria-label={`Leggi: ${n.title}`}
                 />
-                <div className="mt-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-acid opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  <span>Leggi</span>
-                  <span className="w-8 h-px bg-acid" />
-                </div>
               </motion.article>
             ))}
           </div>
