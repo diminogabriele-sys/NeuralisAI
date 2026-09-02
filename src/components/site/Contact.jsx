@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { base44 } from "@/api/base44Client";
 
 export default function Contact() {
   const [lines, setLines] = useState([
@@ -21,15 +22,32 @@ export default function Contact() {
       { type: "sys", text: "Elaborazione..." },
     ]);
 
-    setTimeout(() => {
+    try {
+      const res = await base44.functions.invoke("submitContact", {
+        name: form.name,
+        email: form.email,
+        project: form.project,
+      });
+      if (res.data?.ok) {
+        setLines((l) => [
+          ...l,
+          { type: "ok", text: "✓ Deploy riuscito. Richiesta trasmessa al team." },
+          { type: "ok", text: "Risposta prevista entro 24h." },
+        ]);
+        setDeployed(true);
+      } else {
+        setLines((l) => [
+          ...l,
+          { type: "err", text: "✗ " + (res.data?.error || "Errore di trasmissione.") },
+        ]);
+      }
+    } catch {
       setLines((l) => [
         ...l,
-        { type: "ok", text: "✓ Deploy riuscito. Richiesta trasmessa al team." },
-        { type: "ok", text: "Risposta prevista entro 24h." },
+        { type: "err", text: "✗ Errore di trasmissione. Riprova." },
       ]);
-      setDeployed(true);
-      setSending(false);
-    }, 1400);
+    }
+    setSending(false);
   };
 
   const color = (t) =>
