@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const links = [
   { label: "Sistemi", href: "#services" },
   { label: "Logica", href: "#work" },
   { label: "Protocollo", href: "#protocol" },
   { label: "Tech", href: "#tech" },
+  { label: "Chi siamo", to: "/about" },
   { label: "Terminale", href: "#contact" },
 ];
 
@@ -38,15 +40,25 @@ export default function Nav() {
           </a>
 
           <nav className="hidden md:flex items-center gap-10">
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-acid transition-colors"
-              >
-                {l.label}
-              </a>
-            ))}
+            {links.map((l) =>
+              l.to ? (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-acid transition-colors"
+                >
+                  {l.label}
+                </Link>
+              ) : (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-acid transition-colors"
+                >
+                  {l.label}
+                </a>
+              )
+            )}
           </nav>
 
           <button
@@ -95,9 +107,8 @@ export default function Nav() {
 
               <nav className="flex flex-col gap-1">
                 {links.map((l, i) => (
-                  <motion.a
-                    key={l.href}
-                    href={l.href}
+                  <motion.div
+                    key={l.to || l.href}
                     onClick={() => setOpen(false)}
                     initial={{ opacity: 0, x: 40 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -106,10 +117,16 @@ export default function Nav() {
                     className="group flex items-baseline gap-3 py-1"
                   >
                     <span className="font-mono text-xs text-acid">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="font-display italic text-5xl text-titanium group-hover:text-acid transition-colors">
-                      {l.label}
-                    </span>
-                  </motion.a>
+                    {l.to ? (
+                      <Link to={l.to} className="font-display italic text-5xl text-titanium group-hover:text-acid transition-colors">
+                        {l.label}
+                      </Link>
+                    ) : (
+                      <a href={l.href} className="font-display italic text-5xl text-titanium group-hover:text-acid transition-colors">
+                        {l.label}
+                      </a>
+                    )}
+                  </motion.div>
                 ))}
               </nav>
 

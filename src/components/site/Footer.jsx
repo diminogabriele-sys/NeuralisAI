@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   const [time, setTime] = useState("");
@@ -15,6 +16,7 @@ export default function Footer() {
     { label: "Logica", href: "#work" },
     { label: "Protocollo", href: "#protocol" },
     { label: "Tech", href: "#tech" },
+    { label: "Chi siamo", to: "/about" },
     { label: "Terminale", href: "#contact" },
   ];
 
@@ -38,15 +40,25 @@ export default function Footer() {
               // Mappa
             </div>
             <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-              {items.map((i) => (
-                <a
-                  key={i.href}
-                  href={i.href}
-                  className="font-mono text-sm text-titanium hover:text-acid transition-colors"
-                >
-                  {i.label}
-                </a>
-              ))}
+              {items.map((i) =>
+                i.to ? (
+                  <Link
+                    key={i.to}
+                    to={i.to}
+                    className="font-mono text-sm text-titanium hover:text-acid transition-colors"
+                  >
+                    {i.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={i.href}
+                    href={i.href}
+                    className="font-mono text-sm text-titanium hover:text-acid transition-colors"
+                  >
+                    {i.label}
+                  </a>
+                )
+              )}
             </div>
           </div>
 

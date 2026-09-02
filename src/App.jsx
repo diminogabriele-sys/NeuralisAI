@@ -8,6 +8,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
 import Home from '@/pages/Home';
+import About from '@/pages/About';
 import TechNoteDetail from '@/pages/TechNoteDetail';
 
 const AuthenticatedApp = () => {
@@ -38,6 +39,7 @@ const AuthenticatedApp = () => {
     <Routes>
       {/* Add your page Route elements here */}
       <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
       <Route path="/tech/:id" element={<TechNoteDetail />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
