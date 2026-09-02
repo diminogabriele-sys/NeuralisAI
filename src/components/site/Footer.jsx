@@ -14,6 +14,7 @@ export default function Footer() {
     { label: "Sistemi", href: "#services" },
     { label: "Logica", href: "#work" },
     { label: "Protocollo", href: "#protocol" },
+    { label: "Tech", href: "#tech" },
     { label: "Terminale", href: "#contact" },
   ];
 

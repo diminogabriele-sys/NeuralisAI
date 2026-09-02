@@ -5,6 +5,7 @@ import Services from "@/components/site/Services";
 import CaseStudies from "@/components/site/CaseStudies";
 import ROI from "@/components/site/ROI";
 import Protocol from "@/components/site/Protocol";
+import ProtocolloTech from "@/components/site/ProtocolloTech";
 import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
 
@@ -18,6 +19,7 @@ export default function Home() {
         <CaseStudies />
         <ROI />
         <Protocol />
+        <ProtocolloTech />
         <Contact />
       </main>
       <Footer />
