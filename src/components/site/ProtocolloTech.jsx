@@ -54,7 +54,7 @@ export default function ProtocolloTech() {
             Nessuna nota pubblicata. Torna presto.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-l border-steel">
+          <div className="flex gap-0 overflow-x-auto snap-x border-t border-l border-steel pb-3 [scrollbar-color:#2D3230_transparent]">
             {notes.map((n, i) => (
               <motion.article
                 key={n.id}
@@ -62,7 +62,7 @@ export default function ProtocolloTech() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.6, delay: (i % 3) * 0.08 }}
-                className="group relative flex flex-col p-8 border-b border-r border-steel hover:bg-secondary/30 transition-colors"
+                className="group relative flex flex-col p-8 w-[280px] md:w-[360px] shrink-0 snap-start border-b border-r border-steel hover:bg-secondary/30 transition-colors"
               >
                 <div className="flex items-center justify-between mb-6">
                   <span className={`font-mono text-[10px] uppercase tracking-[0.25em] ${categoryColors[n.category] || "text-acid"}`}>
