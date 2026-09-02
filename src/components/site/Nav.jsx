@@ -50,47 +50,77 @@ export default function Nav() {
 
           <button
             onClick={() => setOpen(true)}
-            className="md:hidden flex flex-col gap-1.5 p-2"
+            className="md:hidden relative w-8 h-8 flex flex-col items-center justify-center gap-[6px] z-[70]"
             aria-label="Apri menu"
           >
-            <span className="w-6 h-px bg-titanium" />
-            <span className="w-6 h-px bg-titanium" />
-            <span className="w-4 h-px bg-acid" />
+            <span className="block w-6 h-px bg-titanium origin-center transition-all duration-300" />
+            <span className="block w-4 h-px bg-acid self-end transition-all duration-300" />
           </button>
         </div>
       </header>
 
       <AnimatePresence>
         {open && (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "tween", duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[60] bg-obsidian flex flex-col justify-center px-8"
-          >
-            <button
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
               onClick={() => setOpen(false)}
-              className="absolute top-8 right-8 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-acid"
+              className="fixed inset-0 z-[55] bg-obsidian/60 backdrop-blur-sm md:hidden"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "tween", duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-y-0 right-0 z-[65] w-full max-w-sm bg-obsidian flex flex-col justify-between px-8 py-10 border-l border-steel grain md:hidden"
             >
-              [Chiudi]
-            </button>
-            <nav className="flex flex-col gap-2">
-              {links.map((l, i) => (
-                <motion.a
-                  key={l.href}
-                  href={l.href}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-acid rounded-full animate-pulse" />
+                  <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">/SYS</span>
+                </div>
+                <button
                   onClick={() => setOpen(false)}
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.15 + i * 0.08 }}
-                  className="font-display italic text-5xl text-titanium hover:text-acid transition-colors"
+                  className="relative w-8 h-8 flex items-center justify-center group"
+                  aria-label="Chiudi menu"
                 >
-                  {l.label}
-                </motion.a>
-              ))}
-            </nav>
-          </motion.div>
+                  <span className="absolute w-6 h-px bg-titanium rotate-45 transition-colors group-hover:bg-acid" />
+                  <span className="absolute w-6 h-px bg-titanium -rotate-45 transition-colors group-hover:bg-acid" />
+                </button>
+              </div>
+
+              <nav className="flex flex-col gap-1">
+                {links.map((l, i) => (
+                  <motion.a
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 40 }}
+                    transition={{ delay: 0.12 + i * 0.06, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="group flex items-baseline gap-3 py-1"
+                  >
+                    <span className="font-mono text-xs text-acid">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="font-display italic text-5xl text-titanium group-hover:text-acid transition-colors">
+                      {l.label}
+                    </span>
+                  </motion.a>
+                ))}
+              </nav>
+
+              <div className="flex flex-col gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                <div className="h-px bg-steel" />
+                <div className="flex justify-between">
+                  <span>Torino · Remoto</span>
+                  <span className="text-acid">NeuralisAI@outlook.it</span>
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
