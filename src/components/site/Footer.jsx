@@ -50,13 +50,13 @@ export default function Footer() {
                     {i.label}
                   </Link>
                 ) : (
-                  <a
+                  <Link
                     key={i.href}
-                    href={i.href}
+                    to={{ pathname: "/", hash: i.href }}
                     className="font-mono text-sm text-titanium hover:text-acid transition-colors"
                   >
                     {i.label}
-                  </a>
+                  </Link>
                 )
               )}
             </div>

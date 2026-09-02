@@ -50,13 +50,13 @@ export default function Nav() {
                   {l.label}
                 </Link>
               ) : (
-                <a
+                <Link
                   key={l.href}
-                  href={l.href}
+                  to={{ pathname: "/", hash: l.href }}
                   className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-acid transition-colors"
                 >
                   {l.label}
-                </a>
+                </Link>
               )
             )}
           </nav>
@@ -122,9 +122,9 @@ export default function Nav() {
                         {l.label}
                       </Link>
                     ) : (
-                      <a href={l.href} className="font-display italic text-5xl text-titanium group-hover:text-acid transition-colors">
+                      <Link to={{ pathname: "/", hash: l.href }} className="font-display italic text-5xl text-titanium group-hover:text-acid transition-colors">
                         {l.label}
-                      </a>
+                      </Link>
                     )}
                   </motion.div>
                 ))}
