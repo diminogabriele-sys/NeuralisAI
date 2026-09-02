@@ -126,7 +126,8 @@ export default function Hero() {
           transition={{ duration: 1, delay: 1 }}
           className="mt-10 max-w-xl mx-auto text-base md:text-lg text-muted-foreground leading-relaxed text-balance"
         >
-          Traduciamo la complessità degli algoritmi in automazioni silenziose
+          Automazione AI e <span className="text-acid">creazione di siti web</span> ad alte
+          prestazioni. Traduciamo la complessità degli algoritmi in automazioni silenziose
           e interfacce che pensano. Il partner architettonico per chi colonizza il futuro.
         </motion.p>
 
