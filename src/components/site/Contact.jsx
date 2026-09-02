@@ -52,7 +52,7 @@ export default function Contact() {
             </p>
             <div className="space-y-3 font-mono text-xs">
               <div className="flex gap-3 text-muted-foreground">
-                <span className="text-acid">→</span> hello@neuralis.studio
+                <span className="text-acid">→</span> NeuralisAI@outlook.it
               </div>
               <div className="flex gap-3 text-muted-foreground">
                 <span className="text-acid">→</span> Torino · Remoto · Worldwide
