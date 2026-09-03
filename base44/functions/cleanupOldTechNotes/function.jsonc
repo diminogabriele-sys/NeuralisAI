@@ -1,0 +1,4 @@
+{
+  "name": "cleanupOldTechNotes",
+  "entry": "entry.ts"
+}
