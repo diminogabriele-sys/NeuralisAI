@@ -4,37 +4,37 @@
 
 @layer base {
   :root {
-    --background: 40 16% 4%;
-    --foreground: 39 42% 89%;
-    --card: 36 10% 10%;
-    --card-foreground: 39 42% 89%;
-    --popover: 36 10% 10%;
-    --popover-foreground: 39 42% 89%;
-    --primary: 5 78% 47%;
-    --primary-foreground: 39 42% 89%;
-    --secondary: 36 10% 10%;
-    --secondary-foreground: 39 42% 89%;
-    --muted: 36 10% 10%;
-    --muted-foreground: 38 12% 59%;
-    --accent: 5 78% 47%;
-    --accent-foreground: 39 42% 89%;
-    --destructive: 5 78% 47%;
-    --destructive-foreground: 39 42% 89%;
-    --border: 36 10% 19%;
-    --input: 36 10% 19%;
-    --ring: 5 78% 47%;
+    --background: 0 0% 4%;
+    --foreground: 43 56% 80%;
+    --card: 216 6% 17%;
+    --card-foreground: 43 56% 80%;
+    --popover: 216 6% 17%;
+    --popover-foreground: 43 56% 80%;
+    --primary: 41 54% 54%;
+    --primary-foreground: 36 10% 10%;
+    --secondary: 216 6% 17%;
+    --secondary-foreground: 43 56% 80%;
+    --muted: 216 6% 17%;
+    --muted-foreground: 42 16% 58%;
+    --accent: 41 54% 54%;
+    --accent-foreground: 36 10% 10%;
+    --destructive: 41 54% 54%;
+    --destructive-foreground: 36 10% 10%;
+    --border: 225 3% 24%;
+    --input: 225 3% 24%;
+    --ring: 41 54% 54%;
     --radius: 0rem;
     --font-heading: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-    --sidebar-background: 40 16% 4%;
-    --sidebar-foreground: 39 42% 89%;
-    --sidebar-primary: 5 78% 47%;
-    --sidebar-primary-foreground: 39 42% 89%;
-    --sidebar-accent: 36 10% 10%;
-    --sidebar-accent-foreground: 39 42% 89%;
-    --sidebar-border: 36 10% 19%;
-    --sidebar-ring: 5 78% 47%;
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 43 56% 80%;
+    --sidebar-primary: 41 54% 54%;
+    --sidebar-primary-foreground: 36 10% 10%;
+    --sidebar-accent: 216 6% 17%;
+    --sidebar-accent-foreground: 43 56% 80%;
+    --sidebar-border: 225 3% 24%;
+    --sidebar-ring: 41 54% 54%;
   }
 }
 
@@ -45,12 +45,12 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-color: #0b0a08;
+    background-color: #0a0a0a;
   }
 
   ::selection {
-    background-color: #da291c;
-    color: #efe7d8;
+    background-color: #c9a24c;
+    color: #1c1a17;
   }
 }
 
@@ -68,13 +68,13 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0a08;
+  background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #35312b;
+  background: #3a3b3e;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #da291c;
+  background: #c9a24c;
 }
 
 html {
@@ -83,14 +83,14 @@ html {
 
 /* Woven carbon-fibre surface, used in place of a flat black page background */
 .carbon-weave {
-  background-color: #0b0a08;
+  background-color: #0a0a0a;
   background-image:
-    linear-gradient(27deg, #17140f 5px, transparent 5px),
-    linear-gradient(207deg, #17140f 5px, transparent 5px),
-    linear-gradient(27deg, #17140f 5px, transparent 5px),
-    linear-gradient(207deg, #17140f 5px, transparent 5px),
-    linear-gradient(90deg, #100e0b 10px, transparent 10px),
-    linear-gradient(#100e0b 25%, #1c1a17 25%, #1c1a17 50%, #100e0b 50%, #100e0b 75%, #1c1a17 75%, #1c1a17);
+    linear-gradient(27deg, #1a1a1c 5px, transparent 5px),
+    linear-gradient(207deg, #1a1a1c 5px, transparent 5px),
+    linear-gradient(27deg, #1a1a1c 5px, transparent 5px),
+    linear-gradient(207deg, #1a1a1c 5px, transparent 5px),
+    linear-gradient(90deg, #121213 10px, transparent 10px),
+    linear-gradient(#121213 25%, #2a2c2f 25%, #2a2c2f 50%, #121213 50%, #121213 75%, #2a2c2f 75%, #2a2c2f);
   background-repeat: repeat;
   background-size: 22px 22px;
   background-position: 0 0, 0 0, 11px 11px, 11px 11px, 0 0, 0 0;

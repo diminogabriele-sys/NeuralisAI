@@ -61,15 +61,15 @@ module.exports = {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			},
-  			obsidian: '#0b0a08',
-  			carbonfiber: '#1c1a17',
-  			titanium: '#efe7d8',
-  			steel: '#35312b',
-  			fumo: '#a39a8a',
-  			brabus: '#da291c',
-  			brabuslight: '#9d2211',
-  			stone: '#f0ebe0',
-  			stoneink: '#16130f'
+  			obsidian: '#0a0a0a',
+  			carbonfiber: '#2a2c2f',
+  			titanium: '#e9d9b0',
+  			steel: '#3a3b3e',
+  			fumo: '#a49a82',
+  			brabus: '#c9a24c',
+  			brabuslight: '#8f7530',
+  			stone: '#f2e9d4',
+  			stoneink: '#1c1a17'
   		},
   		fontFamily: {
   			heading: ['var(--font-heading)'],
