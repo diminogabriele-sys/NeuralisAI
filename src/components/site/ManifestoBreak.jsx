@@ -12,7 +12,7 @@ export default function ManifestoBreak() {
         playsInline
         preload="auto"
       >
-        <source src="/video/hero-s1000rr.mp4" type="video/mp4" />
+        <source src={`${import.meta.env.BASE_URL}video/hero-s1000rr.mp4`} type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-black/70" />
 

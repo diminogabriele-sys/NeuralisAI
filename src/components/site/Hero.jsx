@@ -12,7 +12,7 @@ export default function Hero() {
         playsInline
         preload="auto"
       >
-        <source src="/video/hero-s1000rr.mp4" type="video/mp4" />
+        <source src={`${import.meta.env.BASE_URL}video/hero-s1000rr.mp4`} type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-black/45" />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
