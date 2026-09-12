@@ -1,37 +1,26 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
 
 const models = ["BMW S1000RR", "Kawasaki Z900", "Altra moto"];
+const RECIPIENT = "NeuralisAI@outlook.it";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", model: models[0], message: "" });
   const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState("");
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault();
-    setSending(true);
-    setError("");
 
-    const project = `Moto: ${form.model}\n\n${form.message}`;
+    const subject = `Richiesta consulenza — ${form.name}`;
+    const body =
+      `Nome: ${form.name}\n` +
+      `Email: ${form.email}\n` +
+      `Moto: ${form.model}\n\n` +
+      `Progetto:\n${form.message}`;
 
-    try {
-      const res = await base44.functions.invoke("submitContact", {
-        name: form.name,
-        email: form.email,
-        project,
-      });
-      if (res.data?.ok) {
-        setSent(true);
-      } else {
-        setError(res.data?.error || "Errore di invio. Riprova.");
-      }
-    } catch {
-      setError("Errore di invio. Riprova.");
-    }
-    setSending(false);
+    const mailtoUrl = `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+    setSent(true);
   };
 
   return (
@@ -46,12 +35,12 @@ export default function Contact() {
               Iniziamo a<br />disegnarla.
             </h2>
             <p className="text-muted-foreground leading-relaxed max-w-md mb-10">
-              Raccontaci la tua moto e la tua visione. Ti risponderemo entro 24 ore
-              per fissare una consulenza, in atelier o da remoto.
+              Raccontaci la tua moto e la tua visione. Compila il modulo: si aprirà
+              il tuo programma di posta con la richiesta già pronta da inviare.
             </p>
             <div className="space-y-3 font-mono text-xs">
               <div className="flex gap-3 text-muted-foreground">
-                <span className="text-brabus">→</span> NeuralisAI@outlook.it
+                <span className="text-brabus">→</span> {RECIPIENT}
               </div>
               <div className="flex gap-3 text-muted-foreground">
                 <span className="text-brabus">→</span> Torino · Su appuntamento
@@ -110,15 +99,11 @@ export default function Contact() {
                       className="w-full bg-transparent border-b border-steel focus:border-brabus outline-none py-2 text-titanium placeholder:text-muted-foreground/50 resize-none transition-colors"
                     />
                   </div>
-                  {error && (
-                    <div className="font-mono text-xs text-red-400">{error}</div>
-                  )}
                   <button
                     type="submit"
-                    disabled={sending}
-                    className="w-full py-4 bg-brabus text-titanium font-mono text-xs uppercase tracking-[0.2em] hover:bg-brabuslight disabled:opacity-50 transition-colors"
+                    className="w-full py-4 bg-brabus text-titanium font-mono text-xs uppercase tracking-[0.2em] hover:bg-brabuslight transition-colors"
                   >
-                    {sending ? "Invio in corso..." : "Richiedi consulenza"}
+                    Richiedi consulenza
                   </button>
                 </form>
               ) : (
@@ -127,9 +112,10 @@ export default function Contact() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-16 text-center"
                 >
-                  <div className="font-display uppercase text-3xl text-brabus mb-4">Richiesta inviata.</div>
+                  <div className="font-display uppercase text-3xl text-brabus mb-4">Quasi fatto.</div>
                   <p className="text-muted-foreground text-sm">
-                    Grazie. Il nostro atelier ti contatterà entro 24 ore.
+                    Abbiamo aperto il tuo programma di posta con la richiesta
+                    pronta: premi invia per completarla.
                   </p>
                 </motion.div>
               )}

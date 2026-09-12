@@ -1,9 +1,0 @@
-{
-  "name": "Veloce Custom Moto Atelier",
-  "site": {
-    "installCommand": "npm install",
-    "buildCommand": "npm run build",
-    "serveCommand": "npm run dev",
-    "outputDirectory": "./dist"
-  }
-}
