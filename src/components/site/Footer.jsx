@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const items = [
   { label: "Modelli", href: "#modelli" },
-  { label: "Personalizzazioni", href: "#servizi" },
+  { label: "Prodotti", href: "#prodotti" },
   { label: "Materiali", href: "#materiali" },
   { label: "Processo", href: "#processo" },
   { label: "Chi siamo", to: "/about" },

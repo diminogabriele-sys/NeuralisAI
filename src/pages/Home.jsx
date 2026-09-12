@@ -3,7 +3,7 @@ import Nav from "@/components/site/Nav";
 import Hero from "@/components/site/Hero";
 import Models from "@/components/site/Models";
 import ManifestoBreak from "@/components/site/ManifestoBreak";
-import Services from "@/components/site/Services";
+import Products from "@/components/site/Products";
 import Materials from "@/components/site/Materials";
 import Process from "@/components/site/Process";
 import Contact from "@/components/site/Contact";
@@ -17,7 +17,7 @@ export default function Home() {
         <Hero />
         <Models />
         <ManifestoBreak />
-        <Services />
+        <Products />
         <Materials />
         <Process />
         <Contact />
