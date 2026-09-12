@@ -8,10 +8,7 @@ export default function PageNotFound() {
         <div className="min-h-screen flex items-center justify-center p-6 bg-obsidian">
             <div className="max-w-md w-full">
                 <div className="text-center space-y-6">
-                    <div className="space-y-2">
-                        <h1 className="text-7xl font-display uppercase text-steel">404</h1>
-                        <div className="h-0.5 w-16 bg-steel mx-auto"></div>
-                    </div>
+                    <h1 className="text-7xl font-display text-steel">404</h1>
 
                     <div className="space-y-3">
                         <h2 className="text-2xl font-medium text-titanium">
@@ -25,7 +22,7 @@ export default function PageNotFound() {
                     <div className="pt-6">
                         <a
                             href="/"
-                            className="inline-flex items-center px-6 py-3 font-body text-[12px] uppercase tracking-[0.083em] text-titanium border border-steel hover:border-brabus hover:text-brabus transition-colors"
+                            className="inline-flex items-center px-6 py-3 bg-ottone text-obsidian font-body text-[14px] font-medium rounded-sm hover:bg-titanium transition-colors"
                         >
                             Torna alla home
                         </a>

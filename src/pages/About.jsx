@@ -7,18 +7,18 @@ export default function About() {
     <div className="relative bg-obsidian min-h-screen">
       <Nav />
       <main>
-        <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 border-b border-steel">
-          <div className="mx-auto max-w-[1440px] px-6 md:px-12">
-            <h1 className="font-display uppercase text-3xl md:text-5xl text-titanium leading-[1.1] max-w-4xl break-words">
+        <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 border-b border-steel">
+          <div className="mx-auto max-w-[1100px] px-6 md:px-12">
+            <h1 className="font-display text-3xl md:text-4xl text-titanium leading-[1.25] max-w-2xl">
               Costruiamo moto che non esistono altrove.
             </h1>
           </div>
         </section>
 
-        <section className="relative py-20 md:py-28">
-          <div className="mx-auto max-w-[1440px] px-6 md:px-12">
+        <section className="relative py-20 md:py-24">
+          <div className="mx-auto max-w-[1100px] px-6 md:px-12">
             <div className="grid grid-cols-12 gap-6 md:gap-12">
-              <div className="col-span-12 md:col-span-7 md:col-start-2 space-y-8 text-[13px] leading-[1.78] text-fumo">
+              <div className="min-w-0 col-span-12 md:col-span-7 md:col-start-2 space-y-7 text-[15px] leading-[1.8] text-fumo">
                 <p>
                   <span className="text-titanium">Veloce</span> è un atelier di
                   personalizzazione moto con base a Torino, specializzato nella

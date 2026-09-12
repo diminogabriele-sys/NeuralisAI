@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { Layers, Flame, CircleDot, Palette, Cog, ShieldCheck } from "lucide-react";
 
 const estetica = [
@@ -16,38 +15,34 @@ const performance = [
 
 function ServiceBlock({ title, subtitle, items }) {
   return (
-    <div className="py-20 md:py-28">
-      <div className="mx-auto max-w-[1440px] px-6 md:px-12 w-full">
+    <div className="py-16 md:py-20">
+      <div className="mx-auto max-w-[1100px] px-6 md:px-12 w-full">
         <div className="grid grid-cols-12 gap-6 md:gap-12">
-          <div className="col-span-12 md:col-span-4">
-            <h2 className="font-display uppercase text-3xl md:text-5xl text-titanium leading-[1.1] mb-6 break-words">
+          <div className="min-w-0 col-span-12 md:col-span-4">
+            <h2 className="font-display text-2xl md:text-3xl text-titanium leading-[1.25] mb-5">
               {title}
             </h2>
-            <p className="text-[13px] leading-[1.78] text-fumo max-w-sm">{subtitle}</p>
+            <p className="text-[15px] leading-[1.8] text-fumo max-w-sm">{subtitle}</p>
           </div>
 
-          <div className="col-span-12 md:col-span-7 md:col-start-6 flex flex-col gap-px">
-            {items.map((item, i) => (
-              <motion.div
+          <div className="min-w-0 col-span-12 md:col-span-7 md:col-start-6 flex flex-col gap-px">
+            {items.map((item) => (
+              <div
                 key={item.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="group grid grid-cols-12 gap-4 items-start py-8 border-t border-steel hover:border-brabus transition-colors"
+                className="group grid grid-cols-12 gap-4 items-start py-7 border-t border-steel"
               >
-                <div className="col-span-1">
-                  <item.icon className="w-4 h-4 text-fumo group-hover:text-brabus transition-colors mt-1" strokeWidth={1.5} />
+                <div className="min-w-0 col-span-1">
+                  <item.icon className="w-4 h-4 text-ottone mt-1" strokeWidth={1.5} />
                 </div>
-                <div className="col-span-11 md:col-span-4">
-                  <h3 className="font-display uppercase text-[13px] tracking-[0.015em] text-titanium group-hover:text-brabus transition-colors">
+                <div className="min-w-0 col-span-11 md:col-span-4">
+                  <h3 className="font-display text-lg text-titanium">
                     {item.title}
                   </h3>
                 </div>
-                <div className="col-span-12 md:col-span-7">
-                  <p className="text-[13px] leading-[1.78] text-fumo">{item.desc}</p>
+                <div className="min-w-0 col-span-12 md:col-span-7">
+                  <p className="text-[14px] leading-[1.75] text-fumo">{item.desc}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
