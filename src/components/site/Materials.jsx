@@ -39,18 +39,14 @@ export default function Materials() {
   return (
     <section id="materiali" className="relative py-24 md:py-28 bg-stone text-stoneink">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
-        <div className="grid grid-cols-12 gap-6 mb-14">
-          <div className="min-w-0 col-span-12 md:col-span-5">
-            <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] leading-[1.3]">
-              Lavoriamo solo carbonio, in ogni sua declinazione.
-            </h2>
-          </div>
-          <div className="min-w-0 col-span-12 md:col-span-6 md:col-start-7 flex items-end">
-            <p className="text-[15px] leading-[1.8] text-stoneink/70 max-w-md">
-              Scegliamo la trama in base al pezzo e all'estetica richiesta.
-              Seleziona una lavorazione per scoprirne le caratteristiche.
-            </p>
-          </div>
+        <div className="max-w-xl mx-auto text-center mb-14">
+          <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] leading-[1.3]">
+            Lavoriamo solo carbonio, in ogni sua declinazione.
+          </h2>
+          <p className="text-[15px] leading-[1.8] text-stoneink/70 max-w-md mx-auto mt-5">
+            Scegliamo la trama in base al pezzo e all'estetica richiesta.
+            Seleziona una lavorazione per scoprirne le caratteristiche.
+          </p>
         </div>
 
         <div className="grid grid-cols-12 gap-px">

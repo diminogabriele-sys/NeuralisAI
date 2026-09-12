@@ -6,28 +6,24 @@ const products = [
     fit: "BMW S1000RR",
     name: "Kit carena racing",
     desc: "Carena completa in carbonio a vista, stampata sullo stampo dedicato al modello.",
-    price: "Da €1.890",
   },
   {
     id: "codino",
     fit: "Kawasaki Z900",
     name: "Codino monoposto",
     desc: "Codino in carbonio con sottocodino integrato, finitura lucida o opaca.",
-    price: "Da €490",
   },
   {
     id: "cover",
     fit: "S1000RR e Z900",
     name: "Set cover motore",
     desc: "Protezioni motore in carbonio, sagomate su misura per il modello.",
-    price: "Da €340",
   },
   {
     id: "parafango",
     fit: "S1000RR e Z900",
     name: "Parafango anteriore",
     desc: "Parafango in carbonio 3K, più leggero del componente originale.",
-    price: "Da €220",
   },
 ];
 
@@ -52,9 +48,9 @@ function ProductCard({ p }) {
         <p className="text-[14px] leading-[1.7] text-fumo max-w-xs">{p.desc}</p>
       </div>
       <div className="relative mt-8 flex items-center justify-between border-t border-steel pt-6">
-        <span className="font-display text-lg text-titanium">{p.price}</span>
+        <span className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo">Prezzo su richiesta</span>
         <span className="font-body text-[12px] uppercase tracking-[0.083em] text-titanium group-hover:text-brabus transition-colors">
-          Scopri di più
+          Richiedi il prezzo
         </span>
       </div>
     </a>
@@ -65,7 +61,7 @@ export default function Products() {
   return (
     <section id="prodotti" className="relative py-20 md:py-28 border-t border-steel">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
-        <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] mb-14 max-w-md">
+        <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] mb-14 max-w-md mx-auto text-center">
           I componenti che realizziamo
         </h2>
 

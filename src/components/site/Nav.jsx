@@ -13,14 +13,28 @@ const links = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 py-6 bg-transparent">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,padding,border-color] duration-300 ${
+          scrolled
+            ? "py-4 bg-obsidian/95 backdrop-blur-sm border-b border-steel"
+            : "py-6 bg-transparent border-b border-transparent"
+        }`}
+      >
         <div className="mx-auto max-w-[1200px] px-6 md:px-12 flex items-center justify-between">
           <a href="#top" className="flex items-center">
             <span className="font-display uppercase text-[13px] font-medium tracking-[0.083em] text-titanium">Veloce</span>

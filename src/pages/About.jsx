@@ -8,8 +8,8 @@ export default function About() {
       <Nav />
       <main>
         <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 border-b border-steel">
-          <div className="mx-auto max-w-[1100px] px-6 md:px-12">
-            <h1 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-2xl">
+          <div className="mx-auto max-w-[1100px] px-6 md:px-12 text-center">
+            <h1 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-2xl mx-auto">
               Solo carbonio, solo su due moto
             </h1>
           </div>

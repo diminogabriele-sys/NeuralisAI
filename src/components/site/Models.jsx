@@ -93,8 +93,8 @@ function BikeBlock({ data, index }) {
 export default function Models() {
   return (
     <section id="modelli" className="relative">
-      <div className="mx-auto max-w-[1100px] px-6 md:px-12 pt-24 md:pt-28">
-        <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-xl">
+      <div className="mx-auto max-w-[1100px] px-6 md:px-12 pt-24 md:pt-28 text-center">
+        <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-xl mx-auto">
           Lavoriamo solo su due basi, per conoscerle meglio di chiunque altro
         </h2>
       </div>

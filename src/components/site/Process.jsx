@@ -11,7 +11,7 @@ export default function Process() {
   return (
     <section id="processo" className="relative py-24 md:py-28 border-t border-steel">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
-        <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-xl mb-14">
+        <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-xl mb-14 mx-auto text-center">
           Dal rilievo della moto al componente montato, in quattro fasi
         </h2>
 
