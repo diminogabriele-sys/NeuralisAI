@@ -39,45 +39,44 @@ function BikeBlock({ data, index }) {
   const reverse = index % 2 === 1;
   return (
     <div className="py-20 md:py-28 border-t border-steel">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-        <div className={`grid grid-cols-12 gap-6 md:gap-12 items-center ${reverse ? "" : ""}`}>
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12">
+        <div className="grid grid-cols-12 gap-6 md:gap-12 items-center">
           <div className={`col-span-12 md:col-span-6 ${reverse ? "md:order-2" : ""}`}>
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.7 }}
-              className="carbon border border-steel p-6 md:p-10"
             >
               <BikeBlueprint variant={data.variant} className="w-full h-auto" />
             </motion.div>
           </div>
 
           <div className={`col-span-12 md:col-span-6 ${reverse ? "md:order-1" : ""}`}>
-            <div className="font-mono text-xs uppercase tracking-[0.3em] text-brabus mb-4">
-              [{data.id}] {data.tag}
+            <div className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo mb-4">
+              {data.tag}
             </div>
-            <h3 className="font-display uppercase text-3xl md:text-5xl text-titanium leading-[0.95] mb-2 break-words">
+            <h3 className="font-display uppercase text-[13px] tracking-[0.015em] text-fumo mb-1">
               {data.make}
             </h3>
-            <h2 className="font-display uppercase text-4xl md:text-7xl text-brabus leading-[0.9] mb-6 break-words">
+            <h2 className="font-display uppercase text-3xl md:text-5xl text-titanium leading-[1.1] mb-6 break-words">
               {data.model}
             </h2>
-            <p className="text-muted-foreground leading-relaxed max-w-lg mb-8">{data.desc}</p>
+            <p className="text-[13px] leading-[1.78] text-fumo max-w-lg mb-8">{data.desc}</p>
 
             <div className="grid grid-cols-2 gap-x-6 gap-y-4 mb-8 max-w-md">
               {data.specs.map((s) => (
                 <div key={s.l} className="border-l border-steel pl-3">
-                  <div className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">{s.l}</div>
-                  <div className="font-display uppercase text-lg text-titanium">{s.v}</div>
+                  <div className="font-body text-[10px] uppercase tracking-[0.083em] text-fumo">{s.l}</div>
+                  <div className="font-display uppercase text-[13px] text-titanium mt-1">{s.v}</div>
                 </div>
               ))}
             </div>
 
             <ul className="space-y-2 mb-8">
               {data.highlights.map((h) => (
-                <li key={h} className="flex items-start gap-3 text-sm text-titanium">
-                  <span className="w-1.5 h-1.5 mt-1.5 bg-brabus shrink-0" />
+                <li key={h} className="flex items-start gap-3 text-[13px] text-titanium">
+                  <span className="w-1 h-1 mt-2 bg-fumo shrink-0" />
                   <span>{h}</span>
                 </li>
               ))}
@@ -85,10 +84,9 @@ function BikeBlock({ data, index }) {
 
             <a
               href="#contact"
-              className="inline-flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-titanium hover:text-brabus transition-colors"
+              className="font-body text-[12px] uppercase tracking-[0.083em] text-titanium hover:text-brabus transition-colors"
             >
-              <span className="w-8 h-px bg-current" />
-              Configura la tua {data.model}
+              Configura la tua {data.model} →
             </a>
           </div>
         </div>
@@ -100,10 +98,10 @@ function BikeBlock({ data, index }) {
 export default function Models() {
   return (
     <section id="modelli" className="relative">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-12 pt-24 md:pt-32">
-        <div className="font-mono text-xs uppercase tracking-[0.3em] text-brabus mb-4">// Le Piattaforme</div>
-        <h2 className="font-display uppercase text-4xl md:text-7xl text-titanium leading-[0.95] max-w-3xl break-words">
-          Due basi d'eccellenza.<br />Infinite personalizzazioni.
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12 pt-24 md:pt-32">
+        <div className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo mb-4">Le Piattaforme</div>
+        <h2 className="font-display uppercase text-3xl md:text-5xl text-titanium leading-[1.1] max-w-3xl break-words">
+          Due basi d'eccellenza. Infinite personalizzazioni.
         </h2>
       </div>
       {bikes.map((b, i) => (

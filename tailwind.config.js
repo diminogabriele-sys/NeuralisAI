@@ -61,12 +61,13 @@ module.exports = {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			},
-  			obsidian: '#0D0D0D',
-  			carbonfiber: '#111112',
-  			titanium: '#E5E1D8',
-  			steel: '#2B2B2B',
-  			brabus: '#B3101F',
-  			brabuslight: '#D91E2C'
+  			obsidian: '#000000',
+  			carbonfiber: '#181818',
+  			titanium: '#ffffff',
+  			steel: '#303030',
+  			fumo: '#8f8f8f',
+  			brabus: '#da291c',
+  			brabuslight: '#9d2211'
   		},
   		fontFamily: {
   			heading: ['var(--font-heading)'],

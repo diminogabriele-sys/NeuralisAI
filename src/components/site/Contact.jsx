@@ -25,34 +25,25 @@ export default function Contact() {
 
   return (
     <section id="contact" className="relative py-24 md:py-32 border-t border-steel">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-6 md:gap-12">
           <div className="col-span-12 md:col-span-5">
-            <div className="font-mono text-xs uppercase tracking-[0.3em] text-brabus mb-4">
-              // Consulenza Riservata
-            </div>
-            <h2 className="font-display uppercase text-4xl md:text-7xl text-titanium leading-[0.95] mb-8 break-words">
-              Iniziamo a<br />disegnarla.
+            <h2 className="font-display uppercase text-3xl md:text-5xl text-titanium leading-[1.1] mb-8 break-words">
+              Iniziamo a disegnarla.
             </h2>
-            <p className="text-muted-foreground leading-relaxed max-w-md mb-10">
+            <p className="text-[13px] leading-[1.78] text-fumo max-w-md mb-10">
               Raccontaci la tua moto e la tua visione. Compila il modulo: si aprirà
               il tuo programma di posta con la richiesta già pronta da inviare.
             </p>
-            <div className="space-y-3 font-mono text-xs">
-              <div className="flex gap-3 text-muted-foreground">
-                <span className="text-brabus">→</span> {RECIPIENT}
-              </div>
-              <div className="flex gap-3 text-muted-foreground">
-                <span className="text-brabus">→</span> Torino · Su appuntamento
-              </div>
-              <div className="flex gap-3 text-muted-foreground">
-                <span className="text-brabus">→</span> Risposta entro 24h
-              </div>
+            <div className="space-y-3 font-body text-[12px] uppercase tracking-[0.015em] text-fumo">
+              <div>{RECIPIENT}</div>
+              <div>Torino · Su appuntamento</div>
+              <div>Risposta entro 24h</div>
             </div>
           </div>
 
           <div className="col-span-12 md:col-span-6 md:col-start-7">
-            <div className="border border-steel bg-card/40 backdrop-blur-sm p-6 md:p-10">
+            <div className="bg-carbonfiber p-6 md:p-10">
               {!sent ? (
                 <form onSubmit={submit} className="space-y-6">
                   <Field
@@ -71,7 +62,7 @@ export default function Contact() {
                     required
                   />
                   <div>
-                    <label className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+                    <label className="block font-body text-[10px] uppercase tracking-[0.083em] text-fumo mb-2">
                       Moto
                     </label>
                     <select
@@ -87,7 +78,7 @@ export default function Contact() {
                     </select>
                   </div>
                   <div>
-                    <label className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+                    <label className="block font-body text-[10px] uppercase tracking-[0.083em] text-fumo mb-2">
                       Il tuo progetto
                     </label>
                     <textarea
@@ -96,24 +87,24 @@ export default function Contact() {
                       placeholder="Descrivi lo stile, le lavorazioni o le ispirazioni che hai in mente..."
                       required
                       rows={4}
-                      className="w-full bg-transparent border-b border-steel focus:border-brabus outline-none py-2 text-titanium placeholder:text-muted-foreground/50 resize-none transition-colors"
+                      className="w-full bg-transparent border-b border-steel focus:border-brabus outline-none py-2 text-titanium placeholder:text-fumo/60 resize-none transition-colors"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="w-full py-4 bg-brabus text-titanium font-mono text-xs uppercase tracking-[0.2em] hover:bg-brabuslight transition-colors"
+                    className="w-full py-4 border border-steel text-titanium font-body text-[12px] uppercase tracking-[0.083em] hover:border-brabus hover:text-brabus transition-colors"
                   >
                     Richiedi consulenza
                   </button>
                 </form>
               ) : (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-16 text-center"
                 >
-                  <div className="font-display uppercase text-3xl text-brabus mb-4">Quasi fatto.</div>
-                  <p className="text-muted-foreground text-sm">
+                  <div className="font-display uppercase text-2xl text-titanium mb-4">Quasi fatto.</div>
+                  <p className="text-[13px] leading-[1.78] text-fumo">
                     Abbiamo aperto il tuo programma di posta con la richiesta
                     pronta: premi invia per completarla.
                   </p>
@@ -130,7 +121,7 @@ export default function Contact() {
 function Field({ label, value, onChange, placeholder, type = "text", required }) {
   return (
     <div>
-      <label className="block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+      <label className="block font-body text-[10px] uppercase tracking-[0.083em] text-fumo mb-2">
         {label}
       </label>
       <input
@@ -139,7 +130,7 @@ function Field({ label, value, onChange, placeholder, type = "text", required })
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-transparent border-b border-steel focus:border-brabus outline-none py-2 text-titanium placeholder:text-muted-foreground/50 transition-colors"
+        className="w-full bg-transparent border-b border-steel focus:border-brabus outline-none py-2 text-titanium placeholder:text-fumo/60 transition-colors"
       />
     </div>
   );

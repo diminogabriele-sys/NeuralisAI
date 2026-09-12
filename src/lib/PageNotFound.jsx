@@ -25,7 +25,7 @@ export default function PageNotFound() {
                     <div className="pt-6">
                         <a
                             href="/"
-                            className="inline-flex items-center px-6 py-3 font-mono text-xs uppercase tracking-[0.2em] text-titanium border border-steel hover:border-brabus hover:text-brabus transition-colors"
+                            className="inline-flex items-center px-6 py-3 font-body text-[12px] uppercase tracking-[0.083em] text-titanium border border-steel hover:border-brabus hover:text-brabus transition-colors"
                         >
                             Torna alla home
                         </a>

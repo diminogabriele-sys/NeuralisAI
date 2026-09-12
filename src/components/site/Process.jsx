@@ -11,13 +11,10 @@ const steps = [
 export default function Process() {
   return (
     <section id="processo" className="relative py-24 md:py-32 border-t border-steel">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12">
         <div className="mb-16">
-          <div className="font-mono text-xs uppercase tracking-[0.3em] text-brabus mb-4">
-            // Il Processo
-          </div>
-          <h2 className="font-display uppercase text-4xl md:text-7xl text-titanium leading-[0.95] max-w-2xl break-words">
-            Dall'idea alla moto<br />che non esiste altrove.
+          <h2 className="font-display uppercase text-3xl md:text-5xl text-titanium leading-[1.1] max-w-2xl break-words">
+            Dall'idea alla moto che non esiste altrove.
           </h2>
         </div>
 
@@ -25,15 +22,15 @@ export default function Process() {
           {steps.map((s, i) => (
             <motion.div
               key={s.n}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
               className="relative p-8 border-t border-steel md:border-t-0 md:border-l first:border-l-0"
             >
-              <div className="font-mono text-xs text-brabus mb-8">{s.n}</div>
-              <h3 className="font-heading font-semibold text-xl text-titanium mb-4">{s.t}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{s.d}</p>
+              <div className="font-body text-[11px] text-fumo mb-8">{s.n}</div>
+              <h3 className="font-display uppercase text-[13px] tracking-[0.015em] text-titanium mb-4">{s.t}</h3>
+              <p className="text-[13px] leading-[1.78] text-fumo">{s.d}</p>
             </motion.div>
           ))}
         </div>
