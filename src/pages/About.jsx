@@ -10,7 +10,7 @@ export default function About() {
         <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 border-b border-steel">
           <div className="mx-auto max-w-[1100px] px-6 md:px-12">
             <h1 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-2xl">
-              Costruiamo moto che non esistono altrove
+              Solo carbonio, solo su due moto
             </h1>
           </div>
         </section>
@@ -20,45 +20,39 @@ export default function About() {
             <div className="grid grid-cols-12 gap-6 md:gap-12">
               <div className="min-w-0 col-span-12 md:col-span-7 md:col-start-2 space-y-7 text-[15px] leading-[1.8] text-fumo">
                 <p>
-                  <span className="text-titanium">Veloce</span> è un atelier di
-                  personalizzazione moto con base a Torino, specializzato nella
-                  realizzazione di componenti su misura in carbonio, titanio e
-                  alluminio aeronautico. Non produciamo in serie: ogni pezzo nasce
-                  da una consulenza dedicata e viene progettato, lavorato e
-                  rifinito a mano per una singola moto.
+                  <span className="text-titanium">Veloce</span> è un laboratorio
+                  di Torino specializzato nella realizzazione di componenti in
+                  fibra di carbonio su misura. Non produciamo in serie: ogni
+                  pezzo nasce da una consulenza dedicata e viene stampato,
+                  tagliato e rifinito a mano.
                 </p>
                 <p>
-                  Concentriamo la nostra competenza su due piattaforme che
-                  consideriamo tra le più esigenti sul mercato:{" "}
-                  <span className="text-titanium">BMW S1000RR</span>, la nostra
-                  base per la personalizzazione racing e aerodinamica, e{" "}
-                  <span className="text-titanium">Kawasaki Z900</span>, la nostra
-                  base per un linguaggio street-luxury fatto di linee pulite e
-                  materiali nobili. Su queste due moto abbiamo sviluppato know-how,
-                  stampi e fornitori dedicati che ci permettono di garantire una
-                  qualità costruttiva impossibile da replicare su commesse generiche.
+                  Lavoriamo esclusivamente carbonio — carenature, codini, cover
+                  e parafanghi — e nient'altro: non realizziamo scarichi, cerchi
+                  o interventi sulla meccanica della moto. Concentriamo tutta la
+                  nostra competenza su due piattaforme che conosciamo a fondo:{" "}
+                  <span className="text-titanium">BMW S1000RR</span> e{" "}
+                  <span className="text-titanium">Kawasaki Z900</span>. Su
+                  queste due moto abbiamo sviluppato stampi dedicati che ci
+                  permettono di garantire un accoppiamento perfetto con la
+                  carrozzeria originale.
                 </p>
                 <p>
-                  <span className="text-titanium">A chi ci rivolgiamo.</span>{" "}
-                  A motociclisti che vogliono una moto realmente unica: proprietari
-                  di S1000RR e Z900 che cercano una personalizzazione estetica di
-                  alto livello, riduzione dei pesi, componenti da competizione o
-                  una livrea che non troveranno su nessun'altra moto in strada.
+                  A chi ci rivolgiamo. A proprietari di S1000RR e Z900 che
+                  vogliono ridurre il peso della moto e ottenere una carrozzeria
+                  in carbonio dal disegno pulito, senza compromessi di
+                  accoppiamento tipici dei pezzi non dedicati al modello.
                 </p>
                 <p>
-                  <span className="text-titanium">Come lavoriamo.</span> Ogni
-                  progetto segue un percorso in quattro fasi: consulenza,
-                  progettazione, lavorazione artigianale e collaudo. Selezioniamo
-                  materiali da competizione — carbonio 3K/12K, titanio Grado 5,
-                  Ergal 7075 — e li lavoriamo internamente o con fornitori
-                  specializzati italiani, mantenendo il controllo qualità su ogni
-                  fase. Ogni moto che esce dal nostro atelier è numerata e
-                  documentata.
+                  Come lavoriamo. Ogni progetto segue un percorso in quattro
+                  fasi: consulenza, progettazione, lavorazione del carbonio e
+                  controllo qualità prima della consegna. Ogni componente è
+                  numerato e coperto da garanzia artigianale sulla lavorazione.
                 </p>
                 <p>
-                  Riceviamo su appuntamento a Torino e seguiamo clienti in tutta
-                  Italia. Se possiedi una S1000RR o una Z900 e vuoi trasformarla
-                  in un pezzo unico, siamo pronti ad ascoltare il tuo progetto.
+                  Riceviamo su appuntamento a Torino e spediamo in tutta Italia.
+                  Se possiedi una S1000RR o una Z900, raccontaci quali
+                  componenti vuoi realizzare in carbonio.
                 </p>
               </div>
             </div>

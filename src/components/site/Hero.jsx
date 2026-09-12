@@ -22,7 +22,7 @@ export default function Hero() {
           transition={{ duration: 1 }}
           className="font-body text-[11px] uppercase tracking-[0.091em] text-fumo mb-5"
         >
-          Atelier di personalizzazione
+          Componenti in carbonio su misura
         </motion.p>
 
         <motion.h1
@@ -31,7 +31,7 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.15 }}
           className="font-display uppercase text-lg md:text-2xl font-medium tracking-[0.005em] text-titanium max-w-2xl mx-auto"
         >
-          BMW S1000RR e Kawasaki Z900, lavorate a mano in carbonio e titanio
+          Carrozzeria in carbonio per BMW S1000RR e Kawasaki Z900, lavorata a mano
         </motion.h1>
 
         <motion.div

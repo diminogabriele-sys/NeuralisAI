@@ -21,8 +21,8 @@ export default function Footer() {
               <span className="font-display uppercase text-[13px] font-medium tracking-[0.083em] text-titanium">Veloce</span>
             </div>
             <p className="text-[14px] leading-[1.8] text-fumo max-w-xs">
-              Atelier di personalizzazione moto su misura. Carbonio e titanio
-              lavorati a mano per BMW S1000RR e Kawasaki Z900.
+              Componenti in fibra di carbonio su misura, lavorati a mano per
+              BMW S1000RR e Kawasaki Z900.
             </p>
           </div>
 

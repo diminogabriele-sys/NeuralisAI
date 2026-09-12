@@ -1,16 +1,16 @@
 import React from "react";
-import { Layers, Flame, CircleDot, Palette, Cog, ShieldCheck } from "lucide-react";
+import { Layers, Palette, Ruler, Weight, Sparkles, ShieldCheck } from "lucide-react";
 
 const estetica = [
-  { icon: Layers, title: "Carbonio a vista", desc: "Carenature, codini e cover realizzati in fibra di carbonio 3K e 12K, stampati in autoclave e rifiniti a mano." },
-  { icon: Palette, title: "Verniciature esclusive", desc: "Livree disegnate su misura e dipinte a mano, numerate e mai replicate su un'altra moto." },
-  { icon: CircleDot, title: "Cerchi forgiati", desc: "Ruote forgiate ultraleggere che riducono le masse non sospese e trasformano la guidabilità." },
+  { icon: Layers, title: "Carenature complete", desc: "Carene, codini, cover e parafanghi realizzati in fibra di carbonio 3K e 12K, stampati in autoclave." },
+  { icon: Palette, title: "Finiture su misura", desc: "Trama a vista lucida o opaca, oppure verniciata su richiesta: ogni pezzo rifinito a mano." },
+  { icon: Sparkles, title: "Pezzi esclusivi", desc: "Componenti disegnati per la singola moto, numerati e mai replicati su un altro esemplare." },
 ];
 
-const performance = [
-  { icon: Flame, title: "Scarichi in titanio", desc: "Impianti completi in titanio Grado 5, lavorati per peso, sonorità ed erogazione." },
-  { icon: Cog, title: "Elettronica dedicata", desc: "Centraline e mappature su misura, sviluppate per ogni singola configurazione meccanica." },
-  { icon: ShieldCheck, title: "Collaudo e garanzia", desc: "Ogni componente è collaudato su strada e coperto da garanzia artigianale sulla lavorazione." },
+const precisione = [
+  { icon: Ruler, title: "Calibratura su misura", desc: "Ogni pezzo è stampato su stampo dedicato al modello e verificato per un accoppiamento perfetto con la carrozzeria originale." },
+  { icon: Weight, title: "Riduzione del peso", desc: "Sostituendo i pannelli originali con carbonio strutturale otteniamo un risparmio di peso reale, senza compromessi estetici." },
+  { icon: ShieldCheck, title: "Controllo qualità", desc: "Ogni componente è ispezionato prima della consegna e coperto da garanzia artigianale sulla lavorazione." },
 ];
 
 function ServiceBlock({ title, subtitle, items }) {
@@ -57,14 +57,14 @@ export default function Services() {
       <div className="border-t border-steel" />
       <ServiceBlock
         title="Estetica su misura"
-        subtitle="Ogni linea è disegnata per la moto e per chi la guida. Materiali nobili, lavorazioni a mano, nessun pezzo di serie."
+        subtitle="Ogni linea è disegnata per la moto e per chi la guida. Solo carbonio, lavorazioni a mano, nessun pezzo di serie."
         items={estetica}
       />
       <div className="border-t border-steel" />
       <ServiceBlock
-        title="Performance reale"
-        subtitle="La personalizzazione non è solo estetica. Ogni componente è progettato, testato e collaudato per migliorare la moto, non solo il suo aspetto."
-        items={performance}
+        title="Precisione costruttiva"
+        subtitle="Realizziamo esclusivamente componenti in carbonio: nessun intervento su scarichi, cerchi o meccanica della moto."
+        items={precisione}
       />
     </section>
   );

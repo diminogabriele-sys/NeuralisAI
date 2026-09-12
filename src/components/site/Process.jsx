@@ -1,10 +1,10 @@
 import React from "react";
 
 const steps = [
-  { n: "01", t: "Consulenza", d: "Analizziamo la tua moto, il tuo stile di guida e le tue aspettative. Definiamo insieme la direzione estetica e tecnica del progetto." },
-  { n: "02", t: "Progettazione", d: "Disegniamo ogni componente su misura: rendering, scelta dei materiali e validazione tecnica prima di avviare la lavorazione." },
-  { n: "03", t: "Lavorazione", d: "Carbonio, titanio e alluminio prendono forma nel nostro reparto artigianale. Ogni pezzo è realizzato e rifinito a mano." },
-  { n: "04", t: "Collaudo e consegna", d: "Montaggio, collaudo su strada e consegna della moto pronta, numerata e coperta da garanzia artigianale." },
+  { n: "01", t: "Consulenza", d: "Analizziamo la tua moto e le tue aspettative estetiche. Definiamo insieme quali componenti in carbonio realizzare." },
+  { n: "02", t: "Progettazione", d: "Disegniamo ogni pezzo su misura per il modello: rendering, scelta della trama e validazione prima della lavorazione." },
+  { n: "03", t: "Lavorazione", d: "Il carbonio prende forma nel nostro laboratorio: stampaggio in autoclave, taglio e rifinitura a mano di ogni pezzo." },
+  { n: "04", t: "Controllo e consegna", d: "Verifica dell'accoppiamento con la carrozzeria originale e consegna dei componenti, numerati e garantiti." },
 ];
 
 export default function Process() {
@@ -12,7 +12,7 @@ export default function Process() {
     <section id="processo" className="relative py-24 md:py-28 border-t border-steel">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
         <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-xl mb-14">
-          Dall'idea alla moto che non esiste altrove, in quattro fasi
+          Dal rilievo della moto al componente montato, in quattro fasi
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-px">

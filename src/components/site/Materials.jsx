@@ -3,32 +3,32 @@ import { motion } from "framer-motion";
 
 const materials = [
   {
-    id: "carbonio",
-    name: "Carbonio",
-    subtitle: "3K / 12K, autoclave",
-    desc: "Leggerezza estrema e rigidità strutturale. Ogni componente è stampato in autoclave e rifinito a mano per una trama sempre allineata.",
-    props: [{ l: "Riduzione peso", v: "−40%" }, { l: "Finitura", v: "Lucida o opaca" }],
+    id: "3k",
+    name: "Carbonio 3K",
+    subtitle: "Twill, autoclave",
+    desc: "La trama classica a spina di pesce, fine e regolare. La scelta più richiesta per carenature e cover dal disegno pulito.",
+    props: [{ l: "Riduzione peso", v: "−35%" }, { l: "Finitura", v: "Lucida o opaca" }],
   },
   {
-    id: "titanio",
-    name: "Titanio",
-    subtitle: "Grado 5 aerospaziale",
-    desc: "Il materiale di riferimento per scarichi e minuteria: resistenza alle alte temperature, colorazioni naturali by heat, peso ridotto.",
-    props: [{ l: "Resistenza termica", v: "fino a 600°C" },{ l: "Peso vs acciaio", v: "−45%" }],
+    id: "12k",
+    name: "Carbonio 12K",
+    subtitle: "Twill largo, autoclave",
+    desc: "Trama più ampia e graficamente decisa, per chi cerca un disegno del carbonio più marcato e riconoscibile.",
+    props: [{ l: "Riduzione peso", v: "−32%" }, { l: "Finitura", v: "Lucida o opaca" }],
   },
   {
-    id: "ergal",
-    name: "Ergal 7075",
-    subtitle: "Lavorato CNC",
-    desc: "Alluminio aeronautico lavorato a controllo numerico per pedane, semi-manubri e cover motore su misura, con tolleranze minime.",
-    props: [{ l: "Lavorazione", v: "CNC 5 assi" }, { l: "Tolleranza", v: "±0.02 mm" }],
+    id: "forgiato",
+    name: "Carbonio forgiato",
+    subtitle: "Fibra corta pressata",
+    desc: "Fibre corte pressate a caldo, con effetto marmorizzato unico su ogni pezzo. Ideale per componenti dalle forme complesse.",
+    props: [{ l: "Riduzione peso", v: "−30%" }, { l: "Finitura", v: "Lucida" }],
   },
   {
-    id: "pelle",
-    name: "Pelle & Alcantara",
-    subtitle: "Cuciture a mano",
-    desc: "Selle e rivestimenti in pelle pieno fiore e Alcantara, cuciti a mano con filo a contrasto per un tocco sartoriale.",
-    props: [{ l: "Lavorazione", v: "100% manuale" }, { l: "Personalizzazione", v: "Colori e cuciture" }],
+    id: "kevlar",
+    name: "Carbonio-Kevlar",
+    subtitle: "Ibrido rinforzato",
+    desc: "Fibra di carbonio abbinata a Kevlar nelle zone più esposte a urti, per una resistenza superiore senza rinunciare al peso ridotto.",
+    props: [{ l: "Riduzione peso", v: "−28%" }, { l: "Finitura", v: "Lucida o opaca" }],
   },
 ];
 
@@ -42,14 +42,13 @@ export default function Materials() {
         <div className="grid grid-cols-12 gap-6 mb-14">
           <div className="min-w-0 col-span-12 md:col-span-5">
             <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] leading-[1.3]">
-              Selezioniamo materiali da competizione e li lavoriamo con
-              tecniche artigianali, non con impianti automatici.
+              Lavoriamo solo carbonio, in ogni sua declinazione.
             </h2>
           </div>
           <div className="min-w-0 col-span-12 md:col-span-6 md:col-start-7 flex items-end">
             <p className="text-[15px] leading-[1.8] text-stoneink/70 max-w-md">
-              Da oltre 150 ore di lavorazione manuale per moto nasce la
-              differenza. Scegli un materiale per vedere come lo impieghiamo.
+              Scegliamo la trama in base al pezzo e all'estetica richiesta.
+              Seleziona una lavorazione per scoprirne le caratteristiche.
             </p>
           </div>
         </div>
