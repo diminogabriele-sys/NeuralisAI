@@ -11,7 +11,7 @@ export default function PageNotFound() {
                     <h1 className="text-7xl font-display text-steel">404</h1>
 
                     <div className="space-y-3">
-                        <h2 className="text-2xl font-medium text-titanium">
+                        <h2 className="font-display uppercase text-lg font-medium tracking-[0.01em] text-titanium">
                             Pagina non trovata
                         </h2>
                         <p className="text-muted-foreground leading-relaxed">
@@ -22,7 +22,7 @@ export default function PageNotFound() {
                     <div className="pt-6">
                         <a
                             href="/"
-                            className="inline-flex items-center px-6 py-3 bg-ottone text-obsidian font-body text-[14px] font-medium rounded-sm hover:bg-titanium transition-colors"
+                            className="inline-flex items-center px-6 py-3 border border-steel text-titanium font-body text-[12px] uppercase tracking-[0.083em] hover:border-brabus hover:text-brabus transition-colors"
                         >
                             Torna alla home
                         </a>

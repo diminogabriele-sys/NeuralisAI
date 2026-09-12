@@ -17,8 +17,8 @@ export default function Footer() {
         <div className="grid grid-cols-12 gap-6 items-start">
           <div className="min-w-0 col-span-12 md:col-span-5">
             <div className="flex items-center gap-2.5 mb-5">
-              <span className="w-1.5 h-1.5 rounded-full bg-ottone" />
-              <span className="font-display italic text-2xl text-titanium">Veloce</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-brabus" />
+              <span className="font-display uppercase text-[13px] font-medium tracking-[0.083em] text-titanium">Veloce</span>
             </div>
             <p className="text-[14px] leading-[1.8] text-fumo max-w-xs">
               Atelier di personalizzazione moto su misura. Carbonio e titanio
@@ -33,7 +33,7 @@ export default function Footer() {
                   <Link
                     key={i.to}
                     to={i.to}
-                    className="font-body text-[14px] text-titanium/80 hover:text-titanium transition-colors"
+                    className="font-body text-[11px] uppercase tracking-[0.083em] text-titanium hover:text-brabus transition-colors"
                   >
                     {i.label}
                   </Link>
@@ -41,7 +41,7 @@ export default function Footer() {
                   <Link
                     key={i.href}
                     to={{ pathname: "/", hash: i.href }}
-                    className="font-body text-[14px] text-titanium/80 hover:text-titanium transition-colors"
+                    className="font-body text-[11px] uppercase tracking-[0.083em] text-titanium hover:text-brabus transition-colors"
                   >
                     {i.label}
                   </Link>
@@ -51,7 +51,7 @@ export default function Footer() {
           </div>
 
           <div className="min-w-0 col-span-12 md:col-span-3 md:text-right">
-            <p className="font-body text-[14px] text-fumo leading-[1.8]">
+            <p className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo leading-[1.9]">
               Torino, Italia<br />
               Su appuntamento<br />
               NeuralisAI@outlook.it
@@ -59,7 +59,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-steel flex flex-col md:flex-row justify-between items-center gap-3 text-[13px] text-fumo">
+        <div className="mt-14 pt-6 border-t border-steel flex flex-col md:flex-row justify-between items-center gap-3 font-body text-[11px] uppercase tracking-[0.083em] text-fumo">
           <div>© 2026 Veloce, atelier di personalizzazione moto.</div>
           <div>Progettato e prodotto in Italia.</div>
         </div>

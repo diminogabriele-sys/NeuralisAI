@@ -19,7 +19,7 @@ function ServiceBlock({ title, subtitle, items }) {
       <div className="mx-auto max-w-[1100px] px-6 md:px-12 w-full">
         <div className="grid grid-cols-12 gap-6 md:gap-12">
           <div className="min-w-0 col-span-12 md:col-span-4">
-            <h2 className="font-display text-2xl md:text-3xl text-titanium leading-[1.25] mb-5">
+            <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] mb-5">
               {title}
             </h2>
             <p className="text-[15px] leading-[1.8] text-fumo max-w-sm">{subtitle}</p>
@@ -29,13 +29,13 @@ function ServiceBlock({ title, subtitle, items }) {
             {items.map((item) => (
               <div
                 key={item.title}
-                className="group grid grid-cols-12 gap-4 items-start py-7 border-t border-steel"
+                className="group grid grid-cols-12 gap-4 items-start py-7 border-t border-steel hover:border-brabus transition-colors"
               >
                 <div className="min-w-0 col-span-1">
-                  <item.icon className="w-4 h-4 text-ottone mt-1" strokeWidth={1.5} />
+                  <item.icon className="w-4 h-4 text-titanium group-hover:text-brabus transition-colors mt-1" strokeWidth={1.5} />
                 </div>
                 <div className="min-w-0 col-span-11 md:col-span-4">
-                  <h3 className="font-display text-lg text-titanium">
+                  <h3 className="font-display uppercase text-[13px] font-medium tracking-[0.02em] text-titanium">
                     {item.title}
                   </h3>
                 </div>

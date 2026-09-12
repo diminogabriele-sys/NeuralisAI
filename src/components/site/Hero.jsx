@@ -3,46 +3,50 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <section id="top" className="relative min-h-screen w-full bg-obsidian flex items-end overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,_rgba(184,135,74,0.08)_0%,_transparent_55%)]" />
+    <section id="top" className="relative min-h-screen w-full bg-obsidian flex items-center justify-center overflow-hidden">
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        src="/video/hero-s1000rr.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+      />
+      <div className="absolute inset-0 bg-black/45" />
+      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
 
-      <div className="relative mx-auto max-w-[1200px] px-6 md:px-12 w-full pb-24 md:pb-32 pt-40">
-        <div className="max-w-2xl">
-          <motion.h1
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display font-normal text-4xl sm:text-5xl md:text-6xl leading-[1.15] text-titanium text-balance"
-          >
-            Ogni moto che esce dal nostro atelier porta un numero,
-            non una targa di serie.
-          </motion.h1>
+      <div className="relative mx-auto max-w-[1440px] px-6 md:px-12 w-full text-center">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="font-body text-[11px] uppercase tracking-[0.091em] text-fumo mb-5"
+        >
+          Atelier di personalizzazione
+        </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-8 max-w-lg text-[15px] md:text-base leading-[1.8] text-fumo"
-          >
-            Lavoriamo carbonio e titanio a mano, su commissione, per due
-            piattaforme che conosciamo a fondo: la BMW S1000RR e la Kawasaki
-            Z900. Nessuna produzione in serie — <a href="#modelli" className="text-titanium underline decoration-ottone/50 underline-offset-4 hover:decoration-ottone">guarda cosa nasce dal banco di lavoro</a>.
-          </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.15 }}
+          className="font-display uppercase text-lg md:text-2xl font-medium tracking-[0.005em] text-titanium max-w-2xl mx-auto"
+        >
+          BMW S1000RR e Kawasaki Z900, lavorate a mano in carbonio e titanio
+        </motion.h1>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-10"
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.35 }}
+          className="mt-10"
+        >
+          <a
+            href="#contact"
+            className="font-body text-[12px] uppercase tracking-[0.083em] text-titanium border-b border-transparent hover:text-brabus hover:border-brabus pb-[5px] transition-colors"
           >
-            <a
-              href="#contact"
-              className="inline-block bg-ottone text-obsidian font-body text-[14px] font-medium px-7 py-3.5 rounded-sm hover:bg-titanium transition-colors"
-            >
-              Prenota una consulenza
-            </a>
-          </motion.div>
-        </div>
+            Prenota una consulenza
+          </a>
+        </motion.div>
       </div>
     </section>
   );

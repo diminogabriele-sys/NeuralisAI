@@ -41,7 +41,7 @@ export default function Materials() {
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-6 mb-14">
           <div className="min-w-0 col-span-12 md:col-span-5">
-            <h2 className="font-display text-2xl md:text-3xl leading-[1.25]">
+            <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] leading-[1.3]">
               Selezioniamo materiali da competizione e li lavoriamo con
               tecniche artigianali, non con impianti automatici.
             </h2>
@@ -61,13 +61,13 @@ export default function Materials() {
                 key={m.id}
                 onClick={() => setActive(m.id)}
                 className={`text-left px-6 py-5 border-b border-stoneink/15 last:border-b-0 transition-colors ${
-                  active === m.id ? "border-l-2 border-l-ottone bg-white/40" : "hover:bg-white/20"
+                  active === m.id ? "border-l-2 border-l-brabus bg-white/40" : "hover:bg-white/20"
                 }`}
               >
-                <div className="font-display text-xl">
+                <div className="font-display uppercase text-[13px] font-medium tracking-[0.02em]">
                   {m.name}
                 </div>
-                <div className="font-body text-[13px] text-stoneink/55 mt-1">
+                <div className="font-body text-[11px] uppercase tracking-[0.083em] text-stoneink/55 mt-1">
                   {m.subtitle}
                 </div>
               </button>
@@ -79,9 +79,9 @@ export default function Materials() {
               <p className="text-[15px] leading-[1.8] max-w-xl mb-9">{current.desc}</p>
               <div className="grid grid-cols-2 gap-8 max-w-sm">
                 {current.props.map((p) => (
-                  <div key={p.l} className="border-l-2 border-ottone pl-4">
+                  <div key={p.l} className="border-l-2 border-brabus pl-4">
                     <div className="font-display text-2xl leading-none">{p.v}</div>
-                    <div className="font-body text-[13px] text-stoneink/55 mt-2">{p.l}</div>
+                    <div className="font-body text-[11px] uppercase tracking-[0.083em] text-stoneink/55 mt-2">{p.l}</div>
                   </div>
                 ))}
               </div>

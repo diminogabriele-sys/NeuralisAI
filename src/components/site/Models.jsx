@@ -34,19 +34,19 @@ const bikes = [
 function WorkRecord({ record, make, model, tag, specs }) {
   return (
     <div className="bg-carbonfiber p-8 md:p-10">
-      <div className="flex items-baseline justify-between text-[13px] text-fumo">
+      <div className="flex items-baseline justify-between font-body text-[11px] uppercase tracking-[0.083em] text-fumo">
         <span>Scheda di lavorazione</span>
         <span>N° {record}</span>
       </div>
       <div className="mt-8">
-        <div className="text-[13px] text-fumo">{make}</div>
-        <h3 className="font-display text-4xl text-titanium mt-1">{model}</h3>
-        <div className="text-[13px] text-fumo mt-1">{tag}</div>
+        <div className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo">{make}</div>
+        <h3 className="font-display uppercase text-2xl font-medium tracking-[0.005em] text-titanium mt-1">{model}</h3>
+        <div className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo mt-1">{tag}</div>
       </div>
       <div className="mt-8 pt-6 border-t border-steel grid grid-cols-2 gap-x-6 gap-y-5">
         {specs.map((s) => (
           <div key={s.l}>
-            <div className="text-[12px] text-fumo">{s.l}</div>
+            <div className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo">{s.l}</div>
             <div className="text-[15px] text-titanium mt-0.5">{s.v}</div>
           </div>
         ))}
@@ -71,7 +71,7 @@ function BikeBlock({ data, index }) {
             <ul className="space-y-3 mb-9">
               {data.highlights.map((h) => (
                 <li key={h} className="flex items-start gap-3 text-[14px] text-titanium">
-                  <span className="w-1 h-1 mt-2 bg-ottone shrink-0" />
+                  <span className="w-1 h-1 mt-2 bg-fumo shrink-0" />
                   <span>{h}</span>
                 </li>
               ))}
@@ -79,7 +79,7 @@ function BikeBlock({ data, index }) {
 
             <a
               href="#contact"
-              className="font-body text-[14px] text-titanium underline decoration-ottone/50 underline-offset-4 hover:decoration-ottone transition-colors"
+              className="font-body text-[14px] text-titanium underline decoration-brabus/50 underline-offset-4 hover:decoration-brabus transition-colors"
             >
               Configura la tua {data.model}
             </a>
@@ -94,8 +94,8 @@ export default function Models() {
   return (
     <section id="modelli" className="relative">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12 pt-24 md:pt-28">
-        <h2 className="font-display text-3xl md:text-4xl text-titanium leading-[1.2] max-w-xl">
-          Lavoriamo solo su due basi, per conoscerle meglio di chiunque altro.
+        <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-xl">
+          Lavoriamo solo su due basi, per conoscerle meglio di chiunque altro
         </h2>
       </div>
       {bikes.map((b, i) => (

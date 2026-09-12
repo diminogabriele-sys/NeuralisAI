@@ -11,8 +11,8 @@ export default function Process() {
   return (
     <section id="processo" className="relative py-24 md:py-28 border-t border-steel">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
-        <h2 className="font-display text-2xl md:text-3xl text-titanium leading-[1.25] max-w-xl mb-14">
-          Dall'idea alla moto che non esiste altrove — in quattro fasi.
+        <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-xl mb-14">
+          Dall'idea alla moto che non esiste altrove, in quattro fasi
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-px">
@@ -21,8 +21,8 @@ export default function Process() {
               key={s.n}
               className="relative p-8 border-t border-steel md:border-t-0 md:border-l first:border-l-0"
             >
-              <div className="font-display text-2xl text-ottone mb-6">{s.n}</div>
-              <h3 className="font-display text-lg text-titanium mb-3">{s.t}</h3>
+              <div className="font-display text-2xl text-fumo mb-6">{s.n}</div>
+              <h3 className="font-display uppercase text-[13px] font-medium tracking-[0.02em] text-titanium mb-3">{s.t}</h3>
               <p className="text-[14px] leading-[1.75] text-fumo">{s.d}</p>
             </div>
           ))}

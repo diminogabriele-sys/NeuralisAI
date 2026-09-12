@@ -4,37 +4,37 @@
 
 @layer base {
   :root {
-    --background: 20 19% 9%;
-    --foreground: 40 48% 89%;
-    --card: 24 21% 12%;
-    --card-foreground: 40 48% 89%;
-    --popover: 24 21% 12%;
-    --popover-foreground: 40 48% 89%;
-    --primary: 10 61% 35%;
-    --primary-foreground: 40 48% 94%;
-    --secondary: 30 24% 16%;
-    --secondary-foreground: 40 48% 89%;
-    --muted: 30 24% 16%;
-    --muted-foreground: 30 20% 58%;
-    --accent: 10 61% 35%;
-    --accent-foreground: 40 48% 94%;
-    --destructive: 10 61% 35%;
-    --destructive-foreground: 40 48% 89%;
-    --border: 32 25% 20%;
-    --input: 32 25% 20%;
-    --ring: 10 61% 35%;
-    --radius: 0.375rem;
-    --font-heading: "Fraunces", Georgia, "Times New Roman", serif;
-    --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-    --sidebar-background: 20 19% 9%;
-    --sidebar-foreground: 40 48% 89%;
-    --sidebar-primary: 10 61% 35%;
-    --sidebar-primary-foreground: 40 48% 94%;
-    --sidebar-accent: 30 24% 16%;
-    --sidebar-accent-foreground: 40 48% 89%;
-    --sidebar-border: 32 25% 20%;
-    --sidebar-ring: 10 61% 35%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 9.4%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 9.4%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 5 78% 47%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 9.4%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 9.4%;
+    --muted-foreground: 0 0% 56%;
+    --accent: 5 78% 47%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 5 78% 47%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 19%;
+    --input: 0 0% 19%;
+    --ring: 5 78% 47%;
+    --radius: 0rem;
+    --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 5 78% 47%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 9.4%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 19%;
+    --sidebar-ring: 5 78% 47%;
   }
 }
 
@@ -45,18 +45,18 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-color: #1c1712;
+    background-color: #000000;
   }
 
   ::selection {
-    background-color: #8c2f22;
-    color: #f2ead9;
+    background-color: #da291c;
+    color: #ffffff;
   }
 }
 
 @layer utilities {
   .font-display {
-    font-family: "Fraunces", Georgia, "Times New Roman", serif;
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
   }
   .text-balance {
     text-wrap: balance;
@@ -68,13 +68,13 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #1c1712;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3d3226;
+  background: #303030;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8c2f22;
+  background: #da291c;
 }
 
 html {

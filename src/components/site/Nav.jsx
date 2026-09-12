@@ -22,18 +22,17 @@ export default function Nav() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 py-6 bg-transparent">
         <div className="mx-auto max-w-[1200px] px-6 md:px-12 flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-2.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-ottone" />
-            <span className="font-display italic text-xl text-titanium">Veloce</span>
+          <a href="#top" className="flex items-center">
+            <span className="font-display uppercase text-[13px] font-medium tracking-[0.083em] text-titanium">Veloce</span>
           </a>
 
-          <nav className="hidden md:flex items-center gap-9">
+          <nav className="hidden md:flex items-center gap-8">
             {links.map((l) =>
               l.to ? (
                 <Link
                   key={l.to}
                   to={l.to}
-                  className="font-body text-[14px] text-titanium/80 hover:text-titanium transition-colors"
+                  className="font-body text-[11px] uppercase tracking-[0.083em] text-titanium hover:text-brabus transition-colors py-[5px]"
                 >
                   {l.label}
                 </Link>
@@ -41,7 +40,7 @@ export default function Nav() {
                 <Link
                   key={l.href}
                   to={{ pathname: "/", hash: l.href }}
-                  className="font-body text-[14px] text-titanium/80 hover:text-titanium transition-colors"
+                  className="font-body text-[11px] uppercase tracking-[0.083em] text-titanium hover:text-brabus transition-colors py-[5px]"
                 >
                   {l.label}
                 </Link>
@@ -79,14 +78,14 @@ export default function Nav() {
               className="fixed inset-y-0 right-0 z-[65] w-full max-w-sm bg-obsidian flex flex-col justify-between px-8 py-10 border-l border-steel md:hidden"
             >
               <div className="flex items-center justify-between">
-                <span className="font-display italic text-xl text-titanium">Veloce</span>
+                <span className="font-display uppercase text-[13px] font-medium tracking-[0.083em] text-titanium">Veloce</span>
                 <button
                   onClick={() => setOpen(false)}
                   className="relative w-8 h-8 flex items-center justify-center group"
                   aria-label="Chiudi menu"
                 >
-                  <span className="absolute w-6 h-px bg-titanium rotate-45 transition-colors group-hover:bg-ottone" />
-                  <span className="absolute w-6 h-px bg-titanium -rotate-45 transition-colors group-hover:bg-ottone" />
+                  <span className="absolute w-6 h-px bg-titanium rotate-45 transition-colors group-hover:bg-brabus" />
+                  <span className="absolute w-6 h-px bg-titanium -rotate-45 transition-colors group-hover:bg-brabus" />
                 </button>
               </div>
 
@@ -101,11 +100,11 @@ export default function Nav() {
                     transition={{ delay: 0.08 + i * 0.05, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   >
                     {l.to ? (
-                      <Link to={l.to} className="font-display italic text-3xl text-titanium hover:text-ottone transition-colors">
+                      <Link to={l.to} className="font-display uppercase text-xl font-medium tracking-[0.01em] text-titanium hover:text-brabus transition-colors">
                         {l.label}
                       </Link>
                     ) : (
-                      <Link to={{ pathname: "/", hash: l.href }} className="font-display italic text-3xl text-titanium hover:text-ottone transition-colors">
+                      <Link to={{ pathname: "/", hash: l.href }} className="font-display uppercase text-xl font-medium tracking-[0.01em] text-titanium hover:text-brabus transition-colors">
                         {l.label}
                       </Link>
                     )}
