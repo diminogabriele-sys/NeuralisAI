@@ -1,7 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function ManifestoBreak() {
+  const { t } = useLanguage();
   return (
     <section className="relative min-h-[85vh] w-full bg-obsidian flex items-center justify-center overflow-hidden">
       <video
@@ -24,9 +26,9 @@ export default function ManifestoBreak() {
         className="relative mx-auto max-w-3xl px-6 text-center"
       >
         <h2 className="font-display uppercase text-2xl md:text-4xl font-medium tracking-[0.005em] text-titanium leading-[1.35]">
-          Niente serie. Niente scarichi. Niente cerchi.
+          {t.manifesto.line1}
           <br />
-          Solo carbonio.
+          {t.manifesto.line2}
         </h2>
       </motion.div>
     </section>

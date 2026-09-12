@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-
-const links = [
-  { label: "Modelli", href: "#modelli" },
-  { label: "Prodotti", href: "#prodotti" },
-  { label: "Materiali", href: "#materiali" },
-  { label: "Processo", href: "#processo" },
-  { label: "Chi siamo", to: "/about" },
-  { label: "Contatti", href: "#contact" },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import LanguageSwitcher, { LanguageSwitcherInline } from "./LanguageSwitcher";
 
 export default function Nav() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const links = [
+    { label: t.nav.modelli, href: "#modelli" },
+    { label: t.nav.prodotti, href: "#prodotti" },
+    { label: t.nav.materiali, href: "#materiali" },
+    { label: t.nav.processo, href: "#processo" },
+    { label: t.nav.chiSiamo, to: "/about" },
+    { label: t.nav.contatti, href: "#contact" },
+  ];
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -60,12 +63,13 @@ export default function Nav() {
                 </Link>
               )
             )}
+            <LanguageSwitcher />
           </nav>
 
           <button
             onClick={() => setOpen(true)}
             className="md:hidden relative w-8 h-8 flex flex-col items-center justify-center gap-[6px] z-[70]"
-            aria-label="Apri menu"
+            aria-label={t.misc.openMenu}
           >
             <span className="block w-6 h-px bg-titanium" />
             <span className="block w-6 h-px bg-titanium" />
@@ -96,7 +100,7 @@ export default function Nav() {
                 <button
                   onClick={() => setOpen(false)}
                   className="relative w-8 h-8 flex items-center justify-center group"
-                  aria-label="Chiudi menu"
+                  aria-label={t.misc.closeMenu}
                 >
                   <span className="absolute w-6 h-px bg-titanium rotate-45 transition-colors group-hover:bg-brabus" />
                   <span className="absolute w-6 h-px bg-titanium -rotate-45 transition-colors group-hover:bg-brabus" />
@@ -126,8 +130,11 @@ export default function Nav() {
                 ))}
               </nav>
 
-              <div className="pt-6 border-t border-steel font-body text-[13px] text-fumo">
-                Riceviamo su appuntamento a Torino. Scrivici a NeuralisAI@outlook.it.
+              <div className="space-y-5">
+                <LanguageSwitcherInline />
+                <div className="pt-6 border-t border-steel font-body text-[13px] text-fumo">
+                  {t.misc.mobileNote}
+                </div>
               </div>
             </motion.div>
           </>

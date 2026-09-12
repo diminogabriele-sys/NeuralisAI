@@ -1,16 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-const items = [
-  { label: "Modelli", href: "#modelli" },
-  { label: "Prodotti", href: "#prodotti" },
-  { label: "Materiali", href: "#materiali" },
-  { label: "Processo", href: "#processo" },
-  { label: "Chi siamo", to: "/about" },
-  { label: "Contatti", href: "#contact" },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
+  const items = [
+    { label: t.nav.modelli, href: "#modelli" },
+    { label: t.nav.prodotti, href: "#prodotti" },
+    { label: t.nav.materiali, href: "#materiali" },
+    { label: t.nav.processo, href: "#processo" },
+    { label: t.nav.chiSiamo, to: "/about" },
+    { label: t.nav.contatti, href: "#contact" },
+  ];
+
   return (
     <footer className="relative bg-carbonfiber py-16">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
@@ -21,8 +24,7 @@ export default function Footer() {
               <span className="font-display uppercase text-[13px] font-medium tracking-[0.083em] text-titanium">Veloce</span>
             </div>
             <p className="text-[14px] leading-[1.8] text-fumo max-w-xs">
-              Componenti in fibra di carbonio su misura, lavorati a mano per
-              BMW S1000RR e Kawasaki Z900.
+              {t.footer.blurb}
             </p>
           </div>
 
@@ -52,16 +54,16 @@ export default function Footer() {
 
           <div className="min-w-0 col-span-12 md:col-span-3 md:text-right">
             <p className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo leading-[1.9]">
-              Torino, Italia<br />
-              Su appuntamento<br />
+              {t.footer.addressLine1}<br />
+              {t.footer.addressLine2}<br />
               NeuralisAI@outlook.it
             </p>
           </div>
         </div>
 
         <div className="mt-14 pt-6 border-t border-steel flex flex-col md:flex-row justify-between items-center gap-3 font-body text-[11px] uppercase tracking-[0.083em] text-fumo">
-          <div>© 2026 Veloce, atelier di personalizzazione moto.</div>
-          <div>Progettato e prodotto in Italia.</div>
+          <div>{t.footer.copyright}</div>
+          <div>{t.footer.madeIn}</div>
         </div>
       </div>
     </footer>

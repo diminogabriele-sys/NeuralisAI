@@ -1,34 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const products = [
-  {
-    id: "carena",
-    fit: "BMW S1000RR",
-    name: "Kit carena racing",
-    desc: "Carena completa in carbonio a vista, stampata sullo stampo dedicato al modello.",
-  },
-  {
-    id: "codino",
-    fit: "Kawasaki Z900",
-    name: "Codino monoposto",
-    desc: "Codino in carbonio con sottocodino integrato, finitura lucida o opaca.",
-  },
-  {
-    id: "cover",
-    fit: "S1000RR e Z900",
-    name: "Set cover motore",
-    desc: "Protezioni motore in carbonio, sagomate su misura per il modello.",
-  },
-  {
-    id: "parafango",
-    fit: "S1000RR e Z900",
-    name: "Parafango anteriore",
-    desc: "Parafango in carbonio 3K, più leggero del componente originale.",
-  },
-];
-
-function ProductCard({ p }) {
+function ProductCard({ p, priceOnRequest, requestPrice }) {
   return (
     <a
       href="#contact"
@@ -49,9 +23,9 @@ function ProductCard({ p }) {
         <p className="text-[14px] leading-[1.7] text-fumo max-w-xs">{p.desc}</p>
       </div>
       <div className="relative mt-8 flex flex-col gap-1.5 border-t border-steel pt-6">
-        <span className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo">Prezzo su richiesta</span>
+        <span className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo">{priceOnRequest}</span>
         <span className="font-body text-[12px] uppercase tracking-[0.083em] text-titanium group-hover:text-brabus transition-colors">
-          Richiedi il prezzo
+          {requestPrice}
         </span>
       </div>
     </a>
@@ -59,6 +33,7 @@ function ProductCard({ p }) {
 }
 
 export default function Products() {
+  const { t } = useLanguage();
   const trackRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -95,7 +70,7 @@ export default function Products() {
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between text-center sm:text-left mb-10 gap-6">
           <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] text-titanium leading-[1.3] max-w-md mx-auto sm:mx-0">
-            I componenti che realizziamo
+            {t.products.heading}
           </h2>
 
           <div className="hidden sm:flex items-center gap-2 shrink-0">
@@ -103,7 +78,7 @@ export default function Products() {
               type="button"
               onClick={() => scrollByCard(-1)}
               disabled={!canScrollLeft}
-              aria-label="Componenti precedenti"
+              aria-label={t.products.prevLabel}
               className="w-10 h-10 flex items-center justify-center border border-steel text-titanium hover:border-brabus hover:text-brabus transition-colors disabled:opacity-30 disabled:hover:border-steel disabled:hover:text-titanium"
             >
               <ChevronLeft size={18} />
@@ -112,7 +87,7 @@ export default function Products() {
               type="button"
               onClick={() => scrollByCard(1)}
               disabled={!canScrollRight}
-              aria-label="Componenti successivi"
+              aria-label={t.products.nextLabel}
               className="w-10 h-10 flex items-center justify-center border border-steel text-titanium hover:border-brabus hover:text-brabus transition-colors disabled:opacity-30 disabled:hover:border-steel disabled:hover:text-titanium"
             >
               <ChevronRight size={18} />
@@ -124,8 +99,8 @@ export default function Products() {
           ref={trackRef}
           className="flex gap-5 md:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-6 px-6 md:-mx-12 md:px-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
-          {products.map((p) => (
-            <ProductCard key={p.id} p={p} />
+          {t.products.items.map((p) => (
+            <ProductCard key={p.id} p={p} priceOnRequest={t.products.priceOnRequest} requestPrice={t.products.requestPrice} />
           ))}
         </div>
       </div>

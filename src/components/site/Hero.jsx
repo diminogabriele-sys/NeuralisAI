@@ -1,7 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Hero() {
+  const { t } = useLanguage();
   return (
     <section id="top" className="relative min-h-screen w-full bg-obsidian flex items-center justify-center overflow-hidden">
       <video
@@ -24,7 +26,7 @@ export default function Hero() {
           transition={{ duration: 1 }}
           className="font-body text-[11px] uppercase tracking-[0.091em] text-fumo mb-5"
         >
-          Componenti in carbonio su misura
+          {t.hero.eyebrow}
         </motion.p>
 
         <motion.h1
@@ -33,7 +35,7 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.15 }}
           className="font-display uppercase text-lg md:text-2xl font-medium tracking-[0.005em] text-titanium max-w-2xl mx-auto"
         >
-          Carrozzeria in carbonio per BMW S1000RR e Kawasaki Z900, lavorata a mano
+          {t.hero.title}
         </motion.h1>
 
         <motion.div
@@ -46,7 +48,7 @@ export default function Hero() {
             href="#contact"
             className="font-body text-[12px] uppercase tracking-[0.083em] text-titanium border-b border-transparent hover:text-brabus hover:border-brabus pb-[5px] transition-colors"
           >
-            Prenota una consulenza
+            {t.hero.cta}
           </a>
         </motion.div>
       </div>

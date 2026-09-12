@@ -1,51 +1,22 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-
-const materials = [
-  {
-    id: "3k",
-    name: "Carbonio 3K",
-    subtitle: "Twill, autoclave",
-    desc: "La trama classica a spina di pesce, fine e regolare. La scelta più richiesta per carenature e cover dal disegno pulito.",
-    props: [{ l: "Riduzione peso", v: "−35%" }, { l: "Finitura", v: "Lucida o opaca" }],
-  },
-  {
-    id: "12k",
-    name: "Carbonio 12K",
-    subtitle: "Twill largo, autoclave",
-    desc: "Trama più ampia e graficamente decisa, per chi cerca un disegno del carbonio più marcato e riconoscibile.",
-    props: [{ l: "Riduzione peso", v: "−32%" }, { l: "Finitura", v: "Lucida o opaca" }],
-  },
-  {
-    id: "forgiato",
-    name: "Carbonio forgiato",
-    subtitle: "Fibra corta pressata",
-    desc: "Fibre corte pressate a caldo, con effetto marmorizzato unico su ogni pezzo. Ideale per componenti dalle forme complesse.",
-    props: [{ l: "Riduzione peso", v: "−30%" }, { l: "Finitura", v: "Lucida" }],
-  },
-  {
-    id: "kevlar",
-    name: "Carbonio-Kevlar",
-    subtitle: "Ibrido rinforzato",
-    desc: "Fibra di carbonio abbinata a Kevlar nelle zone più esposte a urti, per una resistenza superiore senza rinunciare al peso ridotto.",
-    props: [{ l: "Riduzione peso", v: "−28%" }, { l: "Finitura", v: "Lucida o opaca" }],
-  },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Materials() {
+  const { t } = useLanguage();
+  const materials = t.materials.items;
   const [active, setActive] = useState(materials[0].id);
-  const current = materials.find((m) => m.id === active);
+  const current = materials.find((m) => m.id === active) || materials[0];
 
   return (
     <section id="materiali" className="relative py-24 md:py-28 bg-stone text-stoneink">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
         <div className="max-w-xl mx-auto text-center mb-14">
           <h2 className="font-display uppercase text-xl md:text-2xl font-medium tracking-[0.01em] leading-[1.3]">
-            Lavoriamo solo carbonio, in ogni sua declinazione.
+            {t.materials.heading}
           </h2>
           <p className="text-[15px] leading-[1.8] text-stoneink/70 max-w-md mx-auto mt-5">
-            Scegliamo la trama in base al pezzo e all'estetica richiesta.
-            Seleziona una lavorazione per scoprirne le caratteristiche.
+            {t.materials.sub}
           </p>
         </div>
 
