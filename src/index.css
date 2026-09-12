@@ -4,38 +4,38 @@
 
 @layer base {
   :root {
-    --background: 150 6% 6.3%;
-    --foreground: 140 12% 89%;
-    --card: 150 6% 9%;
-    --card-foreground: 140 12% 89%;
-    --popover: 150 6% 9%;
-    --popover-foreground: 140 12% 89%;
-    --primary: 75 100% 67%;
-    --primary-foreground: 150 6% 6.3%;
-    --secondary: 155 6% 18%;
-    --secondary-foreground: 140 12% 89%;
-    --muted: 155 6% 14%;
-    --muted-foreground: 140 6% 60%;
-    --accent: 75 100% 67%;
-    --accent-foreground: 150 6% 6.3%;
+    --background: 0 0% 5.5%;
+    --foreground: 40 10% 92%;
+    --card: 0 0% 8%;
+    --card-foreground: 40 10% 92%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 40 10% 92%;
+    --primary: 353 78% 42%;
+    --primary-foreground: 40 10% 96%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 40 10% 92%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 30 4% 58%;
+    --accent: 353 78% 42%;
+    --accent-foreground: 40 10% 96%;
     --destructive: 0 62.8% 40%;
-    --destructive-foreground: 140 12% 89%;
-    --border: 155 6% 18%;
-    --input: 155 6% 18%;
-    --ring: 75 100% 67%;
-    --radius: 0.25rem;
-    --font-heading: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+    --destructive-foreground: 40 10% 92%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 353 78% 42%;
+    --radius: 0.125rem;
+    --font-heading: "Oswald", ui-sans-serif, system-ui, sans-serif;
     --font-body: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+    --font-display: "Oswald", ui-sans-serif, system-ui, sans-serif;
     --font-mono: "JetBrains Mono", ui-monospace, monospace;
-    --sidebar-background: 150 6% 6.3%;
-    --sidebar-foreground: 140 12% 89%;
-    --sidebar-primary: 75 100% 67%;
-    --sidebar-primary-foreground: 150 6% 6.3%;
-    --sidebar-accent: 155 6% 14%;
-    --sidebar-accent-foreground: 140 12% 89%;
-    --sidebar-border: 155 6% 18%;
-    --sidebar-ring: 75 100% 67%;
+    --sidebar-background: 0 0% 5.5%;
+    --sidebar-foreground: 40 10% 92%;
+    --sidebar-primary: 353 78% 42%;
+    --sidebar-primary-foreground: 40 10% 96%;
+    --sidebar-accent: 0 0% 13%;
+    --sidebar-accent-foreground: 40 10% 92%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 353 78% 42%;
   }
 }
 
@@ -46,18 +46,18 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-color: #0F1110;
+    background-color: #0D0D0D;
   }
 
   ::selection {
-    background-color: #C5FF4D;
-    color: #0F1110;
+    background-color: #B3101F;
+    color: #F2EFE9;
   }
 }
 
 @layer utilities {
   .font-display {
-    font-family: "Instrument Serif", ui-serif, Georgia, serif;
+    font-family: "Oswald", ui-sans-serif, system-ui, sans-serif;
   }
   .font-mono {
     font-family: "JetBrains Mono", ui-monospace, monospace;
@@ -66,8 +66,14 @@
     text-wrap: balance;
   }
   .grain {
-    background-image: radial-gradient(rgba(226,232,228,0.025) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(226,222,214,0.025) 1px, transparent 1px);
     background-size: 3px 3px;
+  }
+  .carbon {
+    background-color: #111112;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.035) 0, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 6px),
+      repeating-linear-gradient(-45deg, rgba(255,255,255,0.035) 0, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 6px);
   }
 }
 
@@ -76,13 +82,13 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0F1110;
+  background: #0D0D0D;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2D3230;
+  background: #2B2B2B;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C5FF4D;
+  background: #B3101F;
 }
 
 html {

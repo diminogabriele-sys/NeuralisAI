@@ -18,19 +18,19 @@ export default async function(req) {
       return Response.json({ error: "Email non valida" }, { status: 400 });
     }
 
-    const subject = `Nuova richiesta — ${name}`;
+    const subject = `Nuova richiesta di consulenza — ${name}`;
     const bodyText =
-      `Nuova richiesta dal sito Neuralis\n\n` +
+      `Nuova richiesta dal sito Veloce\n\n` +
       `Nome: ${name}\n` +
       `Email: ${email}\n\n` +
       `Progetto:\n${project}\n\n` +
-      `— Inviato dal Conversion Terminal`;
+      `— Inviato dal modulo di contatto del sito`;
 
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: RECIPIENT,
       subject,
       body: bodyText,
-      from_name: "Neuralis Terminal",
+      from_name: "Veloce — Sito Web",
     });
 
     return Response.json({ ok: true });
