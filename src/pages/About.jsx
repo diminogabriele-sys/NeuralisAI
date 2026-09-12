@@ -4,7 +4,7 @@ import Footer from "@/components/site/Footer";
 
 export default function About() {
   return (
-    <div className="relative carbon-weave min-h-screen">
+    <div className="relative bg-obsidian min-h-screen">
       <Nav />
       <main>
         <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 border-b border-steel">

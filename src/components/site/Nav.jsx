@@ -89,7 +89,7 @@ export default function Nav() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed inset-y-0 right-0 z-[65] w-full max-w-sm carbon-weave flex flex-col justify-between px-8 py-10 border-l border-steel md:hidden"
+              className="fixed inset-y-0 right-0 z-[65] w-full max-w-sm bg-obsidian flex flex-col justify-between px-8 py-10 border-l border-steel md:hidden"
             >
               <div className="flex items-center justify-between">
                 <span className="font-display uppercase text-[13px] font-medium tracking-[0.083em] text-titanium">Veloce</span>
