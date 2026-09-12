@@ -4,36 +4,36 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 9.4%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 9.4%;
-    --popover-foreground: 0 0% 100%;
+    --background: 40 16% 4%;
+    --foreground: 39 42% 89%;
+    --card: 36 10% 10%;
+    --card-foreground: 39 42% 89%;
+    --popover: 36 10% 10%;
+    --popover-foreground: 39 42% 89%;
     --primary: 5 78% 47%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 9.4%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 9.4%;
-    --muted-foreground: 0 0% 56%;
+    --primary-foreground: 39 42% 89%;
+    --secondary: 36 10% 10%;
+    --secondary-foreground: 39 42% 89%;
+    --muted: 36 10% 10%;
+    --muted-foreground: 38 12% 59%;
     --accent: 5 78% 47%;
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: 39 42% 89%;
     --destructive: 5 78% 47%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 19%;
-    --input: 0 0% 19%;
+    --destructive-foreground: 39 42% 89%;
+    --border: 36 10% 19%;
+    --input: 36 10% 19%;
     --ring: 5 78% 47%;
     --radius: 0rem;
     --font-heading: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-    --sidebar-background: 0 0% 0%;
-    --sidebar-foreground: 0 0% 100%;
+    --sidebar-background: 40 16% 4%;
+    --sidebar-foreground: 39 42% 89%;
     --sidebar-primary: 5 78% 47%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 9.4%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 19%;
+    --sidebar-primary-foreground: 39 42% 89%;
+    --sidebar-accent: 36 10% 10%;
+    --sidebar-accent-foreground: 39 42% 89%;
+    --sidebar-border: 36 10% 19%;
     --sidebar-ring: 5 78% 47%;
   }
 }
@@ -45,12 +45,12 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-color: #000000;
+    background-color: #0b0a08;
   }
 
   ::selection {
     background-color: #da291c;
-    color: #ffffff;
+    color: #efe7d8;
   }
 }
 
@@ -68,10 +68,10 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #0b0a08;
 }
 ::-webkit-scrollbar-thumb {
-  background: #303030;
+  background: #35312b;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #da291c;
@@ -79,4 +79,17 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Fine film-grain over the whole page, for depth on the flat dark tones */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
 }

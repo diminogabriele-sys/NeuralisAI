@@ -14,8 +14,8 @@ export default function Hero() {
       >
         <source src={`${import.meta.env.BASE_URL}video/hero-s1000rr.mp4`} type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-black/45" />
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
+      <div className="absolute inset-0 bg-obsidian/45" />
+      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-obsidian/70 to-transparent" />
 
       <div className="relative mx-auto max-w-[1440px] px-6 md:px-12 w-full text-center">
         <motion.p

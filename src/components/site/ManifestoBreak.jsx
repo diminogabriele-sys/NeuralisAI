@@ -14,7 +14,7 @@ export default function ManifestoBreak() {
       >
         <source src={`${import.meta.env.BASE_URL}video/hero-s1000rr.mp4`} type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-black/70" />
+      <div className="absolute inset-0 bg-obsidian/70" />
 
       <motion.div
         initial={{ opacity: 0, y: 14 }}

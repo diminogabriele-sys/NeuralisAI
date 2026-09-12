@@ -38,7 +38,7 @@ function ProductCard({ p }) {
         className="pointer-events-none absolute inset-0 opacity-[0.06]"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 1px, transparent 8px), repeating-linear-gradient(-45deg, #fff 0, #fff 1px, transparent 1px, transparent 8px)",
+            "repeating-linear-gradient(45deg, #efe7d8 0, #efe7d8 1px, transparent 1px, transparent 8px), repeating-linear-gradient(-45deg, #efe7d8 0, #efe7d8 1px, transparent 1px, transparent 8px)",
         }}
       />
       <div className="relative">
