@@ -81,6 +81,21 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Woven carbon-fibre surface, used in place of a flat black page background */
+.carbon-weave {
+  background-color: #0b0a08;
+  background-image:
+    linear-gradient(27deg, #17140f 5px, transparent 5px),
+    linear-gradient(207deg, #17140f 5px, transparent 5px),
+    linear-gradient(27deg, #17140f 5px, transparent 5px),
+    linear-gradient(207deg, #17140f 5px, transparent 5px),
+    linear-gradient(90deg, #100e0b 10px, transparent 10px),
+    linear-gradient(#100e0b 25%, #1c1a17 25%, #1c1a17 50%, #100e0b 50%, #100e0b 75%, #1c1a17 75%, #1c1a17);
+  background-repeat: repeat;
+  background-size: 22px 22px;
+  background-position: 0 0, 0 0, 11px 11px, 11px 11px, 0 0, 0 0;
+}
+
 /* Fine film-grain over the whole page, for depth on the flat dark tones */
 body::after {
   content: "";

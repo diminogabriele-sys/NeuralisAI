@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function ManifestoBreak() {
   return (
-    <section className="relative min-h-[85vh] w-full bg-obsidian flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[85vh] w-full carbon-weave flex items-center justify-center overflow-hidden">
       <video
         className="absolute inset-0 w-full h-full object-cover scale-[1.08]"
         autoPlay

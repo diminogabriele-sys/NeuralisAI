@@ -11,7 +11,7 @@ import Footer from "@/components/site/Footer";
 
 export default function Home() {
   return (
-    <div className="relative bg-obsidian min-h-screen">
+    <div className="relative carbon-weave min-h-screen">
       <Nav />
       <main>
         <Hero />
