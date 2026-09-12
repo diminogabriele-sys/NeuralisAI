@@ -6,12 +6,14 @@ export default function Hero() {
     <section id="top" className="relative min-h-screen w-full bg-obsidian flex items-center justify-center overflow-hidden">
       <video
         className="absolute inset-0 w-full h-full object-cover"
-        src="/video/hero-s1000rr.mp4"
         autoPlay
         muted
         loop
         playsInline
-      />
+        preload="auto"
+      >
+        <source src="/video/hero-s1000rr.mp4" type="video/mp4" />
+      </video>
       <div className="absolute inset-0 bg-black/45" />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
 

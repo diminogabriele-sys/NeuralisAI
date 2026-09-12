@@ -2,6 +2,7 @@ import React from "react";
 import Nav from "@/components/site/Nav";
 import Hero from "@/components/site/Hero";
 import Models from "@/components/site/Models";
+import ManifestoBreak from "@/components/site/ManifestoBreak";
 import Services from "@/components/site/Services";
 import Materials from "@/components/site/Materials";
 import Process from "@/components/site/Process";
@@ -15,6 +16,7 @@ export default function Home() {
       <main>
         <Hero />
         <Models />
+        <ManifestoBreak />
         <Services />
         <Materials />
         <Process />
