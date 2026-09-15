@@ -61,16 +61,20 @@ module.exports = {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			},
-  			obsidian: '#0F1110',
-  			titanium: '#E2E8E4',
-  			acid: '#C5FF4D',
-  			steel: '#2D3230'
+  			obsidian: '#0a0a0a',
+  			carbonfiber: '#2a2c2f',
+  			titanium: '#e9d9b0',
+  			steel: '#3a3b3e',
+  			fumo: '#a49a82',
+  			brabus: '#c9a24c',
+  			brabuslight: '#8f7530',
+  			stone: '#f2e9d4',
+  			stoneink: '#1c1a17'
   		},
   		fontFamily: {
   			heading: ['var(--font-heading)'],
   			body: ['var(--font-body)'],
-  			display: ['var(--font-display)'],
-  			mono: ['var(--font-mono)']
+  			display: ['var(--font-display)']
   		},
   		keyframes: {
   			'accordion-down': {

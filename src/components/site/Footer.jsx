@@ -1,51 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Footer() {
-  const [time, setTime] = useState("");
-  useEffect(() => {
-    const tick = () =>
-      setTime(new Date().toLocaleTimeString("en-GB", { timeZone: "UTC", hour12: false }));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
+  const { t } = useLanguage();
 
   const items = [
-    { label: "Sistemi", href: "#services" },
-    { label: "Logica", href: "#work" },
-    { label: "Protocollo", href: "#protocol" },
-    { label: "Tech", href: "#tech" },
-    { label: "Chi siamo", to: "/about" },
-    { label: "Terminale", href: "#contact" },
+    { label: t.nav.modelli, href: "#modelli" },
+    { label: t.nav.prodotti, href: "#prodotti" },
+    { label: t.nav.materiali, href: "#materiali" },
+    { label: t.nav.processo, href: "#processo" },
+    { label: t.nav.chiSiamo, to: "/about" },
+    { label: t.nav.contatti, href: "#contact" },
   ];
 
   return (
-    <footer className="relative border-t border-steel py-20 overflow-hidden">
-      <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-        <div className="grid grid-cols-12 gap-8 items-center">
-          <div className="col-span-12 md:col-span-5">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-2 h-2 bg-acid rounded-full animate-pulse" />
-              <span className="font-display italic text-3xl text-titanium">Neuralis</span>
+    <footer className="relative bg-carbonfiber py-16">
+      <div className="mx-auto max-w-[1100px] px-6 md:px-12">
+        <div className="grid grid-cols-12 gap-6 items-start">
+          <div className="min-w-0 col-span-12 md:col-span-5">
+            <div className="flex items-center gap-2.5 mb-5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brabus" />
+              <span className="font-display uppercase text-[13px] font-medium tracking-[0.083em] text-titanium">Veloce</span>
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
-              Architetti di logica neurale. Automazione AI e interfacce adattive
-              per aziende che colonizzano il futuro.
+            <p className="text-[14px] leading-[1.8] text-fumo max-w-xs">
+              {t.footer.blurb}
             </p>
           </div>
 
-          <div className="col-span-12 md:col-span-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-4">
-              // Mappa
-            </div>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-2">
+          <div className="min-w-0 col-span-12 md:col-span-4">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
               {items.map((i) =>
                 i.to ? (
                   <Link
                     key={i.to}
                     to={i.to}
-                    className="font-mono text-sm text-titanium hover:text-acid transition-colors"
+                    className="font-body text-[11px] uppercase tracking-[0.083em] text-titanium hover:text-brabus transition-colors"
                   >
                     {i.label}
                   </Link>
@@ -53,7 +43,7 @@ export default function Footer() {
                   <Link
                     key={i.href}
                     to={{ pathname: "/", hash: i.href }}
-                    className="font-mono text-sm text-titanium hover:text-acid transition-colors"
+                    className="font-body text-[11px] uppercase tracking-[0.083em] text-titanium hover:text-brabus transition-colors"
                   >
                     {i.label}
                   </Link>
@@ -62,25 +52,18 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="col-span-12 md:col-span-3 md:text-right">
-            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-4">
-              // Coordinate
-            </div>
-            <div className="font-mono text-sm text-muted-foreground space-y-1">
-              <div>45.0703° N, 7.6869° E</div>
-              <div>Torino · Italia</div>
-              <div className="text-acid">UPTIME: {time} UTC</div>
-            </div>
+          <div className="min-w-0 col-span-12 md:col-span-3 md:text-right">
+            <p className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo leading-[1.9]">
+              {t.footer.addressLine1}<br />
+              {t.footer.addressLine2}<br />
+              NeuralisAI@outlook.it
+            </p>
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-steel flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            © 2026 Neuralis Studio — Tutti i diritti riservati
-          </div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            Costruito con logica · Powered by AI
-          </div>
+        <div className="mt-14 pt-6 border-t border-steel flex flex-col md:flex-row justify-between items-center gap-3 font-body text-[11px] uppercase tracking-[0.083em] text-fumo">
+          <div>{t.footer.copyright}</div>
+          <div>{t.footer.madeIn}</div>
         </div>
       </div>
     </footer>
