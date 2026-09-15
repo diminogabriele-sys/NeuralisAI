@@ -6,15 +6,10 @@ function ProductCard({ p, priceOnRequest, requestPrice }) {
   return (
     <a
       href="#contact"
+      draggable={false}
+      onDragStart={(e) => e.preventDefault()}
       className="group relative flex flex-col justify-between overflow-hidden rounded-[28px] bg-carbonfiber p-8 md:p-10 min-h-[300px] w-[78vw] sm:w-[360px] shrink-0 snap-start transition-transform hover:scale-[1.015]"
     >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg, #e9d9b0 0, #e9d9b0 1px, transparent 1px, transparent 8px), repeating-linear-gradient(-45deg, #e9d9b0 0, #e9d9b0 1px, transparent 1px, transparent 8px)",
-        }}
-      />
       <div className="relative">
         <div className="font-body text-[11px] uppercase tracking-[0.083em] text-fumo mb-3">{p.fit}</div>
         <h3 className="font-display uppercase text-2xl font-medium tracking-[0.005em] text-titanium leading-tight mb-3">
@@ -65,6 +60,63 @@ export default function Products() {
     el.scrollBy({ left: direction * amount, behavior: "smooth" });
   };
 
+  // Click-and-drag scrolling for mouse users (touch/trackpad already scroll natively)
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+
+    let dragging = false;
+    let moved = false;
+    let startX = 0;
+    let startScroll = 0;
+
+    const onPointerDown = (e) => {
+      if (e.pointerType !== "mouse") return;
+      dragging = true;
+      moved = false;
+      startX = e.clientX;
+      startScroll = el.scrollLeft;
+      el.setPointerCapture(e.pointerId);
+      el.style.scrollSnapType = "none";
+      el.style.userSelect = "none";
+      el.classList.replace("cursor-grab", "cursor-grabbing");
+    };
+
+    const onPointerMove = (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 3) moved = true;
+      el.scrollLeft = startScroll - dx;
+    };
+
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      el.style.scrollSnapType = "";
+      el.style.userSelect = "";
+      el.classList.replace("cursor-grabbing", "cursor-grab");
+      if (moved) {
+        const swallowClick = (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+        };
+        el.addEventListener("click", swallowClick, { capture: true, once: true });
+      }
+    };
+
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerup", endDrag);
+    el.addEventListener("pointercancel", endDrag);
+
+    return () => {
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerup", endDrag);
+      el.removeEventListener("pointercancel", endDrag);
+    };
+  }, []);
+
   return (
     <section id="prodotti" className="relative py-20 md:py-28 border-t border-steel">
       <div className="mx-auto max-w-[1100px] px-6 md:px-12">
@@ -97,7 +149,7 @@ export default function Products() {
 
         <div
           ref={trackRef}
-          className="flex gap-5 md:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-6 px-6 md:-mx-12 md:px-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className="flex gap-5 md:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-6 px-6 md:-mx-12 md:px-12 cursor-grab [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
           {t.products.items.map((p) => (
             <ProductCard key={p.id} p={p} priceOnRequest={t.products.priceOnRequest} requestPrice={t.products.requestPrice} />
