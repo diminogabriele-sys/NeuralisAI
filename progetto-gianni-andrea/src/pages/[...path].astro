@@ -1,0 +1,16 @@
+---
+import Home from '../views/Home.astro';
+import Simple from '../views/Simple.astro';
+import { allRoutes } from '../i18n/index.js';
+
+export function getStaticPaths() {
+  return allRoutes().map((r) => ({
+    params: { path: r.path.replace(/^\/|\/$/g, '') || undefined },
+    props: { page: r.page, lang: r.lang },
+  }));
+}
+
+const { page, lang } = Astro.props;
+---
+
+{page === 'home' ? <Home lang={lang} /> : <Simple lang={lang} page={page} />}

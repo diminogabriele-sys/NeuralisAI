@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Services from '../components/Services.astro';
+import Process from '../components/Process.astro';
+import About from '../components/About.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Faq from '../components/Faq.astro';
+import Contact from '../components/Contact.astro';
+import { dictionaries } from '../i18n/index.js';
+import { faqSchema } from '../lib/schema.js';
+interface Props { lang: string }
+const { lang } = Astro.props;
+const m = dictionaries[lang].meta.home;
+---
+
+<Base lang={lang} page="home" title={m.title} description={m.description} extraSchema={[faqSchema(lang)]}>
+  <Hero lang={lang} />
+  <Services lang={lang} />
+  <Process lang={lang} />
+  <About lang={lang} />
+  <Testimonials lang={lang} />
+  <Faq lang={lang} />
+  <Contact lang={lang} />
+</Base>

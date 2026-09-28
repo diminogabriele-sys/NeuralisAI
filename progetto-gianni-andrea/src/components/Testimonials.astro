@@ -1,0 +1,115 @@
+---
+import { dictionaries } from '../i18n/index.js';
+interface Props { lang: string }
+const t = dictionaries[Astro.props.lang].testimonials;
+---
+
+<section id="testimonials" class="section testimonials" aria-labelledby="testimonials-title">
+  <div class="container">
+    <header class="t-head">
+      <div>
+        <p class="kicker reveal" data-n="04">{t.kicker}</p>
+        <h2 id="testimonials-title" class="h-section reveal" set:html={t.title} />
+      </div>
+      <div class="t-nav reveal">
+        <button type="button" class="t-btn" data-t-prev aria-label={t.prev} aria-controls="t-track">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <button type="button" class="t-btn" data-t-next aria-label={t.next} aria-controls="t-track">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <ul class="t-track" id="t-track" data-t-track tabindex="0" aria-label={t.kicker}>
+      {t.items.map((q, i) => (
+        <li class="t-card reveal" style={`--d:${i * 0.1}s`}>
+          <figure>
+            <span class="t-quote-mark" aria-hidden="true">“</span>
+            <blockquote><p>{q.quote}</p></blockquote>
+            <figcaption>
+              <span class="t-name">{q.name}</span>
+              <span class="t-bike mono">{q.bike}</span>
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .t-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; margin-bottom: 3.5rem; }
+  .t-nav { display: flex; gap: 0.6rem; flex-shrink: 0; }
+  .t-btn {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: background 0.4s, color 0.4s, border-color 0.4s;
+  }
+  .t-btn svg { width: 20px; }
+  .t-btn:disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+  .t-btn:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+
+  .t-track {
+    list-style: none;
+    margin: 0 calc(var(--gutter) * -1);
+    padding: 0 var(--gutter) 1rem;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 88%;
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .t-track::-webkit-scrollbar { display: none; }
+  .t-card { scroll-snap-align: start; }
+  .t-card figure {
+    height: 100%;
+    margin: 0;
+    padding: 2.25rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(160deg, var(--surface-2), var(--surface));
+    border: 1px solid var(--line);
+  }
+  .t-quote-mark { font-family: var(--font-display); font-size: 5rem; line-height: 0.6; color: var(--gold); height: 2.2rem; }
+  blockquote { margin: 0 0 2rem; flex: 1; }
+  blockquote p { font-family: var(--font-display); font-size: clamp(1.35rem, 2.2vw, 1.65rem); line-height: 1.35; font-style: italic; margin: 0; }
+  figcaption { display: grid; gap: 0.3rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+  .t-name { font-weight: 600; }
+  .t-bike { color: var(--gold); font-size: 0.64rem; }
+
+  @media (min-width: 700px) { .t-track { grid-auto-columns: 55%; } }
+  @media (min-width: 1100px) {
+    .t-track { grid-auto-columns: calc((100% - 2 * 1.5rem - 2 * var(--gutter)) / 3); gap: 1.5rem; }
+  }
+</style>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-t-track]');
+  const prev = document.querySelector<HTMLButtonElement>('[data-t-prev]');
+  const next = document.querySelector<HTMLButtonElement>('[data-t-next]');
+  if (track && prev && next) {
+    const amount = () => (track.querySelector('li')?.getBoundingClientRect().width ?? 300) + 20;
+    prev.addEventListener('click', () => track.scrollBy({ left: -amount(), behavior: 'smooth' }));
+    next.addEventListener('click', () => track.scrollBy({ left: amount(), behavior: 'smooth' }));
+    const sync = () => {
+      prev.disabled = track.scrollLeft < 8;
+      next.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 8;
+      // nasconde le frecce quando tutte le testimonianze sono già visibili
+      (prev.parentElement as HTMLElement).style.visibility = prev.disabled && next.disabled ? 'hidden' : '';
+    };
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+</script>

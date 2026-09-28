@@ -203,6 +203,7 @@ export default {
       success: 'Grazie! La tua richiesta è stata inviata. Ti ricontatteremo entro 24 ore lavorative.',
       error: 'Si è verificato un errore. Riprova oppure scrivici direttamente via email.',
       required: 'Campo obbligatorio',
+      invalidEmail: 'Inserisci un indirizzo email valido',
       select: 'Seleziona…',
     },
     info: {

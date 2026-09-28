@@ -1,0 +1,67 @@
+---
+import { dictionaries } from '../i18n/index.js';
+interface Props { lang: string }
+const t = dictionaries[Astro.props.lang].faq;
+---
+
+<section id="faq" class="section faq" aria-labelledby="faq-title">
+  <div class="container faq-grid">
+    <header>
+      <p class="kicker reveal" data-n="05">{t.kicker}</p>
+      <h2 id="faq-title" class="h-section reveal" set:html={t.title} />
+    </header>
+
+    <div class="faq-list">
+      {t.items.map((f, i) => (
+        <details class="faq-item reveal" style={`--d:${i * 0.05}s`} name="faq">
+          <summary>
+            <span class="q">{f.q}</span>
+            <span class="icon" aria-hidden="true"></span>
+          </summary>
+          <div class="a"><p>{f.a}</p></div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-grid { display: grid; gap: 3rem; }
+  .faq-list { border-top: 1px solid var(--line); }
+  .faq-item { border-bottom: 1px solid var(--line); }
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.6rem 0;
+    cursor: pointer;
+    list-style: none;
+    min-height: 48px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  .q { font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 1.75rem); line-height: 1.25; transition: color 0.3s; }
+  summary:hover .q, .faq-item[open] .q { color: var(--gold); }
+  .icon { position: relative; flex: 0 0 22px; height: 22px; border: 1px solid var(--line); border-radius: 50%; }
+  .icon::before, .icon::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 9px;
+    height: 1px;
+    background: var(--gold);
+    transform: translate(-50%, -50%);
+    transition: transform 0.4s var(--ease);
+  }
+  .icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .faq-item[open] .icon::after { transform: translate(-50%, -50%) rotate(0deg); }
+  .a p { color: var(--muted); max-width: 70ch; padding: 0 2.5rem 1.8rem 0; margin: 0; }
+  .faq-item[open] .a { animation: faqIn 0.5s var(--ease); }
+  @keyframes faqIn { from { opacity: 0; transform: translateY(-6px); } }
+
+  @media (min-width: 960px) {
+    .faq-grid { grid-template-columns: 1fr 1.6fr; gap: 6rem; align-items: start; }
+    .faq-grid header { position: sticky; top: calc(var(--header-h) + 2rem); }
+  }
+</style>

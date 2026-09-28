@@ -1,0 +1,103 @@
+---
+import { dictionaries } from '../i18n/index.js';
+interface Props { lang: string }
+const t = dictionaries[Astro.props.lang].process;
+---
+
+<section id="process" class="section process" aria-labelledby="process-title">
+  <div class="container">
+    <header class="section-head section-head--split">
+      <div>
+        <p class="kicker reveal" data-n="02">{t.kicker}</p>
+        <h2 id="process-title" class="h-section reveal" set:html={t.title} />
+      </div>
+      <p class="lead reveal" style="--d:.15s">{t.lead}</p>
+    </header>
+
+    <div class="steps-wrap" data-steps>
+    <span class="steps-track" aria-hidden="true"><span class="steps-fill" data-steps-fill></span></span>
+    <ol class="steps">
+      {t.steps.map((s, i) => (
+        <li class="step reveal" style={`--d:${i * 0.1}s`}>
+          <span class="step-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+        </li>
+      ))}
+    </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .process {
+    background:
+      radial-gradient(60% 50% at 100% 0%, rgba(201, 164, 92, 0.07), transparent 70%),
+      var(--surface);
+    border-block: 1px solid var(--line);
+  }
+  .steps-wrap { position: relative; padding-left: 2.5rem; }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.75rem;
+  }
+  .steps-track {
+    position: absolute;
+    left: 0.45rem;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    width: 1px;
+    background: var(--line);
+  }
+  .steps-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(var(--gold-light), var(--gold-deep));
+    transform: scaleY(var(--p, 0));
+    transform-origin: top;
+  }
+  .step { position: relative; }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: calc(-2.5rem + 0.45rem - 4px);
+    top: 0.55rem;
+    width: 9px;
+    height: 9px;
+    transform: rotate(45deg);
+    background: var(--black);
+    border: 1px solid var(--gold);
+  }
+  .step-n { display: block; font-family: var(--font-display); font-style: italic; font-size: 3rem; line-height: 1; color: var(--gold); margin-bottom: 0.6rem; }
+  .step h3 { font-size: 1.75rem; margin-bottom: 0.6rem; }
+  .step p { color: var(--muted); margin: 0; max-width: 38ch; }
+
+  @media (min-width: 1024px) {
+    .steps-wrap { padding: 3rem 0 0; }
+    .steps { grid-template-columns: repeat(5, 1fr); gap: 2rem; }
+    .steps-track { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 1px; }
+    .steps-fill { transform: scaleX(var(--p, 0)); transform-origin: left; }
+    .step::before { left: 0; top: -3rem; margin-top: -4px; }
+  }
+</style>
+
+<script>
+  // Linea di avanzamento del processo legata allo scroll
+  const steps = document.querySelector<HTMLElement>('[data-steps]');
+  const fill = document.querySelector<HTMLElement>('[data-steps-fill]');
+  if (steps && fill) {
+    let ticking = false;
+    const update = () => {
+      const r = steps.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = Math.min(Math.max((vh * 0.85 - r.top) / (r.height + vh * 0.35), 0), 1);
+      fill.style.setProperty('--p', p.toFixed(3));
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  }
+</script>

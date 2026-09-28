@@ -1,0 +1,245 @@
+---
+import Logo from './Logo.astro';
+import { dictionaries, locales, path } from '../i18n/index.js';
+
+interface Props { lang: string; page: 'home' | 'thanks' | 'privacy' }
+const { lang, page } = Astro.props;
+const t = dictionaries[lang];
+const home = path('home', lang);
+const links = [
+  ['services', t.nav.services],
+  ['process', t.nav.process],
+  ['about', t.nav.about],
+  ['testimonials', t.nav.testimonials],
+  ['faq', t.nav.faq],
+  ['contact', t.nav.contact],
+];
+const anchor = (id: string) => (page === 'home' ? `#${id}` : `${home}#${id}`);
+---
+
+<header class="site-header" data-header>
+  <div class="bar container">
+    <a class="brand" href={home} aria-label={t.nav.home}><Logo /></a>
+
+    <nav class="nav" id="site-nav" aria-label="Menu" data-nav>
+      <ul class="nav-list">
+        {links.map(([id, label], i) => (
+          <li style={`--i:${i}`}><a href={anchor(id)} data-navlink>{label}</a></li>
+        ))}
+      </ul>
+
+      <div class="lang" role="group" aria-label={t.nav.language}>
+        {locales.map((l) => (
+          <a
+            href={path(page, l)}
+            hreflang={dictionaries[l].htmlLang}
+            lang={dictionaries[l].htmlLang}
+            aria-current={l === lang ? 'true' : undefined}
+            aria-label={dictionaries[l].label}
+          >{l.toUpperCase()}</a>
+        ))}
+      </div>
+
+      <a class="btn btn--solid nav-cta-mobile" href={anchor('contact')} data-navlink>{t.cta}</a>
+    </nav>
+
+    <a class="btn header-cta" href={anchor('contact')}>{t.cta}</a>
+
+    <button class="burger" type="button" aria-controls="site-nav" aria-expanded="false" data-burger
+      data-open={t.nav.menu} data-close={t.nav.close}>
+      <span class="sr-only" data-burger-label>{t.nav.menu}</span>
+      <span class="burger-lines" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    height: var(--header-h);
+    transition: background-color 0.5s var(--ease), border-color 0.5s var(--ease), transform 0.5s var(--ease);
+    border-bottom: 1px solid transparent;
+  }
+  .site-header.is-scrolled {
+    background: rgba(10, 10, 11, 0.82);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-color: var(--line);
+  }
+  /* backdrop-filter creerebbe un containing block per il menu fixed: lo togliamo a menu aperto */
+  .site-header.menu-open {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: transparent;
+    border-color: transparent;
+  }
+  .bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .brand { display: inline-flex; margin-right: auto; text-decoration: none; }
+
+  /* --- Mobile: pannello a tutto schermo --- */
+  .nav {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: calc(var(--header-h) + 2rem) var(--gutter) 3rem;
+    background:
+      radial-gradient(120% 60% at 100% 0%, rgba(201, 164, 92, 0.12), transparent 60%),
+      var(--black);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s var(--ease), visibility 0s linear 0.5s;
+  }
+  .nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s var(--ease);
+  }
+  .nav-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+  .nav-list a {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 9vw, 3.2rem);
+    line-height: 1.15;
+    text-decoration: none;
+    color: var(--white);
+    transition: color 0.3s;
+  }
+  .nav.is-open .nav-list li { animation: navIn 0.7s var(--ease) both; animation-delay: calc(var(--i) * 60ms + 100ms); }
+  @keyframes navIn { from { opacity: 0; transform: translateY(20px); } }
+  .nav-list a:hover, .nav-list a:focus-visible { color: var(--gold); }
+
+  .lang { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+  .lang a {
+    display: inline-grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .lang a:hover { color: var(--white); }
+  .lang a[aria-current='true'] { color: var(--gold); border-color: var(--line); }
+
+  .header-cta { display: none; }
+  .nav-cta-mobile { align-self: flex-start; }
+
+  .burger {
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-right: -10px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .burger-lines { position: relative; width: 26px; height: 10px; }
+  .burger-lines i {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: var(--gold);
+    transition: transform 0.45s var(--ease), top 0.45s var(--ease);
+  }
+  .burger-lines i:first-child { top: 0; }
+  .burger-lines i:last-child { top: 8px; width: 70%; left: auto; right: 0; }
+  .burger[aria-expanded='true'] .burger-lines i:first-child { top: 4px; transform: rotate(45deg); }
+  .burger[aria-expanded='true'] .burger-lines i:last-child { top: 4px; width: 100%; transform: rotate(-45deg); }
+
+  /* --- Desktop --- */
+  @media (min-width: 1100px) {
+    .burger, .nav-cta-mobile { display: none; }
+    .header-cta { display: inline-flex; --pad: 0.8rem 1.4rem; min-height: 44px; font-size: 0.7rem; }
+    .nav {
+      position: static;
+      z-index: auto;
+      flex-direction: row;
+      align-items: center;
+      gap: 2rem;
+      padding: 0;
+      background: none;
+      opacity: 1;
+      visibility: visible;
+    }
+    .nav-list { display: flex; gap: 1.9rem; }
+    .nav-list a {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      position: relative;
+      padding-block: 0.5rem;
+    }
+    .nav-list a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0.2rem;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.5s var(--ease);
+    }
+    .nav-list a:hover::after, .nav-list a:focus-visible::after { transform: scaleX(1); transform-origin: left; }
+    .lang { flex-wrap: nowrap; border-left: 1px solid var(--line); padding-left: 1rem; }
+    .lang a { min-width: 34px; min-height: 34px; font-size: 0.68rem; }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const nav = document.querySelector<HTMLElement>('[data-nav]')!;
+  const burger = document.querySelector<HTMLButtonElement>('[data-burger]')!;
+  const label = burger.querySelector<HTMLElement>('[data-burger-label]')!;
+  const desktop = window.matchMedia('(min-width: 1100px)');
+
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const setOpen = (open: boolean) => {
+    nav.classList.toggle('is-open', open);
+    header.classList.toggle('menu-open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    label.textContent = open ? burger.dataset.close! : burger.dataset.open!;
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) nav.querySelector<HTMLElement>('a')?.focus();
+  };
+
+  burger.addEventListener('click', () => setOpen(burger.getAttribute('aria-expanded') !== 'true'));
+  nav.querySelectorAll('[data-navlink]').forEach((a) => a.addEventListener('click', () => !desktop.matches && setOpen(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+      setOpen(false);
+      burger.focus();
+    }
+    // Trappola del focus nel menu mobile aperto
+    if (e.key === 'Tab' && nav.classList.contains('is-open')) {
+      const f = [burger, ...nav.querySelectorAll<HTMLElement>('a')];
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  desktop.addEventListener('change', () => setOpen(false));
+</script>

@@ -203,6 +203,7 @@ export default {
       success: 'Thank you! Your request has been sent. We will get back to you within 24 business hours.',
       error: 'Something went wrong. Please try again or email us directly.',
       required: 'Required field',
+      invalidEmail: 'Please enter a valid email address',
       select: 'Select…',
     },
     info: {

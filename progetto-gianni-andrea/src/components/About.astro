@@ -1,0 +1,121 @@
+---
+import { Picture } from 'astro:assets';
+import { dictionaries } from '../i18n/index.js';
+import { images } from '../lib/images.js';
+interface Props { lang: string }
+const t = dictionaries[Astro.props.lang].about;
+---
+
+<section id="about" class="section about" aria-labelledby="about-title">
+  <div class="container about-grid">
+    <div class="about-media reveal">
+      <div class="frame" data-parallax>
+        <Picture
+          src={images['chi-siamo']}
+          alt={t.imageAlt}
+          formats={['avif', 'webp']}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 960px) 45vw, 100vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <span class="frame-corner" aria-hidden="true"></span>
+    </div>
+
+    <div class="about-text">
+      <p class="kicker reveal" data-n="03">{t.kicker}</p>
+      <h2 id="about-title" class="h-section reveal" set:html={t.title} />
+      {t.paragraphs.map((p, i) => <p class="reveal about-p" style={`--d:${0.1 + i * 0.1}s`}>{p}</p>)}
+
+      <dl class="stats">
+        {t.stats.map((s, i) => (
+          <div class="stat reveal" style={`--d:${0.2 + i * 0.1}s`}>
+            <dt class="mono">{s.label}</dt>
+            <dd data-count={s.value}>{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-grid { display: grid; gap: 3.5rem; align-items: center; }
+  .about-media { position: relative; }
+  .frame { overflow: hidden; aspect-ratio: 4 / 5; border: 1px solid var(--line); }
+  .frame :global(img) { width: 100%; height: 115%; object-fit: cover; transform: translateY(var(--py, 0)); }
+  .frame-corner {
+    position: absolute;
+    right: -0.9rem;
+    bottom: -0.9rem;
+    width: 45%;
+    height: 45%;
+    border-right: 1px solid var(--gold);
+    border-bottom: 1px solid var(--gold);
+    pointer-events: none;
+  }
+  .about-text h2 { margin-bottom: 2rem; }
+  .about-p { color: var(--muted); font-size: 1.05rem; max-width: 58ch; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 2.75rem 0 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+  .stat { display: flex; flex-direction: column-reverse; }
+  .stat dt { color: var(--muted); font-size: 0.62rem; line-height: 1.5; }
+  .stat dd {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  @media (min-width: 960px) {
+    .about-grid { grid-template-columns: 0.9fr 1fr; gap: 6rem; }
+  }
+</style>
+
+<script>
+  // Contatori animati e leggero parallax dell'immagine
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+  if (!reduced && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const el = e.target as HTMLElement;
+        io.unobserve(el);
+        const raw = el.dataset.count!;
+        const n = parseInt(raw, 10);
+        const suffix = raw.replace(/^\d+/, '');
+        const t0 = performance.now();
+        const step = (now: number) => {
+          const p = Math.min((now - t0) / 1600, 1);
+          el.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))) + suffix;
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    }, { threshold: 0.6 });
+    counters.forEach((c) => io.observe(c));
+
+    const frame = document.querySelector<HTMLElement>('[data-parallax]');
+    if (frame) {
+      const onScroll = () => {
+        const r = frame.getBoundingClientRect();
+        const p = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
+        const py = Math.min(Math.max(-6.5 - p * 6.5, -13), 0);
+        frame.style.setProperty('--py', `${py.toFixed(2)}%`);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+  }
+</script>

@@ -203,6 +203,7 @@ export default {
       success: 'Vielen Dank! Ihre Anfrage wurde gesendet. Wir melden uns innerhalb von 24 Arbeitsstunden.',
       error: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt per E-Mail.',
       required: 'Pflichtfeld',
+      invalidEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
       select: 'Bitte wählen…',
     },
     info: {

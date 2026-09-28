@@ -1,0 +1,173 @@
+---
+import { dictionaries } from '../i18n/index.js';
+interface Props { lang: string }
+const t = dictionaries[Astro.props.lang];
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <canvas class="hero-canvas" data-hero-canvas role="img" aria-label={t.hero.canvasLabel}></canvas>
+
+  <div class="hero-inner container">
+    <p class="kicker hero-kicker" data-n="—">{t.hero.eyebrow}</p>
+    <h1 id="hero-title" class="hero-title" set:html={t.hero.title} />
+    <p class="lead hero-lead">{t.hero.lead}</p>
+    <div class="hero-actions">
+      <a class="btn btn--solid" href="#contact">
+        {t.cta}
+        <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </a>
+      <a class="btn btn--ghost" href="#services">{t.hero.secondary}</a>
+    </div>
+    <ul class="hero-specs mono">
+      {t.hero.specs.map((s) => <li>{s}</li>)}
+    </ul>
+  </div>
+
+  <a class="scroll-cue mono" href="#services" aria-label={t.hero.secondary}>
+    <span>{t.hero.scroll}</span><i aria-hidden="true"></i>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    padding: calc(var(--header-h) + 2rem) 0 5.5rem;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(60% 45% at 50% 28%, rgba(201, 164, 92, 0.16), transparent 70%),
+      radial-gradient(40% 40% at 50% 30%, rgba(255, 255, 255, 0.04), transparent 70%),
+      linear-gradient(180deg, #0a0a0b 0%, #0e0e10 60%, #0a0a0b 100%);
+  }
+  .hero-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1.6s var(--ease);
+  }
+  .hero-canvas.is-ready { opacity: 1; }
+  /* Sfumatura per leggibilità del testo sopra il 3D su mobile */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 65%;
+    z-index: -1;
+    background: linear-gradient(0deg, var(--black) 20%, rgba(10, 10, 11, 0.85) 55%, transparent);
+    pointer-events: none;
+  }
+
+  .hero-inner { position: relative; }
+
+  /* Mobile: il modello 3D occupa la parte alta, il testo scorre sotto */
+  @media (max-width: 767px) {
+    .hero { padding-top: 50svh; align-items: flex-start; }
+    .hero-canvas { height: 54svh; bottom: auto; top: 2svh; }
+    .hero::after { inset: 44svh 0 0; height: auto; background: linear-gradient(180deg, transparent, var(--black) 18%); }
+    .hero-kicker::after { display: none; }
+    .hero-kicker { letter-spacing: 0.22em; }
+  }
+  .hero-kicker::before { display: none; }
+  .hero-title {
+    font-size: clamp(2.9rem, 11vw, 7.2rem);
+    font-weight: 400;
+    line-height: 0.98;
+    max-width: 12ch;
+    margin-bottom: 1.5rem;
+  }
+  .hero-lead { max-width: 52ch; margin-bottom: 2.25rem; color: #c4bfb5; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+  .hero-actions .btn { flex: 1 1 auto; }
+  .hero-specs {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.6rem;
+    margin: 2.5rem 0 0;
+    padding: 1.25rem 0 0;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.68rem;
+  }
+  .hero-specs li::before { content: '◆'; color: var(--gold); margin-right: 0.6rem; font-size: 0.55rem; vertical-align: 0.15em; }
+
+  .scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 1.25rem;
+    transform: translateX(-50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .scroll-cue i { width: 1px; height: 44px; background: linear-gradient(var(--gold), transparent); animation: cue 2.4s var(--ease) infinite; transform-origin: top; }
+  @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+  /* Entrata del testo */
+  .hero-inner > * { animation: heroIn 1.4s var(--ease) both; }
+  .hero-inner > :nth-child(2) { animation-delay: 0.15s; }
+  .hero-inner > :nth-child(3) { animation-delay: 0.3s; }
+  .hero-inner > :nth-child(4) { animation-delay: 0.45s; }
+  .hero-inner > :nth-child(5) { animation-delay: 0.6s; }
+  @keyframes heroIn { from { opacity: 0; transform: translateY(30px); } }
+
+  @media (min-width: 768px) {
+    .hero { align-items: center; padding-bottom: 6rem; }
+    .hero::after { height: 40%; background: linear-gradient(0deg, var(--black), transparent); }
+    .hero-actions .btn { flex: 0 0 auto; }
+    .scroll-cue { display: flex; }
+    .hero-bg {
+      background:
+        radial-gradient(45% 55% at 72% 50%, rgba(201, 164, 92, 0.17), transparent 70%),
+        radial-gradient(70% 70% at 0% 50%, rgba(0, 0, 0, 0.9), transparent 70%),
+        linear-gradient(180deg, #0a0a0b 0%, #0e0e10 60%, #0a0a0b 100%);
+    }
+  }
+</style>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // @ts-ignore - saveData non standard
+  const saveData = navigator.connection?.saveData === true;
+
+  const hasWebGL = () => {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch {
+      return false;
+    }
+  };
+
+  const boot = async () => {
+    if (!canvas || saveData || !hasWebGL()) return;
+    try {
+      const { initHero } = await import('../lib/hero3d.js');
+      initHero(canvas, { reducedMotion: reduced });
+      requestAnimationFrame(() => canvas.classList.add('is-ready'));
+    } catch (err) {
+      console.warn('3D non disponibile', err);
+    }
+  };
+
+  // Caricamento differito: non blocca il primo rendering della pagina
+  if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 1500 });
+  else setTimeout(boot, 300);
+</script>

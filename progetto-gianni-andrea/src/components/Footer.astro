@@ -1,0 +1,58 @@
+---
+import Logo from './Logo.astro';
+import { dictionaries, path } from '../i18n/index.js';
+import { site } from '../config/site.js';
+interface Props { lang: string }
+const { lang } = Astro.props;
+const t = dictionaries[lang];
+const year = new Date().getFullYear();
+const home = path('home', lang);
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <a href={home} aria-label={t.nav.home} class="f-brand"><Logo /></a>
+      <p class="f-tag">{t.footer.tagline}</p>
+      <a class="btn" href={`${home}#contact`}>{t.cta}</a>
+    </div>
+    <hr class="gold-rule" />
+    <div class="footer-bottom">
+      <p>© {year} {site.legalName} · {site.vat}. {t.footer.rights}</p>
+      <ul>
+        <li><a href={path('privacy', lang)}>{t.footer.privacy}</a></li>
+        <li><button type="button" data-cookie-open>{t.footer.cookieSettings}</button></li>
+      </ul>
+    </div>
+  </div>
+  <p class="f-watermark" aria-hidden="true">{site.name}</p>
+</footer>
+
+<style>
+  .footer { position: relative; overflow: hidden; padding: 5rem 0 2rem; background: var(--black); border-top: 1px solid var(--line); }
+  .footer-top { display: grid; gap: 1.5rem; justify-items: start; margin-bottom: 3rem; }
+  .f-brand :global(.logo) { height: 40px; }
+  .f-tag { font-family: var(--font-display); font-size: 1.6rem; font-style: italic; color: var(--muted); margin: 0; }
+  .footer-bottom { display: grid; gap: 1rem; padding-top: 2rem; font-size: 0.8rem; color: var(--muted); }
+  .footer-bottom p { margin: 0; }
+  .footer-bottom ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .footer-bottom a, .footer-bottom button { display: inline-block; line-height: 1.5; font-family: var(--font-body); color: var(--muted); background: none; border: 0; padding: 0.5rem 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-size: 0.8rem; }
+  .footer-bottom a:hover, .footer-bottom button:hover { color: var(--gold); }
+  .f-watermark {
+    margin: 2rem 0 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: clamp(6rem, 30vw, 22rem);
+    line-height: 0.75;
+    letter-spacing: 0.1em;
+    background: linear-gradient(180deg, rgba(201, 164, 92, 0.16), transparent 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    user-select: none;
+  }
+  @media (min-width: 900px) {
+    .footer-top { grid-template-columns: auto 1fr auto; align-items: center; gap: 3rem; }
+    .footer-bottom { grid-template-columns: 1fr auto; align-items: center; }
+  }
+</style>

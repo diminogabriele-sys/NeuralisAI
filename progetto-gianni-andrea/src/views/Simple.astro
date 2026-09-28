@@ -1,0 +1,50 @@
+---
+/** Pagine semplici: grazie, privacy, 404 */
+import Base from '../layouts/Base.astro';
+import { dictionaries, path } from '../i18n/index.js';
+import { site } from '../config/site.js';
+interface Props { lang: string; page: 'thanks' | 'privacy' | 'notFound' }
+const { lang, page } = Astro.props;
+const t = dictionaries[lang];
+const m = t.meta[page];
+const addr = `${site.address.street}, ${site.address.postalCode} ${site.address.city}`;
+const fill = (s: string) => s.replaceAll('{legal}', site.legalName).replaceAll('{address}', addr).replaceAll('{email}', site.email);
+const basePage = page === 'notFound' ? 'home' : page;
+---
+
+<Base lang={lang} page={basePage} title={m.title} description={m.description} noindex={page !== 'privacy'}>
+  <section class="simple section">
+    <div class="container narrow">
+      {page === 'privacy' ? (
+        <>
+          <h1 class="h-section" set:html={t.privacy.title} />
+          <p class="note mono">{t.privacy.note}</p>
+          {t.privacy.sections.map((s) => (
+            <>
+              <h2>{s.h}</h2>
+              <p>{fill(s.p)}</p>
+            </>
+          ))}
+        </>
+      ) : (
+        <>
+          <p class="big-mark" aria-hidden="true">{page === 'thanks' ? '✓' : '404'}</p>
+          <h1 class="h-section" set:html={t[page].title} />
+          <p class="lead">{t[page].text}</p>
+          <a class="btn btn--solid" href={path('home', lang)}>{t[page].back}</a>
+        </>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .simple { min-height: 80vh; padding-top: calc(var(--header-h) + 5rem); }
+  .narrow { max-width: 860px; }
+  .simple h1 { margin-bottom: 2rem; }
+  .simple h2 { font-size: 1.9rem; margin: 2.5rem 0 0.8rem; color: var(--gold); }
+  .simple p { color: var(--muted); }
+  .simple .lead { margin-bottom: 2.5rem; }
+  .note { padding: 1rem; border: 1px dashed var(--gold-deep); color: var(--gold) !important; }
+  .big-mark { font-family: var(--font-display); font-size: 6rem; line-height: 1; color: var(--gold); margin-bottom: 1rem; }
+</style>

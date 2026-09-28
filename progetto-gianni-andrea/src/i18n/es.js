@@ -203,6 +203,7 @@ export default {
       success: '¡Gracias! Tu solicitud se ha enviado. Te contactaremos en un plazo de 24 horas laborables.',
       error: 'Se ha producido un error. Inténtalo de nuevo o escríbenos directamente por email.',
       required: 'Campo obligatorio',
+      invalidEmail: 'Introduce una dirección de email válida',
       select: 'Selecciona…',
     },
     info: {
