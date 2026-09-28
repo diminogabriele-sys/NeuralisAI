@@ -277,6 +277,14 @@ const socials = Object.entries(site.social).filter(([, url]) => url);
       status.textContent = '';
       const data = new FormData(form);
       try {
+        // Modalità dimostrativa (anteprima): simula l'invio senza inviare dati
+        if (ds.provider === 'demo') {
+          await new Promise((r) => setTimeout(r, 700));
+          form.reset();
+          status.className = 'form-status ok';
+          status.textContent = ds.success!;
+          return;
+        }
         const res =
           ds.provider === 'netlify'
             ? await fetch('/', {
