@@ -1,0 +1,128 @@
+---
+import { Image } from 'astro:assets';
+import { t, servicePath, type Lang } from '../i18n';
+import { img } from '../lib/images';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="section" id={d.anchors.services} aria-labelledby="servizi-title">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <h2 id="servizi-title">{d.services.title}</h2>
+      <p>{d.services.intro}</p>
+    </header>
+
+    <ul class="svc">
+      {
+        d.services.items.map((s) => (
+          <li class="svc__item" data-reveal>
+            <Image
+              src={img(s.image)}
+              alt=""
+              widths={[240, 480]}
+              sizes="(min-width: 64em) 9rem, 6.5rem"
+              class="svc__img"
+              loading="lazy"
+            />
+            <div class="svc__body">
+              <h3 class="svc__name">
+                <a href={servicePath(lang, s.id)}>{s.name}</a>
+              </h3>
+              <p class="svc__short">{s.short}</p>
+              <span class="svc__more" aria-hidden="true">
+                {d.services.more}
+              </span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .svc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    border-top: 2px solid var(--ardesia);
+  }
+  @media (min-width: 56em) {
+    .svc {
+      grid-template-columns: 1fr 1fr;
+      column-gap: clamp(2rem, 4vw, 4rem);
+      border-top: 0;
+    }
+    .svc__item:nth-child(-n + 2) {
+      border-top: 2px solid var(--ardesia);
+    }
+  }
+  .svc__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 1.1rem;
+    align-items: start;
+    padding-block: 1.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (min-width: 64em) {
+    .svc__item {
+      grid-template-columns: 9rem 1fr;
+      gap: 1.5rem;
+      padding-block: 1.75rem;
+    }
+  }
+  .svc__img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-s);
+    filter: saturate(0.9);
+    transition: filter 0.25s ease;
+  }
+  .svc__name {
+    font-size: var(--step-2);
+    margin-bottom: 0.35rem;
+  }
+  .svc__name a {
+    color: var(--ardesia);
+    text-decoration: none;
+  }
+  /* l'intera riga è cliccabile */
+  .svc__name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .svc__name a:focus-visible {
+    outline: none;
+  }
+  .svc__item:has(a:focus-visible) {
+    outline: 3px solid var(--focus);
+    outline-offset: 4px;
+  }
+  .svc__short {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .svc__more {
+    font-weight: 700;
+    font-size: var(--step--1);
+    color: var(--acqua);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .svc__item:hover .svc__more {
+    text-decoration-thickness: 2px;
+  }
+  .svc__item:hover .svc__img {
+    filter: saturate(1.1) brightness(1.05);
+  }
+</style>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /grazie/
+Disallow: /en/thank-you/
+
+# PLACEHOLDER: aggiorna con il dominio definitivo
+Sitemap: https://www.mawashing.it/sitemap-index.xml

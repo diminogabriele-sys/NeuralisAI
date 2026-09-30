@@ -1,0 +1,243 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { t, routes, homeAnchor, type Lang, type Alternates } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  alternates: Alternates;
+}
+const { lang, alternates } = Astro.props;
+const d = t(lang);
+const other: Lang = lang === 'it' ? 'en' : 'it';
+const otherHref = alternates[other] ?? routes.home[other];
+
+const links = [
+  { href: homeAnchor(lang, 'services'), label: d.nav.services },
+  { href: homeAnchor(lang, 'works'), label: d.nav.works },
+  { href: homeAnchor(lang, 'about'), label: d.nav.about },
+  { href: homeAnchor(lang, 'faq'), label: d.nav.faq },
+  { href: routes.blog[lang], label: d.nav.blog },
+  { href: homeAnchor(lang, 'contact'), label: d.nav.contact },
+];
+---
+
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <Logo href={routes.home[lang]} label={`M&A Washing, ${d.nav.home}`} />
+
+    <nav class="nav" aria-label={d.nav.mainNav}>
+      <button
+        class="nav__toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="nav-panel"
+        data-nav-toggle
+        data-label-open={d.nav.menu}
+        data-label-close={d.nav.close}
+      >
+        <Icon name="menu" class="nav__icon-open" />
+        <Icon name="close" class="nav__icon-close" />
+        <span class="nav__toggle-label">{d.nav.menu}</span>
+      </button>
+
+      <div class="nav__panel" id="nav-panel" data-nav-panel>
+        <ul class="nav__list">
+          {
+            links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+        <a class="nav__lang" href={otherHref} hreflang={other} lang={other}>
+          <Icon name="globe" />
+          <span aria-hidden="true">{other.toUpperCase()}</span>
+          <span class="visually-hidden">{d.nav.switchTo}</span>
+        </a>
+        <a class="btn btn--primary nav__cta" href={homeAnchor(lang, 'contact')}>{d.nav.quote}</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  @supports (backdrop-filter: blur(8px)) {
+    .site-header {
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: saturate(1.4) blur(10px);
+    }
+  }
+  .site-header.is-scrolled {
+    border-bottom-color: var(--border);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    min-height: var(--header-h);
+  }
+
+  .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--ardesia);
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: var(--ardesia);
+    font: 700 var(--step--1) / 1 var(--font-body);
+    cursor: pointer;
+  }
+  .nav__toggle :global(svg) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  .nav__toggle :global(.nav__icon-close),
+  .nav__toggle[aria-expanded='true'] :global(.nav__icon-open) {
+    display: none;
+  }
+  .nav__toggle[aria-expanded='true'] :global(.nav__icon-close) {
+    display: block;
+  }
+
+  .nav__panel {
+    position: fixed;
+    inset: var(--header-h) 0 auto 0;
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    padding: var(--space-m) var(--gutter) var(--space-l);
+    background: var(--bianco);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 24px 40px -24px rgba(22, 36, 44, 0.35);
+    display: none;
+  }
+  .nav__panel.is-open {
+    display: block;
+  }
+  .nav__list {
+    list-style: none;
+    margin: 0 0 var(--space-m);
+    padding: 0;
+  }
+  .nav__list a {
+    display: block;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--ardesia);
+    font-family: var(--font-display);
+    font-stretch: 110%;
+    font-weight: 700;
+    font-size: var(--step-1);
+    text-decoration: none;
+  }
+  .nav__lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.5rem 0.25rem;
+    color: var(--ardesia);
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: var(--space-s);
+  }
+  .nav__lang :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .nav__cta {
+    width: 100%;
+  }
+
+  @media (min-width: 64em) {
+    .nav__toggle {
+      display: none;
+    }
+    .nav__panel {
+      position: static;
+      display: flex;
+      align-items: center;
+      gap: var(--space-m);
+      padding: 0;
+      max-height: none;
+      overflow: visible;
+      background: none;
+      border: 0;
+      box-shadow: none;
+    }
+    .nav__list {
+      display: flex;
+      gap: 1.4rem;
+      margin: 0;
+    }
+    .nav__list a {
+      padding: 0.5rem 0;
+      border: 0;
+      font-family: var(--font-body);
+      font-stretch: normal;
+      font-weight: 600;
+      font-size: var(--step--1);
+      background: linear-gradient(currentColor, currentColor) left bottom / 0 2px no-repeat;
+      transition: background-size 0.2s ease;
+    }
+    .nav__list a:hover {
+      background-size: 100% 2px;
+    }
+    .nav__lang {
+      margin: 0;
+      font-size: var(--step--1);
+    }
+    .nav__cta {
+      width: auto;
+      min-height: 2.75rem;
+      padding: 0.6rem 1.1rem;
+      font-size: var(--step--1);
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+
+  if (header) {
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  if (toggle && panel) {
+    const label = toggle.querySelector('.nav__toggle-label');
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.classList.toggle('is-open', open);
+      if (label) label.textContent = open ? toggle.dataset.labelClose! : toggle.dataset.labelOpen!;
+    };
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    panel.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    window.matchMedia('(min-width: 64em)').addEventListener('change', () => setOpen(false));
+  }
+</script>

@@ -1,0 +1,53 @@
+---
+// LOGO PLACEHOLDER: marchio testuale provvisorio.
+// Per usare il logo reale: salva il file in src/assets/logo.svg (o .png) e sostituisci
+// il contenuto di questo componente con <Image src={logo} alt="M&A Washing" height={40} />.
+interface Props {
+  href: string;
+  tone?: 'dark' | 'light';
+  label: string;
+}
+const { href, tone = 'dark', label } = Astro.props;
+---
+
+<a class:list={['logo', `logo--${tone}`]} href={href} aria-label={label}>
+  <span class="logo__mark" aria-hidden="true">
+    <svg viewBox="0 0 40 40" width="40" height="40">
+      <rect width="40" height="40" rx="8" class="logo__bg"></rect>
+      <path d="M-4 40 30 6h10L6 40z" fill="#f4b000"></path>
+      <path d="M10 29V12h3.6l4.4 7.4 4.4-7.4H26v17h-3.6V18.6l-3.6 6h-1.6l-3.6-6V29z" fill="#fff"></path>
+    </svg>
+  </span>
+  <span class="logo__word" aria-hidden="true">M&amp;A <span>Washing</span></span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    min-height: 44px;
+  }
+  .logo__bg {
+    fill: var(--ardesia);
+  }
+  .logo--light .logo__bg {
+    fill: var(--acqua);
+  }
+  .logo__word {
+    font-family: var(--font-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+    color: var(--ardesia);
+    line-height: 1;
+  }
+  .logo__word span {
+    font-weight: 500;
+  }
+  .logo--light .logo__word {
+    color: #fff;
+  }
+</style>

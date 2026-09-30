@@ -1,0 +1,206 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { t, routes, servicePath, homeAnchor, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const year = new Date().getFullYear();
+const socials = (['instagram', 'facebook', 'tiktok'] as const).filter((k) => site.social[k]);
+const socialNames = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok' };
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <Logo href={routes.home[lang]} tone="light" label={`M&A Washing, ${d.nav.home}`} />
+      <p>{d.footer.tagline}</p>
+      {
+        socials.length > 0 && (
+          <ul class="site-footer__social">
+            {socials.map((k) => (
+              <li>
+                <a href={site.social[k]} rel="noopener" target="_blank">
+                  <Icon name={k} label={socialNames[k]} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">{d.footer.services}</h2>
+      <ul class="site-footer__list">
+        {
+          d.services.items.map((s) => (
+            <li>
+              <a href={servicePath(lang, s.id)}>{s.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">{d.footer.company}</h2>
+      <ul class="site-footer__list">
+        <li><a href={homeAnchor(lang, 'about')}>{d.nav.about}</a></li>
+        <li><a href={homeAnchor(lang, 'works')}>{d.nav.works}</a></li>
+        <li><a href={homeAnchor(lang, 'faq')}>{d.nav.faq}</a></li>
+        <li><a href={routes.blog[lang]}>{d.nav.blog}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">{d.footer.contacts}</h2>
+      <ul class="site-footer__list site-footer__contacts">
+        {
+          site.phones.map((p) => (
+            <li>
+              <a href={`tel:${p.tel}`}>
+                <Icon name="phone" />
+                {p.display}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={`mailto:${site.email}`}><Icon name="mail" />{site.email}</a>
+        </li>
+        <li>
+          <a href={homeAnchor(lang, 'area')}><Icon name="pin" />Padova (PD)</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container site-footer__legal">
+    <p>{`© ${year} ${site.legalName}. ${d.footer.vat} ${site.vatNumber}. ${d.footer.rights}`}</p>
+    <ul>
+      <li><a href={routes.privacy[lang]}>{d.footer.privacy}</a></li>
+      <li><a href={routes.cookie[lang]}>{d.footer.cookie}</a></li>
+      <li><button type="button" class="linklike" data-cookie-open>{d.footer.cookieSettings}</button></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ardesia);
+    color: #c9d4d8;
+    padding-top: var(--space-xl);
+    font-size: var(--step--1);
+  }
+  .site-footer a,
+  .site-footer .linklike {
+    color: #e9eef0;
+    text-decoration: none;
+  }
+  .site-footer a:hover,
+  .site-footer .linklike:hover {
+    color: var(--giallo);
+    text-decoration: underline;
+  }
+  .site-footer__grid {
+    display: grid;
+    gap: var(--space-l);
+    grid-template-columns: 1fr;
+    padding-bottom: var(--space-l);
+  }
+  @media (min-width: 40em) {
+    .site-footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 64em) {
+    .site-footer__grid {
+      grid-template-columns: 1.4fr 1fr 0.8fr 1.1fr;
+    }
+  }
+  .site-footer__brand p {
+    margin-top: var(--space-s);
+    max-width: 22rem;
+  }
+  .site-footer__title {
+    font-size: var(--step-0);
+    font-stretch: 110%;
+    color: #fff;
+    margin-bottom: 0.9rem;
+  }
+  .site-footer__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .site-footer__list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+  }
+  .site-footer__contacts :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    color: var(--giallo);
+  }
+  .site-footer__social {
+    list-style: none;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0;
+    margin: var(--space-s) 0 0;
+  }
+  .site-footer__social a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid #3c515c;
+    border-radius: 50%;
+  }
+  .site-footer__social :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+  .site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    padding-block: var(--space-m) calc(var(--space-m) + var(--mobilebar-h, 0px));
+    border-top: 1px solid #2f434e;
+  }
+  .site-footer__legal p {
+    margin: 0;
+  }
+  .site-footer__legal ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+    margin: 0;
+    padding: 0;
+  }
+  .site-footer__legal a,
+  .site-footer__legal .linklike {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .linklike {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+  }
+</style>

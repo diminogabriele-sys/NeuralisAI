@@ -1,0 +1,38 @@
+---
+import SimplePage from './SimplePage.astro';
+import Icon from '../components/Icon.astro';
+import { whatsappLink } from '../config/site';
+import { t, routes, alternatesFor, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<SimplePage
+  lang={lang}
+  title={d.thanks.title}
+  metaTitle={d.meta.thanksTitle}
+  description={d.meta.thanksDescription}
+  alternates={alternatesFor('thanks')}
+  noindex
+>
+  <p class="lead">{d.thanks.text}</p>
+  <p class="thanks__actions">
+    <a class="btn btn--primary" href={whatsappLink(d.whatsapp.message)} target="_blank" rel="noopener">
+      <Icon name="whatsapp" />{d.whatsapp.label}
+    </a>
+    <a class="btn btn--ghost" href={routes.home[lang]}>{d.thanks.back}</a>
+  </p>
+</SimplePage>
+
+<style>
+  .thanks__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: var(--space-m);
+  }
+</style>

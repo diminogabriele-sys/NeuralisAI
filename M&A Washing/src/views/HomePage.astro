@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Services from '../components/Services.astro';
+import Process from '../components/Process.astro';
+import Works from '../components/Works.astro';
+import About from '../components/About.astro';
+import Area from '../components/Area.astro';
+import Faq from '../components/Faq.astro';
+import Contact from '../components/Contact.astro';
+import { t, alternatesFor, type Lang } from '../i18n';
+import { faqSchema } from '../lib/schema';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<Base
+  lang={lang}
+  title={d.meta.homeTitle}
+  description={d.meta.homeDescription}
+  alternates={alternatesFor('home')}
+  schema={[faqSchema(lang)]}
+>
+  <Hero lang={lang} />
+  <Services lang={lang} />
+  <Process lang={lang} />
+  <Works lang={lang} />
+  <About lang={lang} />
+  <Area lang={lang} />
+  <Faq lang={lang} />
+  <Contact lang={lang} />
+</Base>

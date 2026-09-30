@@ -1,0 +1,46 @@
+---
+import SimplePage from '../../views/SimplePage.astro';
+import { site } from '../../config/site';
+import { t, routes, alternatesFor } from '../../i18n';
+const d = t('en');
+---
+
+<SimplePage lang="en" title="Privacy policy" metaTitle={d.meta.privacyTitle} description={d.meta.privacyDescription} alternates={alternatesFor('privacy')}>
+  <p class="placeholder-note">
+    Sample text to be checked and completed by a privacy consultant before publishing (fields in square brackets).
+  </p>
+
+  <h2>Data controller</h2>
+  <p>
+    {site.legalName}, VAT no. {site.vatNumber}, [registered address]. Email: <a href={`mailto:${site.email}`}>{site.email}</a>.
+  </p>
+
+  <h2>Data collected and purposes</h2>
+  <p>
+    Through the quote request form we collect name, phone number, town and optionally email and a description of the job.
+    We use this data only to answer the request, arrange the site visit and send the quote.
+  </p>
+  <p>Legal basis: pre-contractual measures requested by the data subject (Art. 6.1.b GDPR) and consent (Art. 6.1.a GDPR).</p>
+
+  <h2>Retention</h2>
+  <p>
+    We keep the data as long as needed to handle the request and, if we are hired, for the period required by law. [State
+    the period, e.g. 12 months for requests with no follow-up.]
+  </p>
+
+  <h2>Recipients</h2>
+  <p>
+    Form submissions are received through Netlify Forms (Netlify, Inc.), acting as data processor. Data is never sold or
+    passed on to third parties for marketing.
+  </p>
+
+  <h2>Your rights</h2>
+  <p>
+    You can request access, rectification, erasure, restriction or portability of your data, or object to processing, at
+    any time by writing to <a href={`mailto:${site.email}`}>{site.email}</a>. You may also lodge a complaint with the Italian
+    Data Protection Authority (Garante per la protezione dei dati personali).
+  </p>
+
+  <p>For cookies, see the <a href={routes.cookie.en}>cookie policy</a>.</p>
+  <p><small>Last updated: [date]</small></p>
+</SimplePage>

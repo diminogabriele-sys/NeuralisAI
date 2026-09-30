@@ -1,0 +1,118 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { t, homeAnchor, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="section" id={d.anchors.faq} aria-labelledby="faq-title">
+  <div class="container faq">
+    <div class="faq__head" data-reveal>
+      <h2 id="faq-title">{d.faq.title}</h2>
+      <p>{d.faq.more}</p>
+      <p class="faq__links">
+        <a href={`tel:${site.phones[0].tel}`}><Icon name="phone" />{site.phones[0].display}</a>
+        <a href={homeAnchor(lang, 'contact')}>{d.nav.quote}</a>
+      </p>
+    </div>
+    <div class="faq__list" data-reveal>
+      {
+        d.faq.items.map((f, i) => (
+          <details class="faq__item" open={i === 0}>
+            <summary>
+              <span>{f.q}</span>
+              <Icon name="chevron" class="faq__chev" />
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--space-m);
+  }
+  @media (min-width: 56em) {
+    .faq {
+      grid-template-columns: 0.75fr 1.25fr;
+      gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
+    }
+  }
+  @media (min-width: 56em) {
+    .faq__head {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+  .faq__head p {
+    color: var(--text-muted);
+    max-width: 24rem;
+  }
+  .faq__links {
+    display: grid;
+    gap: 0.25rem;
+    font-weight: 700;
+  }
+  .faq__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+  }
+  .faq__links :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .faq__list {
+    border-top: 2px solid var(--ardesia);
+  }
+  .faq__item {
+    border-bottom: 1px solid var(--border);
+  }
+  .faq__item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    min-height: 44px;
+    padding: 1.1rem 0;
+    font-family: var(--font-display);
+    font-stretch: 105%;
+    font-weight: 700;
+    font-size: var(--step-1);
+    line-height: 1.3;
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq__item summary:hover {
+    color: var(--acqua);
+  }
+  .faq__item :global(.faq__chev) {
+    flex: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    color: var(--acqua);
+    transition: transform 0.25s var(--ease-out);
+  }
+  .faq__item[open] :global(.faq__chev) {
+    transform: rotate(180deg);
+  }
+  .faq__item p {
+    margin: 0 0 1.25rem;
+    color: var(--text-muted);
+    max-width: 44rem;
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { t, routes, postPath, formatDate, alternatesFor, type Lang } from '../i18n';
+import { postsFor } from '../lib/blog';
+import { breadcrumbSchema } from '../lib/schema';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const posts = await postsFor(lang);
+const crumbs = [
+  { name: d.nav.home, path: routes.home[lang] },
+  { name: d.blog.title, path: routes.blog[lang] },
+];
+---
+
+<Base
+  lang={lang}
+  title={d.meta.blogTitle}
+  description={d.meta.blogDescription}
+  alternates={alternatesFor('blog')}
+  schema={[breadcrumbSchema(crumbs)]}
+>
+  <section class="section blog">
+    <div class="container">
+      <Breadcrumb label={d.breadcrumb} items={crumbs} />
+      <header class="section-head">
+        <h1>{d.blog.title}</h1>
+        <p>{d.blog.intro}</p>
+      </header>
+
+      <ol class="posts">
+        {
+          posts.map((p) => (
+            <li class="post" data-reveal>
+              <time datetime={p.data.date.toISOString()}>{formatDate(lang, p.data.date)}</time>
+              <h2>
+                <a href={postPath(lang, p.id)}>{p.data.title}</a>
+              </h2>
+              <p>{p.data.description}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+  <CtaBand lang={lang} title={d.blog.ctaTitle} text={d.blog.ctaText} />
+</Base>
+
+<style>
+  .blog {
+    padding-top: var(--space-l);
+  }
+  .posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 2px solid var(--ardesia);
+    max-width: 52rem;
+  }
+  .post {
+    position: relative;
+    padding-block: 1.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .post time {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .post h2 {
+    font-size: var(--step-2);
+    margin: 0.3rem 0 0.5rem;
+  }
+  .post h2 a {
+    color: var(--ardesia);
+    text-decoration: none;
+  }
+  .post h2 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .post:hover h2 a {
+    color: var(--acqua);
+  }
+  .post:has(a:focus-visible) {
+    outline: 3px solid var(--focus);
+    outline-offset: 4px;
+  }
+  .post h2 a:focus-visible {
+    outline: none;
+  }
+  .post p {
+    color: var(--text-muted);
+    margin: 0;
+    max-width: 44rem;
+  }
+</style>

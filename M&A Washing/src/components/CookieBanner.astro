@@ -1,0 +1,93 @@
+---
+import { t, routes, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="cookie" role="region" aria-labelledby="cookie-title" data-cookie hidden>
+  <div class="cookie__inner">
+    <div>
+      <h2 id="cookie-title" class="cookie__title">{d.cookie.title}</h2>
+      <p class="cookie__text">
+        {d.cookie.text} <a href={routes.cookie[lang]}>{d.cookie.more}</a>.
+      </p>
+    </div>
+    <div class="cookie__actions">
+      <button type="button" class="btn btn--ghost" data-cookie-reject>{d.cookie.reject}</button>
+      <button type="button" class="btn btn--primary" data-cookie-accept>{d.cookie.accept}</button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cookie {
+    position: fixed;
+    z-index: 60;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: calc(var(--mobilebar-h, 0px) + env(safe-area-inset-bottom) + 0.75rem);
+    max-width: 40rem;
+    background: var(--bianco);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--acqua);
+    border-radius: var(--radius-m);
+    box-shadow: 0 20px 50px -20px rgba(22, 36, 44, 0.45);
+    padding: var(--space-m);
+  }
+  .cookie[hidden] {
+    display: none;
+  }
+  .cookie__title {
+    font-size: var(--step-1);
+    margin-bottom: 0.4rem;
+  }
+  .cookie__text {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    margin-bottom: var(--space-s);
+  }
+  .cookie__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .cookie__actions .btn {
+    flex: 1 1 10rem;
+  }
+  @media (min-width: 64em) {
+    .cookie {
+      left: 1.5rem;
+      right: auto;
+    }
+  }
+</style>
+
+<script>
+  import { getConsent, setConsent } from '../scripts/consent';
+
+  const banner = document.querySelector<HTMLElement>('[data-cookie]');
+  if (banner) {
+    const show = () => {
+      banner.hidden = false;
+      banner.querySelector<HTMLButtonElement>('[data-cookie-accept]')?.focus({ preventScroll: true });
+    };
+    const hide = () => (banner.hidden = true);
+
+    if (!getConsent()) banner.hidden = false;
+
+    banner.querySelector('[data-cookie-accept]')?.addEventListener('click', () => {
+      setConsent(true);
+      hide();
+    });
+    banner.querySelector('[data-cookie-reject]')?.addEventListener('click', () => {
+      setConsent(false);
+      hide();
+    });
+    document.querySelectorAll('[data-cookie-open]').forEach((b) => b.addEventListener('click', show));
+    document.addEventListener('consent-change', hide);
+  }
+</script>

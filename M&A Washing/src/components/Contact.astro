@@ -1,0 +1,448 @@
+---
+import Icon from './Icon.astro';
+import { site, whatsappLink } from '../config/site';
+import { t, routes, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  preselect?: string; // id del servizio da preselezionare
+}
+const { lang, preselect } = Astro.props;
+const d = t(lang);
+const f = d.contact.form;
+const socials = (['instagram', 'facebook', 'tiktok'] as const).filter((k) => site.social[k]);
+const socialNames = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok' };
+---
+
+<section class="section section--alt" id={d.anchors.contact} aria-labelledby="contatti-title">
+  <div class="container contact">
+    <header class="contact__head" data-reveal>
+      <h2 id="contatti-title">{d.contact.title}</h2>
+      <p class="contact__intro">{d.contact.intro}</p>
+    </header>
+
+    <div class="contact__side" data-reveal>
+      <h3 class="contact__sub contact__sub--first">{d.contact.directTitle}</h3>
+      <ul class="contact__list">
+        {
+          site.phones.map((p) => (
+            <li>
+              <a href={`tel:${p.tel}`}>
+                <Icon name="phone" />
+                <span>
+                  <small>{d.contact.phoneLabel}</small>
+                  {p.display}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={`mailto:${site.email}`}>
+            <Icon name="mail" />
+            <span><small>{d.contact.emailLabel}</small>{site.email}</span>
+          </a>
+        </li>
+        <li>
+          <a href={whatsappLink(d.whatsapp.message)} target="_blank" rel="noopener">
+            <Icon name="whatsapp" />
+            <span><small>WhatsApp</small>{d.contact.whatsappLabel}</span>
+          </a>
+        </li>
+      </ul>
+
+      {
+        socials.length > 0 && (
+          <>
+            <h3 class="contact__sub">{d.contact.socialTitle}</h3>
+            <ul class="contact__social">
+              {socials.map((k) => (
+                <li>
+                  <a href={site.social[k]} target="_blank" rel="noopener">
+                    <Icon name={k} />
+                    {socialNames[k]}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+    </div>
+
+    <form
+      class="form"
+      name="preventivo"
+      method="POST"
+      action={routes.thanks[lang]}
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      data-quote-form
+      data-msg-required={f.errorRequired}
+      data-msg-phone={f.errorPhone}
+      data-msg-email={f.errorEmail}
+      data-msg-privacy={f.errorPrivacy}
+      data-msg-sending={f.sending}
+      data-reveal
+    >
+      <input type="hidden" name="form-name" value="preventivo" />
+      <input type="hidden" name="lingua" value={lang} />
+      <p class="visually-hidden">
+        <label>{f.honeypot} <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+      </p>
+
+      <p class="form__summary" role="alert" data-form-summary hidden>{f.errorSummary}</p>
+
+      <div class="form__row">
+        <div class="field">
+          <label for="f-nome">{f.name} <span class="field__req">({f.required})</span></label>
+          <input id="f-nome" name="nome" type="text" autocomplete="name" required aria-describedby="e-nome" />
+          <p class="field__error" id="e-nome" data-error></p>
+        </div>
+        <div class="field">
+          <label for="f-telefono">{f.phone} <span class="field__req">({f.required})</span></label>
+          <input
+            id="f-telefono"
+            name="telefono"
+            type="tel"
+            autocomplete="tel"
+            inputmode="tel"
+            required
+            pattern="[\d\s+\-\(\)\.\/]{6,}"
+            aria-describedby="e-telefono"
+          />
+          <p class="field__error" id="e-telefono" data-error></p>
+        </div>
+      </div>
+
+      <div class="form__row">
+        <div class="field">
+          <label for="f-email">{f.email} <span class="field__opt">({f.optional})</span></label>
+          <input id="f-email" name="email" type="email" autocomplete="email" aria-describedby="e-email" />
+          <p class="field__error" id="e-email" data-error></p>
+        </div>
+        <div class="field">
+          <label for="f-comune">{f.city} <span class="field__req">({f.required})</span></label>
+          <input
+            id="f-comune"
+            name="comune"
+            type="text"
+            autocomplete="address-level2"
+            required
+            list="comuni"
+            aria-describedby="e-comune"
+          />
+          <datalist id="comuni">
+            {site.areaServed.map((c) => <option value={c} />)}
+          </datalist>
+          <p class="field__error" id="e-comune" data-error></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-servizio">{f.service} <span class="field__opt">({f.optional})</span></label>
+        <select id="f-servizio" name="servizio">
+          <option value="">{f.servicePlaceholder}</option>
+          {
+            d.services.items.map((s) => (
+              <option value={s.name} selected={s.id === preselect}>
+                {s.name}
+              </option>
+            ))
+          }
+          <option value={f.serviceOther}>{f.serviceOther}</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="f-messaggio">{f.message} <span class="field__opt">({f.optional})</span></label>
+        <textarea id="f-messaggio" name="messaggio" rows="4" aria-describedby="h-messaggio"></textarea>
+        <p class="field__hint" id="h-messaggio">{f.messageHint}</p>
+      </div>
+
+      <div class="field field--check">
+        <input id="f-privacy" name="privacy" type="checkbox" value="accettata" required aria-describedby="e-privacy" />
+        <label for="f-privacy">
+          {f.privacy} <a href={routes.privacy[lang]}>{f.privacyLink}</a>{' '}{f.privacyAfter}
+        </label>
+        <p class="field__error" id="e-privacy" data-error></p>
+      </div>
+
+      <button class="btn btn--primary form__submit" type="submit">{f.submit}</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contact {
+    display: grid;
+    gap: var(--space-l);
+    align-items: start;
+  }
+  @media (min-width: 56em) {
+    .contact {
+      grid-template-columns: 0.8fr 1.2fr;
+      grid-template-areas: 'head form' 'side form';
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(2rem, 5vw, 5rem);
+      row-gap: 0;
+    }
+    .contact__head {
+      grid-area: head;
+    }
+    .contact__side {
+      grid-area: side;
+    }
+    .form {
+      grid-area: form;
+    }
+  }
+  .contact__intro {
+    margin-bottom: 0;
+  }
+  /* su mobile il form viene subito dopo il titolo, i recapiti dopo */
+  .contact__side {
+    order: 1;
+  }
+  .contact__sub--first {
+    margin-top: 0;
+  }
+  @media (min-width: 56em) {
+    .contact__sub--first {
+      margin-top: var(--space-l);
+    }
+  }
+  .contact__intro {
+    color: var(--text-muted);
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+  .contact__sub {
+    font-size: var(--step-0);
+    margin: var(--space-l) 0 0.75rem;
+  }
+  .contact__list,
+  .contact__social {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .contact__list a {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.35rem 0;
+    min-height: 44px;
+    color: var(--ardesia);
+    font-weight: 700;
+    font-size: var(--step-1);
+    text-decoration: none;
+  }
+  .contact__list a:hover span {
+    text-decoration: underline;
+  }
+  .contact__list :global(svg) {
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.6rem;
+    border-radius: 50%;
+    background: var(--bianco);
+    color: var(--acqua);
+  }
+  .contact__list span {
+    display: grid;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+  .contact__list small {
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .contact__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .contact__social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--cemento);
+    border-radius: 999px;
+    color: var(--ardesia);
+    font-weight: 600;
+    text-decoration: none;
+    background: var(--bianco);
+  }
+  .contact__social a:hover {
+    border-color: var(--ardesia);
+  }
+  .contact__social :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  /* ---------- Form ---------- */
+  .form {
+    background: var(--bianco);
+    border-radius: var(--radius-m);
+    padding: clamp(1.25rem, 1rem + 2vw, 2.5rem);
+    box-shadow: 0 30px 60px -40px rgba(22, 36, 44, 0.5);
+    display: grid;
+    gap: 1.1rem;
+  }
+  .form__row {
+    display: grid;
+    gap: 1.1rem;
+  }
+  @media (min-width: 40em) {
+    .form__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .field {
+    display: grid;
+    gap: 0.35rem;
+    align-content: start;
+  }
+  .field label {
+    font-weight: 700;
+    font-size: var(--step--1);
+  }
+  .field__req,
+  .field__opt {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+  .field input:not([type='checkbox']),
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 0.85rem;
+    border: 1.5px solid #768085; /* 4:1 sul bianco */
+    border-radius: var(--radius-s);
+    background: var(--bianco);
+    color: var(--ardesia);
+    font: inherit;
+    font-size: max(16px, 1rem); /* evita lo zoom automatico su iOS */
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 7rem;
+  }
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 1px;
+    border-color: var(--acqua);
+  }
+  .field [aria-invalid='true'] {
+    border-color: #b3261e !important;
+  }
+  .field__hint {
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .field__error {
+    margin: 0;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: #b3261e;
+  }
+  .field__error:empty {
+    display: none;
+  }
+  .field--check {
+    grid-template-columns: auto 1fr;
+    column-gap: 0.75rem;
+    align-items: start;
+  }
+  .field--check input {
+    width: 1.35rem;
+    height: 1.35rem;
+    margin: 0.15rem 0 0;
+    accent-color: var(--acqua);
+  }
+  .field--check label {
+    font-weight: 400;
+    font-size: var(--step--1);
+  }
+  .field--check .field__error {
+    grid-column: 2;
+  }
+  .form__summary {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid #b3261e;
+    background: #fbeceb;
+    color: #8c1d18;
+    font-weight: 600;
+  }
+  .form__submit {
+    justify-self: start;
+    min-width: 14rem;
+  }
+  @media (max-width: 39.99em) {
+    .form__submit {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
+  if (form) {
+    form.noValidate = true; // validazione con messaggi personalizzati; senza JS resta quella nativa
+    const summary = form.querySelector<HTMLElement>('[data-form-summary]')!;
+    const msg = form.dataset;
+
+    const check = (el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
+      const error = document.getElementById(el.getAttribute('aria-describedby')?.split(' ')[0] ?? '');
+      let text = '';
+      const v = el.validity;
+      if (el instanceof HTMLInputElement && el.type === 'checkbox') {
+        if (v.valueMissing) text = msg.msgPrivacy!;
+      } else if (v.valueMissing) text = msg.msgRequired!;
+      else if (el instanceof HTMLInputElement && el.type === 'tel' && v.patternMismatch) text = msg.msgPhone!;
+      else if (el instanceof HTMLInputElement && el.type === 'email' && v.typeMismatch) text = msg.msgEmail!;
+      if (error && error.hasAttribute('data-error')) error.textContent = text;
+      el.setAttribute('aria-invalid', text ? 'true' : 'false');
+      return !text;
+    };
+
+    const fields = Array.from(form.querySelectorAll<HTMLInputElement>('input[required], input[type=email], input[type=tel]'));
+    fields.forEach((el) =>
+      el.addEventListener('blur', () => {
+        if (el.value || el.getAttribute('aria-invalid') === 'true') check(el);
+      }),
+    );
+    fields
+      .filter((el) => el.type === 'checkbox')
+      .forEach((el) => el.addEventListener('change', () => check(el)));
+
+    form.addEventListener('submit', (e) => {
+      const invalid = fields.filter((el) => !check(el));
+      if (invalid.length) {
+        e.preventDefault();
+        summary.hidden = false;
+        invalid[0].focus();
+        return;
+      }
+      summary.hidden = true;
+      const btn = form.querySelector<HTMLButtonElement>('button[type=submit]');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = msg.msgSending!;
+      }
+    });
+  }
+</script>

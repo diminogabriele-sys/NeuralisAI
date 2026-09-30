@@ -1,0 +1,169 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Contact from '../components/Contact.astro';
+import { t, routes, servicePath, homeAnchor, type Lang } from '../i18n';
+import { img } from '../lib/images';
+import { serviceSchema, breadcrumbSchema } from '../lib/schema';
+
+interface Props {
+  lang: Lang;
+  id: string;
+}
+const { lang, id } = Astro.props;
+const d = t(lang);
+const s = d.services.items.find((x) => x.id === id)!;
+const path = servicePath(lang, id);
+const others = d.services.items.filter((x) => x.id !== id);
+const crumbs = [
+  { name: d.nav.home, path: routes.home[lang] },
+  { name: d.nav.services, path: homeAnchor(lang, 'services') },
+  { name: s.name, path },
+];
+---
+
+<Base
+  lang={lang}
+  title={s.metaTitle}
+  description={s.metaDescription}
+  alternates={{ it: servicePath('it', id), en: servicePath('en', id) }}
+  schema={[serviceSchema(lang, s, path), breadcrumbSchema(crumbs)]}
+>
+  <article>
+    <header class="svc-hero">
+      <div class="container svc-hero__grid">
+        <div>
+          <Breadcrumb label={d.breadcrumb} items={crumbs} />
+          <h1>{s.name}</h1>
+          <p class="lead">{s.short}</p>
+          <a class="btn btn--primary" href="#richiesta">{d.nav.quote}</a>
+        </div>
+        <Image
+          src={img(s.image)}
+          alt=""
+          widths={[480, 800, 960]}
+          sizes="(min-width: 56em) 40vw, 100vw"
+          loading="eager"
+          class="svc-hero__img"
+        />
+      </div>
+    </header>
+
+    <div class="section">
+      <div class="container svc-body">
+        <div class="prose">
+          {s.body.map((p) => <p>{p}</p>)}
+          <h2>{d.services.suitableTitle}</h2>
+          <p>{s.suitable}</p>
+        </div>
+        <aside class="svc-includes" aria-labelledby="include-title">
+          <h2 id="include-title">{d.services.includesTitle}</h2>
+          <ul class="checklist">
+            {s.includes.map((i) => <li>{i}</li>)}
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  <div id="richiesta">
+    <Contact lang={lang} preselect={id} />
+  </div>
+
+  <nav class="section" aria-labelledby="altri-title">
+    <div class="container">
+      <h2 id="altri-title" class="others__title">{d.services.otherServices}</h2>
+      <ul class="others">
+        {
+          others.map((o) => (
+            <li>
+              <a href={servicePath(lang, o.id)}>{o.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+</Base>
+
+<style>
+  .svc-hero {
+    background: var(--bg-alt);
+    padding-block: var(--space-l) var(--space-xl);
+  }
+  .svc-hero__grid {
+    display: grid;
+    gap: var(--space-l);
+    align-items: center;
+  }
+  @media (min-width: 56em) {
+    .svc-hero__grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+  }
+  .svc-hero h1 {
+    max-width: 16ch;
+  }
+  .svc-hero .lead {
+    color: var(--text-muted);
+    margin-bottom: var(--space-m);
+  }
+  .svc-hero__img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-m);
+  }
+  .svc-body {
+    display: grid;
+    gap: var(--space-l);
+    align-items: start;
+  }
+  @media (min-width: 56em) {
+    .svc-body {
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+  }
+  .svc-body .prose p:first-child {
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+  .svc-includes {
+    padding: var(--space-m);
+    border-top: 4px solid var(--acqua);
+    background: var(--bg-alt);
+    border-radius: 0 0 var(--radius-m) var(--radius-m);
+  }
+  .svc-includes h2 {
+    font-size: var(--step-1);
+  }
+  .others__title {
+    font-size: var(--step-2);
+  }
+  .others {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .others a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border: 1.5px solid var(--ardesia);
+    border-radius: 999px;
+    color: var(--ardesia);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .others a:hover {
+    background: var(--ardesia);
+    color: #fff;
+  }
+</style>

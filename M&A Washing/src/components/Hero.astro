@@ -1,0 +1,193 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { t, homeAnchor, type Lang } from '../i18n';
+import { img } from '../lib/images';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const sizes = '(min-width: 64em) 44vw, 100vw';
+---
+
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__text">
+      <h1>{d.hero.title}</h1>
+      <p class="lead">{d.hero.lead}</p>
+      <div class="hero__ctas">
+        <a class="btn btn--primary" href={homeAnchor(lang, 'contact')}>{d.hero.ctaPrimary}</a>
+        <a class="btn btn--ghost" href={`tel:${site.phones[0].tel}`}>
+          <Icon name="phone" />
+          {d.hero.ctaSecondary}
+        </a>
+      </div>
+      <ul class="hero__trust checklist">
+        {d.hero.trust.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+
+    <!-- Elemento distintivo: la "passata" diagonale che rivela la superficie pulita -->
+    <figure class="wash" aria-label={`${d.hero.before} / ${d.hero.after}`}>
+      <Picture
+        src={img('hero-prima')}
+        alt={d.hero.imageAltBefore}
+        widths={[480, 800, 1200, 1600]}
+        sizes={sizes}
+        formats={['avif', 'webp']}
+        loading="eager"
+        fetchpriority="high"
+        class="wash__img"
+      />
+      <div class="wash__edge">
+        <div class="wash__after">
+          <Picture
+            src={img('hero-dopo')}
+            alt={d.hero.imageAltAfter}
+            widths={[480, 800, 1200, 1600]}
+            sizes={sizes}
+            formats={['avif', 'webp']}
+            loading="eager"
+            class="wash__img"
+          />
+        </div>
+      </div>
+      <span class="wash__tag wash__tag--after" aria-hidden="true">{d.hero.after}</span>
+      <span class="wash__tag wash__tag--before" aria-hidden="true">{d.hero.before}</span>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background: var(--bg-alt);
+    padding-block: var(--space-l) var(--space-xl);
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid;
+    gap: var(--space-l);
+    align-items: center;
+  }
+  @media (min-width: 64em) {
+    .hero {
+      padding-block: var(--space-xl);
+    }
+    .hero__grid {
+      grid-template-columns: 1.05fr 1fr;
+      gap: clamp(2rem, 4vw, 4.5rem);
+    }
+  }
+  .hero h1 {
+    max-width: 14ch;
+  }
+  .hero .lead {
+    color: var(--text-muted);
+    margin-bottom: var(--space-m);
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: var(--space-m);
+  }
+  .hero__trust {
+    font-weight: 600;
+  }
+  @media (min-width: 40em) {
+    .hero__trust {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.5rem;
+    }
+    .hero__trust li {
+      white-space: nowrap;
+    }
+  }
+
+  /* ---------- La passata ---------- */
+  @property --p {
+    syntax: '<percentage>';
+    inherits: true;
+    initial-value: 40%;
+  }
+  .wash {
+    --p: 40%;
+    position: relative;
+    margin: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    background: #6d6962;
+    box-shadow: 0 30px 60px -30px rgba(22, 36, 44, 0.55);
+  }
+  @media (min-width: 64em) {
+    .wash {
+      aspect-ratio: 5 / 5.2;
+    }
+  }
+  .wash :global(picture),
+  .wash :global(.wash__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .wash__after {
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(calc(var(--p) + 14%) 0, 100% 0, 100% 100%, calc(var(--p) - 14%) 100%);
+  }
+  /* linea d'acqua lungo il bordo della passata: ombra netta bianca del livello "dopo" */
+  .wash__edge {
+    position: absolute;
+    inset: 0;
+    filter: drop-shadow(-4px 0 0 rgba(255, 255, 255, 0.75));
+  }
+  .wash__tag {
+    position: absolute;
+    bottom: 1rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--radius-s);
+    font-weight: 700;
+    font-size: var(--step--1);
+    line-height: 1.2;
+  }
+  .wash__tag--after {
+    right: 1rem;
+    background: var(--giallo);
+    color: var(--ardesia);
+  }
+  .wash__tag--before {
+    left: 1rem;
+    background: var(--ardesia);
+    color: #fff;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .wash {
+      animation: wash-pass 1.9s var(--ease-out) 0.35s both;
+    }
+    .wash__tag {
+      animation: tag-in 0.5s ease 1.6s both;
+    }
+  }
+  @keyframes wash-pass {
+    from {
+      --p: 116%;
+    }
+    to {
+      --p: 40%;
+    }
+  }
+  @keyframes tag-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+</style>

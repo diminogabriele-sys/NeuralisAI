@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import { type Lang, type Alternates } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  metaTitle: string;
+  description: string;
+  alternates: Alternates;
+  noindex?: boolean;
+}
+const { lang, title, metaTitle, description, alternates, noindex } = Astro.props;
+---
+
+<Base lang={lang} title={metaTitle} description={description} alternates={alternates} noindex={noindex}>
+  <section class="section simple">
+    <div class="container prose">
+      <h1>{title}</h1>
+      <slot />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .simple {
+    padding-top: var(--space-l);
+    min-height: 55vh;
+  }
+  .simple h1 {
+    font-size: var(--step-3);
+  }
+</style>

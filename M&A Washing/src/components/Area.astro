@@ -1,0 +1,151 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const q = encodeURIComponent(site.mapQuery);
+const embed = `https://www.google.com/maps?q=${q}&z=11&output=embed&hl=${lang}`;
+const openUrl = `https://www.google.com/maps/search/?api=1&query=${q}`;
+---
+
+<section class="section section--alt" id={d.anchors.area} aria-labelledby="zona-title">
+  <div class="container area">
+    <div data-reveal>
+      <h2 id="zona-title">{d.area.title}</h2>
+      <p class="area__text">{d.area.text}</p>
+      <ul class="area__list">
+        {
+          site.areaServed.map((c) => (
+            <li>
+              <Icon name="pin" />
+              {c}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- La mappa Google viene caricata solo dopo il consenso ai servizi esterni -->
+    <div class="map" data-map data-src={embed} data-title={d.area.mapTitle} data-reveal>
+      <div class="map__consent" data-map-consent>
+        <Icon name="pin" class="map__pin" />
+        <p>{d.area.mapConsent}</p>
+        <div class="map__actions">
+          <button type="button" class="btn btn--primary" data-map-load>{d.area.mapLoad}</button>
+          <a class="btn btn--ghost" href={openUrl} target="_blank" rel="noopener">{d.area.mapOpen}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .area {
+    display: grid;
+    gap: var(--space-l);
+    align-items: start;
+  }
+  @media (min-width: 56em) {
+    .area {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+  }
+  .area__text {
+    color: var(--text-muted);
+    max-width: 34rem;
+  }
+  .area__list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-m) 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 0.5rem 1rem;
+    font-weight: 600;
+  }
+  .area__list li {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .area__list :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    color: var(--acqua);
+    flex: none;
+  }
+  .map {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    background:
+      linear-gradient(90deg, rgba(22, 36, 44, 0.06) 1px, transparent 1px) 0 0 / 32px 32px,
+      linear-gradient(rgba(22, 36, 44, 0.06) 1px, transparent 1px) 0 0 / 32px 32px,
+      var(--bianco);
+    border: 1px solid var(--border);
+  }
+  .map :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .map__consent {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: var(--space-m);
+    text-align: center;
+  }
+  .map__consent p {
+    max-width: 26rem;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  .map__consent :global(.map__pin) {
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--acqua);
+  }
+  .map__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+</style>
+
+<script>
+  import { getConsent, setConsent } from '../scripts/consent';
+
+  const map = document.querySelector<HTMLElement>('[data-map]');
+  if (map) {
+    const load = () => {
+      if (map.querySelector('iframe')) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = map.dataset.src!;
+      iframe.title = map.dataset.title!;
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      map.appendChild(iframe);
+      map.querySelector('[data-map-consent]')?.remove();
+    };
+    if (getConsent()?.media) load();
+    document.addEventListener('consent-change', (e) => {
+      if ((e as CustomEvent).detail?.media) load();
+    });
+    map.querySelector('[data-map-load]')?.addEventListener('click', () => setConsent(true));
+  }
+</script>

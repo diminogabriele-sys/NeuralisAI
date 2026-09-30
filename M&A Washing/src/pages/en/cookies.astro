@@ -1,0 +1,27 @@
+---
+import SimplePage from '../../views/SimplePage.astro';
+import { t, alternatesFor } from '../../i18n';
+const d = t('en');
+---
+
+<SimplePage lang="en" title="Cookie policy" metaTitle={d.meta.cookieTitle} description={d.meta.cookieDescription} alternates={alternatesFor('cookie')}>
+  <p class="placeholder-note">Sample text to be checked by a consultant before publishing.</p>
+
+  <h2>Technical cookies</h2>
+  <p>
+    This site uses no profiling cookies and no analytics. We only store the choice you make in the banner in your browser
+    (localStorage), so it is not shown on every visit.
+  </p>
+
+  <h2>Third-party services</h2>
+  <p>
+    <strong>Google Maps</strong> (Google Ireland Ltd.) shows the map of the area we serve. It loads only after your consent
+    and may set its own cookies. Privacy policy:
+    <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">policies.google.com/privacy</a>.
+  </p>
+  <p>The WhatsApp, Instagram and Facebook buttons are plain links: nothing loads until you open them.</p>
+
+  <h2>Changing your choice</h2>
+  <p>You can change your mind at any time with the button below or the "Cookie preferences" link at the bottom of every page.</p>
+  <p><button type="button" class="btn btn--ghost" data-cookie-open>{d.footer.cookieSettings}</button></p>
+</SimplePage>

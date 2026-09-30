@@ -1,0 +1,120 @@
+---
+import Icon from './Icon.astro';
+import { site, whatsappLink } from '../config/site';
+import { t, homeAnchor, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const wa = whatsappLink(d.whatsapp.message);
+---
+
+<!-- Su mobile: barra fissa con le tre azioni principali. Su desktop: solo il pulsante WhatsApp flottante. -->
+<div class="mobilebar">
+  <a class="mobilebar__item" href={`tel:${site.phones[0].tel}`}>
+    <Icon name="phone" />
+    <span>{d.nav.call}</span>
+  </a>
+  <a class="mobilebar__item" href={wa} target="_blank" rel="noopener">
+    <Icon name="whatsapp" />
+    <span>WhatsApp</span>
+  </a>
+  <a class="mobilebar__item mobilebar__item--cta" href={homeAnchor(lang, 'contact')}>
+    <span>{d.nav.quoteShort}</span>
+  </a>
+</div>
+
+<a class="wa-float" href={wa} target="_blank" rel="noopener">
+  <Icon name="whatsapp" />
+  <span class="visually-hidden">{d.whatsapp.label}</span>
+</a>
+
+<style>
+  :global(body) {
+    --mobilebar-h: 4rem;
+  }
+  .mobilebar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.3fr;
+    height: calc(var(--mobilebar-h) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--ardesia);
+    box-shadow: 0 -8px 24px -12px rgba(22, 36, 44, 0.45);
+  }
+  .mobilebar__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    color: #fff;
+    font-weight: 700;
+    font-size: var(--step--1);
+    text-decoration: none;
+    border-right: 1px solid #2f434e;
+  }
+  .mobilebar__item:hover {
+    color: #fff;
+    background: var(--ardesia-2);
+  }
+  .mobilebar__item :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .mobilebar__item--cta {
+    background: var(--giallo);
+    color: var(--ardesia);
+    border: 0;
+  }
+  .mobilebar__item--cta:hover {
+    background: var(--giallo-scuro);
+    color: var(--ardesia);
+  }
+  .mobilebar__item:focus-visible {
+    outline-offset: -4px;
+    outline-color: var(--giallo);
+  }
+  .mobilebar__item--cta:focus-visible {
+    outline-color: var(--ardesia);
+  }
+
+  .wa-float {
+    display: none;
+  }
+
+  @media (min-width: 64em) {
+    :global(body) {
+      --mobilebar-h: 0px;
+    }
+    .mobilebar {
+      display: none;
+    }
+    .wa-float {
+      position: fixed;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      z-index: 40;
+      display: grid;
+      place-items: center;
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      background: #177a42; /* verde WhatsApp scurito: contrasto 5.4:1 col bianco */
+      color: #fff;
+      box-shadow: 0 10px 24px -8px rgba(22, 36, 44, 0.5);
+      transition: transform 0.2s var(--ease-out);
+    }
+    .wa-float:hover {
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    .wa-float :global(svg) {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+</style>

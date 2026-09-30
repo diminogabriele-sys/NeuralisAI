@@ -1,0 +1,190 @@
+---
+import { Image } from 'astro:assets';
+import { img } from '../lib/images';
+
+interface Props {
+  image: string; // nome base: usa <nome>-prima e <nome>-dopo
+  caption: string;
+  place: string;
+  label: string;
+  beforeLabel: string;
+  afterLabel: string;
+}
+const { image, caption, place, label, beforeLabel, afterLabel } = Astro.props;
+const sizes = '(min-width: 56em) 45vw, 100vw';
+---
+
+<figure class="ba-card" data-reveal>
+  <div class="ba" data-ba style="--pos: 50%">
+    <Image
+      src={img(`${image}-dopo`)}
+      alt={`${caption}, ${place}: ${afterLabel.toLowerCase()}`}
+      widths={[480, 800, 1200]}
+      sizes={sizes}
+      loading="lazy"
+      class="ba__img"
+    />
+    <div class="ba__before">
+      <Image
+        src={img(`${image}-prima`)}
+        alt={`${caption}, ${place}: ${beforeLabel.toLowerCase()}`}
+        widths={[480, 800, 1200]}
+        sizes={sizes}
+        loading="lazy"
+        class="ba__img"
+      />
+    </div>
+    <span class="ba__tag ba__tag--before" aria-hidden="true">{beforeLabel}</span>
+    <span class="ba__tag ba__tag--after" aria-hidden="true">{afterLabel}</span>
+    <span class="ba__handle" aria-hidden="true"></span>
+    <input
+      class="ba__range"
+      type="range"
+      min="0"
+      max="100"
+      value="50"
+      step="1"
+      aria-label={`${label}: ${caption}`}
+      aria-valuetext="50%"
+      data-ba-range
+    />
+  </div>
+  <figcaption class="ba-card__cap">
+    <strong>{caption}</strong>
+    <span>{place}</span>
+  </figcaption>
+</figure>
+
+<style>
+  .ba-card {
+    margin: 0;
+  }
+  .ba {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    background: #6d6962;
+    touch-action: pan-y;
+    user-select: none;
+  }
+  .ba :global(.ba__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ba__before {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+  .ba__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 3px;
+    margin-left: -1.5px;
+    background: #fff;
+    pointer-events: none;
+  }
+  .ba__handle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2.75rem;
+    height: 2.75rem;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--giallo)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316242c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6-6 6 6 6M15 6l6 6-6 6'/%3E%3C/svg%3E")
+      center / 60% no-repeat;
+    box-shadow: 0 4px 14px rgba(22, 36, 44, 0.4);
+  }
+  .ba:has(.ba__range:focus-visible) .ba__handle::after {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+  .ba__range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .ba__tag {
+    position: absolute;
+    top: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-s);
+    font-size: var(--step--1);
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .ba__tag--before {
+    left: 0.75rem;
+    background: var(--ardesia);
+    color: #fff;
+  }
+  .ba__tag--after {
+    right: 0.75rem;
+    background: var(--giallo);
+    color: var(--ardesia);
+  }
+  .ba-card__cap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding-top: 0.75rem;
+  }
+  .ba-card__cap span {
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((ba) => {
+    const range = ba.querySelector<HTMLInputElement>('[data-ba-range]')!;
+    const set = (v: number) => {
+      ba.style.setProperty('--pos', `${v}%`);
+      range.setAttribute('aria-valuetext', `${Math.round(v)}%`);
+    };
+    range.addEventListener('input', () => set(Number(range.value)));
+
+    // Un unico suggerimento di movimento quando il confronto entra nel viewport
+    if (!reduce && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries[0].isIntersecting) return;
+          io.disconnect();
+          let touched = false;
+          range.addEventListener('pointerdown', () => (touched = true), { once: true });
+          range.addEventListener('keydown', () => (touched = true), { once: true });
+          const start = performance.now();
+          const dur = 1400;
+          const step = (now: number) => {
+            if (touched) return;
+            const k = Math.min(1, (now - start) / dur);
+            const v = 50 - 22 * Math.sin(k * Math.PI);
+            set(v);
+            range.value = String(Math.round(v));
+            if (k < 1) requestAnimationFrame(step);
+          };
+          setTimeout(() => requestAnimationFrame(step), 250);
+        },
+        { threshold: 0.6 },
+      );
+      io.observe(ba);
+    }
+  });
+</script>

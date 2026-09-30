@@ -1,0 +1,89 @@
+---
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/public-sans';
+import '../styles/global.css';
+import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileBar from '../components/MobileBar.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import { site } from '../config/site';
+import { t, routes, type Lang, type Alternates } from '../i18n';
+import { businessSchema } from '../lib/schema';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  alternates: Alternates;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  schema?: object[];
+}
+
+const { lang, title, description, alternates, ogType = 'website', noindex = false, schema = [] } = Astro.props;
+const d = t(lang);
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL('/og-image.jpg', site.url).href;
+const jsonLd = [businessSchema(lang), ...schema];
+const xDefault = alternates.it ?? routes.home.it;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
+    {
+      !noindex &&
+        Object.entries(alternates).map(([l, path]) => (
+          <link rel="alternate" hreflang={l} href={new URL(path!, site.url).href} />
+        ))
+    }
+    {!noindex && <link rel="alternate" hreflang="x-default" href={new URL(xDefault, site.url).href} />}
+
+    <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#16242c" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={d.locale} />
+    <meta property="og:locale:alternate" content={lang === 'it' ? 'en_GB' : 'it_IT'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {jsonLd.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#contenuto">{d.nav.skip}</a>
+    <Header lang={lang} alternates={alternates} />
+    <main id="contenuto" tabindex="-1">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <MobileBar lang={lang} />
+    <CookieBanner lang={lang} />
+
+    <script>
+      import '../scripts/reveal';
+    </script>
+  </body>
+</html>

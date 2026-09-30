@@ -1,0 +1,29 @@
+# Configurazione Netlify. Se il sito è in una sottocartella del repository,
+# imposta "Base directory" = "M&A Washing" nelle impostazioni del sito su Netlify.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# File con hash nel nome: cache lunga
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Reindirizza il dominio senza www verso quello con www (aggiorna col dominio reale)
+# [[redirects]]
+#   from = "https://mawashing.it/*"
+#   to = "https://www.mawashing.it/:splat"
+#   status = 301
+#   force = true

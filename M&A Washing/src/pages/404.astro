@@ -1,0 +1,19 @@
+---
+import SimplePage from '../views/SimplePage.astro';
+import { t, routes } from '../i18n';
+const it = t('it');
+const en = t('en');
+---
+
+<SimplePage
+  lang="it"
+  title={it.notFound.title}
+  metaTitle={it.meta.notFoundTitle}
+  description={it.notFound.text}
+  alternates={{}}
+  noindex
+>
+  <p class="lead">{it.notFound.text}</p>
+  <p><a class="btn btn--primary" href={routes.home.it}>{it.notFound.back}</a></p>
+  <p lang="en">{en.notFound.title} <a href={routes.home.en}>{en.notFound.back}</a></p>
+</SimplePage>

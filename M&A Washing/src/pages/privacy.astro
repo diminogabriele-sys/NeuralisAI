@@ -1,0 +1,50 @@
+---
+import SimplePage from '../views/SimplePage.astro';
+import { site } from '../config/site';
+import { t, routes, alternatesFor } from '../i18n';
+const d = t('it');
+---
+
+<SimplePage lang="it" title="Privacy policy" metaTitle={d.meta.privacyTitle} description={d.meta.privacyDescription} alternates={alternatesFor('privacy')}>
+  <p class="placeholder-note">
+    Testo di esempio da far verificare e completare da un consulente privacy prima della pubblicazione (campi tra
+    parentesi quadre).
+  </p>
+
+  <h2>Titolare del trattamento</h2>
+  <p>
+    {site.legalName}, P.IVA {site.vatNumber}, [indirizzo della sede]. Email: <a href={`mailto:${site.email}`}>{site.email}</a>.
+  </p>
+
+  <h2>Dati raccolti e finalità</h2>
+  <p>
+    Tramite il modulo di richiesta preventivo raccogliamo nome, telefono, comune ed eventualmente email e descrizione del
+    lavoro. Usiamo questi dati solo per rispondere alla richiesta, organizzare il sopralluogo e inviare il preventivo.
+  </p>
+  <p>
+    Base giuridica: esecuzione di misure precontrattuali richieste dall'interessato (art. 6.1.b GDPR) e consenso (art. 6.1.a
+    GDPR).
+  </p>
+
+  <h2>Conservazione</h2>
+  <p>
+    Conserviamo i dati per il tempo necessario a gestire la richiesta e, in caso di incarico, per la durata prevista dagli
+    obblighi di legge. [Indicare il periodo, ad esempio 12 mesi per le richieste senza seguito.]
+  </p>
+
+  <h2>Destinatari</h2>
+  <p>
+    I dati inviati dal modulo sono ricevuti tramite il servizio Netlify Forms (Netlify, Inc.), che agisce come responsabile
+    del trattamento. I dati non vengono venduti né ceduti a terzi per finalità di marketing.
+  </p>
+
+  <h2>Diritti dell'interessato</h2>
+  <p>
+    Puoi chiedere in qualsiasi momento accesso, rettifica, cancellazione, limitazione o portabilità dei tuoi dati, oppure
+    opporti al trattamento, scrivendo a <a href={`mailto:${site.email}`}>{site.email}</a>. Puoi inoltre proporre reclamo al
+    Garante per la protezione dei dati personali.
+  </p>
+
+  <p>Per i cookie consulta la <a href={routes.cookie.it}>cookie policy</a>.</p>
+  <p><small>Ultimo aggiornamento: [data]</small></p>
+</SimplePage>

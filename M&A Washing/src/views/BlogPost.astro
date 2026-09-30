@@ -1,0 +1,75 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { t, routes, postPath, formatDate, type Lang } from '../i18n';
+import { postAlternates, type Post } from '../lib/blog';
+import { articleSchema, breadcrumbSchema } from '../lib/schema';
+
+interface Props {
+  post: Post;
+}
+const { post } = Astro.props;
+const lang = post.data.lang as Lang;
+const d = t(lang);
+const path = postPath(lang, post.id);
+const { Content } = await render(post);
+const alternates = await postAlternates(post);
+const crumbs = [
+  { name: d.nav.home, path: routes.home[lang] },
+  { name: d.blog.title, path: routes.blog[lang] },
+  { name: post.data.title, path },
+];
+---
+
+<Base
+  lang={lang}
+  title={`${post.data.title} | M&A Washing`}
+  description={post.data.description}
+  alternates={alternates}
+  ogType="article"
+  schema={[articleSchema({ ...post.data, path, lang }), breadcrumbSchema(crumbs)]}
+>
+  <article class="section article">
+    <div class="container">
+      <Breadcrumb label={d.breadcrumb} items={crumbs} />
+      <header class="article__head">
+        <h1>{post.data.title}</h1>
+        <p class="article__meta">
+          {d.blog.published} <time datetime={post.data.date.toISOString()}>{formatDate(lang, post.data.date)}</time>
+        </p>
+      </header>
+      <div class="prose">
+        <Content />
+      </div>
+      <p class="article__back"><a href={routes.blog[lang]}>{d.blog.back}</a></p>
+    </div>
+  </article>
+  <CtaBand lang={lang} title={d.blog.ctaTitle} text={d.blog.ctaText} />
+</Base>
+
+<style>
+  .article {
+    padding-top: var(--space-l);
+  }
+  .article__head {
+    max-width: 48rem;
+    margin-bottom: var(--space-l);
+  }
+  .article__head h1 {
+    font-size: var(--step-3);
+  }
+  .article__meta {
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  .article .prose > :global(p:first-child) {
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+  .article__back {
+    margin-top: var(--space-l);
+    font-weight: 700;
+  }
+</style>

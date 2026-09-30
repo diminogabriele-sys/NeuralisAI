@@ -1,0 +1,73 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="section section--dark" aria-labelledby="processo-title">
+  <div class="container">
+    <h2 id="processo-title" class="process__title" data-reveal>{d.process.title}</h2>
+    <ol class="process">
+      {
+        d.process.steps.map((s, i) => (
+          <li class="process__step" data-reveal>
+            <span class="process__num" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .process__title {
+    margin-bottom: var(--space-l);
+    color: #fff;
+  }
+  .process {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-l);
+    counter-reset: step;
+  }
+  @media (min-width: 56em) {
+    .process {
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(1.5rem, 3vw, 3rem);
+    }
+  }
+  .process__step {
+    position: relative;
+    padding-top: 1.25rem;
+    border-top: 2px solid #3c515c;
+  }
+  .process__num {
+    display: block;
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 800;
+    font-size: clamp(3rem, 2.2rem + 3vw, 4.75rem);
+    line-height: 1;
+    color: var(--giallo);
+    margin-bottom: 0.75rem;
+  }
+  .process__step h3 {
+    color: #fff;
+    font-size: var(--step-2);
+  }
+  .process__step p {
+    color: #c9d4d8;
+    margin: 0;
+    max-width: 30rem;
+  }
+</style>

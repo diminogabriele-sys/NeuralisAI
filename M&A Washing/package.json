@@ -1,0 +1,21 @@
+{
+  "name": "ma-washing",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sito web di M&A Washing - pulizia ad alta pressione di superfici esterne a Padova e provincia",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/public-sans": "^5.3.0",
+    "astro": "^7.3.5"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}
