@@ -88,15 +88,6 @@ export default {
         alt: 'Motorcycle part prototype under development',
       },
     ],
-    materialsTitle: 'Materials',
-    materials: [
-      { name: 'Carbon fibre', note: 'Autoclave pre-preg' },
-      { name: 'Kevlar® / aramid', note: 'Impact resistance' },
-      { name: 'Fibreglass', note: 'Versatile and cost-effective' },
-      { name: 'Hybrid composites', note: 'Carbon-Kevlar' },
-      { name: 'Aluminium & titanium', note: 'CNC brackets and mounts' },
-      { name: 'Technical 3D printing', note: 'Prototypes and jigs' },
-    ],
   },
 
   projects: {

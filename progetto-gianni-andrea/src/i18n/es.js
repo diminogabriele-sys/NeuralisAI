@@ -88,15 +88,6 @@ export default {
         alt: 'Prototipo de componente de moto en desarrollo',
       },
     ],
-    materialsTitle: 'Materiales',
-    materials: [
-      { name: 'Fibra de carbono', note: 'Pre-preg en autoclave' },
-      { name: 'Kevlar® / aramida', note: 'Resistencia a impactos' },
-      { name: 'Fibra de vidrio', note: 'Versátil y económica' },
-      { name: 'Composites híbridos', note: 'Carbono-kevlar' },
-      { name: 'Aluminio y titanio', note: 'Soportes y anclajes CNC' },
-      { name: 'Impresión 3D técnica', note: 'Prototipos y plantillas' },
-    ],
   },
 
   projects: {

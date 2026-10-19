@@ -88,15 +88,6 @@ export default {
         alt: 'Prototyp eines Motorradteils in der Entwicklung',
       },
     ],
-    materialsTitle: 'Materialien',
-    materials: [
-      { name: 'Kohlefaser', note: 'Prepreg im Autoklav' },
-      { name: 'Kevlar® / Aramid', note: 'Schlagfestigkeit' },
-      { name: 'Glasfaser', note: 'Vielseitig und wirtschaftlich' },
-      { name: 'Hybrid-Verbundstoffe', note: 'Carbon-Kevlar' },
-      { name: 'Aluminium & Titan', note: 'CNC-Halter und Befestigungen' },
-      { name: 'Technischer 3D-Druck', note: 'Prototypen und Lehren' },
-    ],
   },
 
   projects: {
