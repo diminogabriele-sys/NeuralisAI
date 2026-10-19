@@ -285,9 +285,20 @@ const letters = ['A', 'B', 'C'];
     const groups: SVGGElement[] = [];
 
     const draw = () => {
-      const box = flow.getBoundingClientRect();
+      let box = flow.getBoundingClientRect();
       const ly = parseFloat(getComputedStyle(flow).getPropertyValue('--ly')) * parseFloat(getComputedStyle(document.documentElement).fontSize) || 38;
       let sx: number, sy: number;
+      // su PC la linea delle fasi entra all'altezza del ramo centrale: uno sopra, uno in mezzo, uno sotto
+      const mid = branches[Math.floor(branches.length / 2)];
+      if (desktop.matches) {
+        trunk.style.marginTop = '0px';
+        const m = mid.getBoundingClientRect();
+        const offset = m.top + m.height / 2 - list.getBoundingClientRect().top - ly;
+        trunk.style.marginTop = `${Math.max(0, offset)}px`;
+      } else {
+        trunk.style.marginTop = '';
+      }
+      box = flow.getBoundingClientRect();
       if (desktop.matches) {
         // dal termine della linea delle fasi
         sx = trunk.getBoundingClientRect().right - box.left;
@@ -303,7 +314,7 @@ const letters = ['A', 'B', 'C'];
       branches.forEach((b) => {
         const r = b.getBoundingClientRect();
         const ex = r.left - box.left;
-        const ey = r.top - box.top + (desktop.matches ? ly : 32);
+        const ey = r.top - box.top + (desktop.matches ? r.height / 2 : 32);
         let d: string;
         if (desktop.matches) {
           const dx = (ex - sx) * 0.55;
