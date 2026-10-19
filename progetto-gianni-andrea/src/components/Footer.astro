@@ -21,11 +21,11 @@ const home = path('home', lang);
       <p>© {year} {site.legalName} · {site.vat}. {t.footer.rights}</p>
       <ul>
         <li><a href={path('privacy', lang)}>{t.footer.privacy}</a></li>
-        <li><button type="button" data-cookie-open>{t.footer.cookieSettings}</button></li>
+        <li><a href={path('area', lang)}>{t.nav.area}</a></li>
       </ul>
     </div>
   </div>
-  <p class="f-watermark" aria-hidden="true">{site.name}</p>
+  <p class="f-watermark" aria-hidden="true">BTF</p>
 </footer>
 
 <style>

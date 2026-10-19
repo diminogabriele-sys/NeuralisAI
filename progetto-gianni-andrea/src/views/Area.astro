@@ -1,0 +1,299 @@
+---
+/** Area clienti: accesso via link email, dati di spedizione obbligatori, ordini, documenti e chat */
+import Base from '../layouts/Base.astro';
+import '../styles/portal.css';
+import { dictionaries } from '../i18n/index.js';
+interface Props { lang: string }
+const { lang } = Astro.props;
+const d = dictionaries[lang];
+const t = d.area;
+const strings = { lang, ...t };
+---
+
+<Base lang={lang} page="area" title={d.meta.area.title} description={d.meta.area.description} noindex>
+  <section class="portal">
+    <div class="container">
+      <header class="portal-head">
+        <p class="kicker" data-n="—">{t.kicker}</p>
+        <h1 set:html={t.title} />
+      </header>
+
+      <div data-area aria-live="polite" tabindex="-1">
+        <p class="pmsg">{t.loading}</p>
+      </div>
+    </div>
+  </section>
+  <script type="application/json" id="area-i18n" set:html={JSON.stringify(strings)} />
+</Base>
+
+<script>
+  import {
+    supabase, esc, fmtDate, statusTrack, loadOrderDetail, watchOrder, chatHtml, docsHtml,
+    wireOrderActions, PROFILE_FIELDS, type Order, type Profile,
+  } from '../lib/portal';
+  import type { RealtimeChannel } from '@supabase/supabase-js';
+
+  const t = JSON.parse(document.getElementById('area-i18n')!.textContent!);
+  const lang: string = t.lang;
+  const root = document.querySelector<HTMLElement>('[data-area]')!;
+  const channels = new Map<string, RealtimeChannel>();
+  let editingProfile = false;
+
+  const showError = (e: unknown) => {
+    console.error(e);
+    const box = root.querySelector<HTMLElement>('[data-error]');
+    if (box) {
+      box.hidden = false;
+      box.textContent = t.error;
+    }
+  };
+
+  /* ---------- 1. accesso ---------- */
+  function renderLogin() {
+    root.innerHTML = `
+      <div class="pcard">
+        <h2>${esc(t.login.title)}</h2>
+        <p>${esc(t.login.text)}</p>
+        <form class="pform" data-login novalidate>
+          <div class="pfield">
+            <label for="login-email">${esc(t.login.email)} <span aria-hidden="true">*</span></label>
+            <input id="login-email" type="email" name="email" autocomplete="email" required />
+          </div>
+          <div class="pform-actions"><button class="btn btn--solid" type="submit">${esc(t.login.submit)}</button></div>
+          <p class="pmsg" data-login-msg hidden></p>
+        </form>
+      </div>`;
+    const form = root.querySelector<HTMLFormElement>('[data-login]')!;
+    const msg = root.querySelector<HTMLElement>('[data-login-msg]')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = form.elements.namedItem('email') as HTMLInputElement;
+      if (!input.checkValidity()) {
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        return;
+      }
+      const btn = form.querySelector('button')!;
+      btn.disabled = true;
+      const { error } = await supabase!.auth.signInWithOtp({
+        email: input.value.trim().toLowerCase(),
+        options: { emailRedirectTo: location.origin + location.pathname },
+      });
+      btn.disabled = false;
+      msg.hidden = false;
+      msg.className = `pmsg ${error ? 'err' : 'ok'}`;
+      msg.textContent = error ? t.error : t.login.sent;
+    });
+  }
+
+  /* ---------- 2. dati di spedizione (obbligatori) ---------- */
+  function renderProfile(email: string, profile: Profile | null) {
+    const p = t.profile;
+    const field = ([key, label, required, ac]: readonly [string, string, boolean, string]) => {
+      const value = esc((profile as any)?.[key] ?? '');
+      const req = required ? ' required' : '';
+      const star = required ? ' <span aria-hidden="true">*</span>' : '';
+      const input =
+        key === 'notes'
+          ? `<textarea id="pf-${key}" name="${key}" rows="2">${value}</textarea>`
+          : `<input id="pf-${key}" name="${key}" value="${value}" autocomplete="${ac}"${req} />`;
+      return `<div class="pfield"><label for="pf-${key}">${esc(p[label])}${star}</label>${input}</div>`;
+    };
+    const f = PROFILE_FIELDS;
+    root.innerHTML = `
+      ${bar(email)}
+      <div class="pcard">
+        <h2>${esc(p.title)}</h2>
+        <p>${esc(p.text)}</p>
+        <form class="pform" data-profile novalidate>
+          <div class="row">${field(f[0])}${field(f[1])}</div>
+          <div class="row">${field(f[2])}${field(f[3])}</div>
+          ${field(f[4])}
+          ${field(f[5])}
+          <div class="row">${field(f[6])}${field(f[7])}</div>
+          <div class="row">${field(f[8])}${field(f[9])}</div>
+          ${field(f[10])}
+          <div class="pform-actions">
+            <button class="btn btn--solid" type="submit">${esc(p.save)}</button>
+            ${profile ? `<button class="plink" type="button" data-cancel>${esc(p.cancel)}</button>` : ''}
+          </div>
+          <p class="pmsg err" data-error hidden></p>
+        </form>
+      </div>`;
+    wireBar();
+    root.querySelector('[data-cancel]')?.addEventListener('click', () => {
+      editingProfile = false;
+      route();
+    });
+    const form = root.querySelector<HTMLFormElement>('[data-profile]')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const invalid = [...form.querySelectorAll<HTMLInputElement>('[required]')].filter((el) => {
+        const bad = !el.value.trim();
+        bad ? el.setAttribute('aria-invalid', 'true') : el.removeAttribute('aria-invalid');
+        return bad;
+      });
+      if (invalid.length) {
+        invalid[0].focus();
+        return;
+      }
+      const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+      for (const k in data) data[k] = data[k].trim();
+      const { data: auth } = await supabase!.auth.getUser();
+      const { error } = await supabase!.from('profiles').upsert({ ...data, id: auth.user!.id, email, lang });
+      if (error) return showError(error);
+      editingProfile = false;
+      route();
+    });
+  }
+
+  /* ---------- 3. ordini ---------- */
+  function bar(email: string, withEdit = false) {
+    return `<div class="pbar">
+      <span>${esc(t.signedInAs)} <strong>${esc(email)}</strong></span>
+      <span class="pbar-actions">
+        ${withEdit ? `<button class="plink" type="button" data-edit-profile>${esc(t.profile.edit)}</button>` : ''}
+        <button class="plink" type="button" data-logout>${esc(t.logout)}</button>
+      </span>
+    </div>`;
+  }
+  function wireBar() {
+    root.querySelector('[data-logout]')?.addEventListener('click', async () => {
+      await supabase!.auth.signOut();
+      route();
+    });
+    root.querySelector('[data-edit-profile]')?.addEventListener('click', () => {
+      editingProfile = true;
+      route();
+    });
+  }
+
+  async function renderOrders(email: string) {
+    const { data, error } = await supabase!.from('orders').select('*').order('updated_at', { ascending: false });
+    if (error) throw error;
+    const orders = data as Order[];
+    root.innerHTML = `
+      ${bar(email, true)}
+      <h2 class="sr-only">${esc(t.orders.title)}</h2>
+      <p class="pmsg err" data-error hidden></p>
+      ${
+        orders.length
+          ? `<div class="orders">${orders
+              .map(
+                (o, i) => `
+            <details class="order" data-order="${o.id}"${i === 0 ? ' open' : ''}>
+              <summary>
+                <span class="order-top"><span class="order-code">${esc(t.orders.code)} ${esc(o.code)}</span><span class="order-updated">${esc(t.orders.updated)} ${fmtDate(o.updated_at, lang)}</span></span>
+                <span class="order-title">${esc(o.title)}</span>
+                <span class="order-status">${esc(t.statuses[o.status])}</span>
+                ${statusTrack(o.status, t.statuses)}
+              </summary>
+              <div class="order-body" data-order-body><p class="pmsg">${esc(t.loading)}</p></div>
+            </details>`
+              )
+              .join('')}</div>`
+          : `<div class="pcard"><h2>${esc(t.orders.title)}</h2><p>${esc(t.orders.empty)}</p></div>`
+      }`;
+    wireBar();
+    root.querySelectorAll<HTMLDetailsElement>('[data-order]').forEach((det) => {
+      const order = orders.find((o) => o.id === det.dataset.order)!;
+      const load = () => renderOrderBody(det, order).catch(showError);
+      det.addEventListener('toggle', () => {
+        if (det.open && !channels.has(order.id)) {
+          load();
+          channels.set(order.id, watchOrder(order.id, (table) => (table === 'orders' ? route() : load())));
+        }
+      });
+      if (det.open) det.dispatchEvent(new Event('toggle'));
+    });
+  }
+
+  async function renderOrderBody(det: HTMLElement, order: Order) {
+    const body = det.querySelector<HTMLElement>('[data-order-body]')!;
+    const { events, docs, messages } = await loadOrderDetail(order.id);
+    // conserva un messaggio in scrittura quando la vista si aggiorna
+    const draft = body.querySelector<HTMLTextAreaElement>('textarea');
+    const draftValue = draft?.value ?? '';
+    const hadFocus = draft != null && document.activeElement === draft;
+    const tracking =
+      order.tracking_number || order.carrier
+        ? `<p class="tracking"><strong>${esc(t.orders.tracking)}:</strong> ${esc(order.carrier ?? '')} ${
+            order.tracking_url
+              ? `<a href="${esc(order.tracking_url)}" target="_blank" rel="noopener">${esc(order.tracking_number || order.tracking_url)} ↗</a>`
+              : esc(order.tracking_number ?? '')
+          }</p>`
+        : '';
+    body.innerHTML = `
+      <div class="pgrid">
+        <div class="pgrid">
+          <section class="pbox" aria-label="${esc(t.orders.history)}">
+            <h3 class="pbox-title">${esc(t.orders.history)}</h3>
+            <ol class="history">${[...events]
+              .reverse()
+              .map(
+                (e) => `<li><strong>${esc(t.statuses[e.status])}</strong><time datetime="${e.created_at}">${fmtDate(e.created_at, lang, true)}</time>${
+                  e.note ? `<span class="note">${esc(e.note)}</span>` : ''
+                }</li>`
+              )
+              .join('')}</ol>
+            ${tracking}
+          </section>
+          ${docsHtml(order.id, docs, t.docs, lang)}
+        </div>
+        ${chatHtml(order.id, messages, { ...t.chat, client: t.chat.you }, lang, false)}
+      </div>`;
+    const ta = body.querySelector<HTMLTextAreaElement>('textarea');
+    if (ta && draftValue) ta.value = draftValue;
+    if (ta && hadFocus) ta.focus();
+    wireOrderActions(body, showError, () => {
+      const box = body.querySelector<HTMLTextAreaElement>('textarea');
+      if (box) box.value = '';
+      renderOrderBody(det, order).catch(showError);
+    });
+  }
+
+  /* ---------- router (un aggiornamento alla volta) ---------- */
+  let queue: Promise<void> = Promise.resolve();
+  function route() {
+    queue = queue.then(doRoute).then(() => {
+      // se l'elemento con il focus è stato ridisegnato, il focus resta nell'area (navigazione da tastiera)
+      if (document.activeElement === document.body) root.focus({ preventScroll: true });
+    });
+    return queue;
+  }
+  async function doRoute() {
+    if (!supabase) {
+      root.innerHTML = `<div class="pcard"><p>${esc(t.notConfigured)}</p></div>`;
+      return;
+    }
+    try {
+      const { data } = await supabase.auth.getSession();
+      const session = data.session;
+      if (!session) {
+        channels.forEach((c) => supabase!.removeChannel(c));
+        channels.clear();
+        return renderLogin();
+      }
+      const email = (session.user.email ?? '').toLowerCase();
+      const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+      if (error) throw error;
+      if (!profile || editingProfile) return renderProfile(email, profile as Profile | null);
+      channels.forEach((c) => supabase!.removeChannel(c));
+      channels.clear();
+      await renderOrders(email);
+    } catch (e) {
+      console.error(e);
+      root.innerHTML = `<p class="pmsg err">${esc(t.error)}</p>`;
+    }
+  }
+
+  // ridisegna solo quando cambia l'utente collegato (non a ogni rinnovo della sessione)
+  let currentUser: string | null | undefined;
+  supabase?.auth.onAuthStateChange((_event, session) => {
+    const uid = session?.user.id ?? null;
+    if (uid === currentUser) return;
+    currentUser = uid;
+    route();
+  });
+  if (!supabase) route();
+</script>

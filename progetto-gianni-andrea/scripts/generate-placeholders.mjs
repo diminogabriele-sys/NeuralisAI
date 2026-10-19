@@ -14,6 +14,11 @@ const items = [
   { file: 'servizio-aero.jpg', w: 1600, h: 1200, label: 'Foto appendici aerodinamiche' },
   { file: 'servizio-finiture.jpg', w: 1600, h: 1200, label: 'Foto dettaglio finiture' },
   { file: 'chi-siamo.jpg', w: 1600, h: 2000, label: 'Foto laboratorio / team' },
+  { file: 'progetto-1.jpg', w: 1600, h: 1200, label: 'Progetto 1' },
+  { file: 'progetto-2.jpg', w: 1600, h: 1200, label: 'Progetto 2' },
+  { file: 'progetto-3.jpg', w: 1600, h: 1200, label: 'Progetto 3' },
+  { file: 'progetto-4.jpg', w: 1600, h: 1200, label: 'Progetto 4' },
+  { file: 'progetto-5.jpg', w: 1600, h: 1200, label: 'Progetto 5' },
 ];
 
 const svg = (w, h, label, big = false) => `
@@ -38,7 +43,7 @@ const svg = (w, h, label, big = false) => `
   <g fill="none" stroke="url(#gold)" stroke-width="3">
     <path d="M60 140V60h80M${w - 140} 60h80v80M${w - 60} ${h - 140}v80h-80M140 ${h - 60}H60v-80"/>
   </g>
-  <text x="50%" y="${h / 2 - (big ? 40 : 10)}" text-anchor="middle" font-family="DejaVu Serif, Georgia, serif" font-size="${big ? 120 : 64}" fill="url(#gold)" letter-spacing="12">XXX</text>
+  <text x="50%" y="${h / 2 - (big ? 40 : 10)}" text-anchor="middle" font-family="DejaVu Serif, Georgia, serif" font-size="${big ? 76 : 56}" fill="url(#gold)" letter-spacing="10">BEYOND THE FACTORY</text>
   <text x="50%" y="${h / 2 + (big ? 50 : 60)}" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="${big ? 34 : 30}" fill="#F4F1EA" letter-spacing="6">${label.toUpperCase()}</text>
   <text x="50%" y="${h / 2 + (big ? 100 : 110)}" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="22" fill="#A39E94" letter-spacing="3">PLACEHOLDER · ${w}×${h}</text>
 </svg>`;
@@ -50,7 +55,7 @@ for (const it of items) {
   console.log('✓', it.file);
 }
 
-await sharp(Buffer.from(svg(1200, 630, 'Carene e aerodinamica su misura', true)))
+await sharp(Buffer.from(svg(1200, 630, 'Beyond the Ordinary', true)))
   .jpeg({ quality: 85, mozjpeg: true })
   .toFile(new URL('../public/og-image.jpg', import.meta.url).pathname);
 console.log('✓ public/og-image.jpg');

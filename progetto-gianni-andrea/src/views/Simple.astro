@@ -7,8 +7,7 @@ interface Props { lang: string; page: 'thanks' | 'privacy' | 'notFound' }
 const { lang, page } = Astro.props;
 const t = dictionaries[lang];
 const m = t.meta[page];
-const addr = `${site.address.street}, ${site.address.postalCode} ${site.address.city}`;
-const fill = (s: string) => s.replaceAll('{legal}', site.legalName).replaceAll('{address}', addr).replaceAll('{email}', site.email);
+const fill = (s: string) => s.replaceAll('{legal}', site.legalName).replaceAll('{email}', site.email);
 const basePage = page === 'notFound' ? 'home' : page;
 ---
 

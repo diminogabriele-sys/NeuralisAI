@@ -1,6 +1,7 @@
 ---
 import Home from '../views/Home.astro';
 import Simple from '../views/Simple.astro';
+import Area from '../views/Area.astro';
 import { allRoutes } from '../i18n/index.js';
 
 export function getStaticPaths() {
@@ -13,4 +14,4 @@ export function getStaticPaths() {
 const { page, lang } = Astro.props;
 ---
 
-{page === 'home' ? <Home lang={lang} /> : <Simple lang={lang} page={page} />}
+{page === 'home' ? <Home lang={lang} /> : page === 'area' ? <Area lang={lang} /> : <Simple lang={lang} page={page as "thanks" | "privacy"} />}

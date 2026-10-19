@@ -4,13 +4,13 @@ interface Props { lang: string }
 const t = dictionaries[Astro.props.lang];
 ---
 
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero" aria-label="Beyond the Factory">
   <div class="hero-bg" aria-hidden="true"></div>
   <canvas class="hero-canvas" data-hero-canvas role="img" aria-label={t.hero.canvasLabel}></canvas>
 
   <div class="hero-inner container">
     <p class="kicker hero-kicker" data-n="—">{t.hero.eyebrow}</p>
-    <h1 id="hero-title" class="hero-title" set:html={t.hero.title} />
+    <p class="hero-title" set:html={t.hero.title} />
     <p class="lead hero-lead">{t.hero.lead}</p>
     <div class="hero-actions">
       <a class="btn btn--solid" href="#contact">
@@ -80,11 +80,15 @@ const t = dictionaries[Astro.props.lang];
     .hero-kicker { letter-spacing: 0.22em; }
   }
   .hero-kicker::before { display: none; }
+  .hero-title :global(em) { font-style: italic; color: var(--gold); }
   .hero-title {
-    font-size: clamp(2.9rem, 11vw, 7.2rem);
+    font-family: var(--font-display);
+    font-size: clamp(2.7rem, 9.5vw, 6.4rem);
     font-weight: 400;
-    line-height: 0.98;
-    max-width: 12ch;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    max-width: 14ch;
     margin-bottom: 1.5rem;
   }
   .hero-lead { max-width: 52ch; margin-bottom: 2.25rem; color: #c4bfb5; }

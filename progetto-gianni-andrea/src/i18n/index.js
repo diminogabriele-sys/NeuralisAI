@@ -13,6 +13,7 @@ export const slugs = {
   home: { it: '', en: '', es: '', de: '', fr: '' },
   thanks: { it: 'grazie', en: 'thank-you', es: 'gracias', de: 'danke', fr: 'merci' },
   privacy: { it: 'privacy', en: 'privacy', es: 'privacidad', de: 'datenschutz', fr: 'confidentialite' },
+  area: { it: 'area-clienti', en: 'client-area', es: 'area-clientes', de: 'kundenbereich', fr: 'espace-client' },
 };
 
 /** Percorso di una pagina in una lingua, es. path('privacy','de') → /de/datenschutz/ */

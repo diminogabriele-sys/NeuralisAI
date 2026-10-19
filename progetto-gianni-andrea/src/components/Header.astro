@@ -2,12 +2,13 @@
 import Logo from './Logo.astro';
 import { dictionaries, locales, path } from '../i18n/index.js';
 
-interface Props { lang: string; page: 'home' | 'thanks' | 'privacy' }
+interface Props { lang: string; page: 'home' | 'thanks' | 'privacy' | 'area' }
 const { lang, page } = Astro.props;
 const t = dictionaries[lang];
 const home = path('home', lang);
 const links = [
   ['services', t.nav.services],
+  ['projects', t.nav.projects],
   ['process', t.nav.process],
   ['about', t.nav.about],
   ['testimonials', t.nav.testimonials],
@@ -39,6 +40,11 @@ const anchor = (id: string) => (page === 'home' ? `#${id}` : `${home}#${id}`);
           >{l.toUpperCase()}</a>
         ))}
       </div>
+
+      <a class="area-link" href={path('area', lang)} aria-current={page === 'area' ? 'page' : undefined}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span>{t.nav.area}</span>
+      </a>
 
       <a class="btn btn--solid nav-cta-mobile" href={anchor('contact')} data-navlink>{t.cta}</a>
     </nav>
@@ -136,6 +142,21 @@ const anchor = (id: string) => (page === 'home' ? `#${id}` : `${home}#${id}`);
   .lang a:hover { color: var(--white); }
   .lang a[aria-current='true'] { color: var(--gold); border-color: var(--line); }
 
+  .area-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .area-link svg { width: 20px; flex: 0 0 20px; }
+  .area-link:hover, .area-link[aria-current='page'] { color: var(--gold-light); }
+
   .header-cta { display: none; }
   .nav-cta-mobile { align-self: flex-start; }
 
@@ -164,7 +185,7 @@ const anchor = (id: string) => (page === 'home' ? `#${id}` : `${home}#${id}`);
   .burger[aria-expanded='true'] .burger-lines i:last-child { top: 4px; width: 100%; transform: rotate(-45deg); }
 
   /* --- Desktop --- */
-  @media (min-width: 1100px) {
+  @media (min-width: 1280px) {
     .burger, .nav-cta-mobile { display: none; }
     .header-cta { display: inline-flex; --pad: 0.8rem 1.4rem; min-height: 44px; font-size: 0.7rem; }
     .nav {
@@ -203,6 +224,15 @@ const anchor = (id: string) => (page === 'home' ? `#${id}` : `${home}#${id}`);
     .nav-list a:hover::after, .nav-list a:focus-visible::after { transform: scaleX(1); transform-origin: left; }
     .lang { flex-wrap: nowrap; border-left: 1px solid var(--line); padding-left: 1rem; }
     .lang a { min-width: 34px; min-height: 34px; font-size: 0.68rem; }
+    .nav-list { gap: 1.4rem; }
+    .nav-list a { white-space: nowrap; }
+    .area-link { font-size: 0.68rem; }
+  }
+  /* fino a 1439px la CTA resta nel menu e nella pagina, per non affollare la barra */
+  @media (min-width: 1280px) and (max-width: 1439px) {
+    .header-cta { display: none; }
+    .area-link span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .area-link { min-width: 40px; justify-content: center; }
   }
 </style>
 
@@ -211,7 +241,7 @@ const anchor = (id: string) => (page === 'home' ? `#${id}` : `${home}#${id}`);
   const nav = document.querySelector<HTMLElement>('[data-nav]')!;
   const burger = document.querySelector<HTMLButtonElement>('[data-burger]')!;
   const label = burger.querySelector<HTMLElement>('[data-burger-label]')!;
-  const desktop = window.matchMedia('(min-width: 1100px)');
+  const desktop = window.matchMedia('(min-width: 1280px)');
 
   const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
   onScroll();

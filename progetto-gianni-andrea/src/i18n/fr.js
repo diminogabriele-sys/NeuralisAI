@@ -1,4 +1,4 @@
-/** Textes en français. « XXX » est l’espace réservé de la marque. */
+/** Textes en français. */
 export default {
   code: 'fr',
   htmlLang: 'fr',
@@ -7,80 +7,85 @@ export default {
 
   meta: {
     home: {
-      title: 'XXX — Carénages sur mesure et aérodynamique moto',
+      title: 'Beyond the Factory | Carénages et Pièces Moto sur Mesure',
       description:
-        'Carénages et appendices aérodynamiques sur mesure pour moto, fabriqués à la main en carbone, kevlar et composites. Aucun tarif fixe : chaque pièce naît d’une consultation. Réservez la vôtre.',
+        'Carénages, appendices aérodynamiques et pièces moto sur mesure. Motos en édition limitée au design exclusif. Donnez à votre moto une nouvelle identité.',
     },
     thanks: {
-      title: 'Demande reçue — XXX',
-      description: 'Merci de nous avoir contactés. L’un de nos techniciens vous répondra sous 24 heures ouvrées.',
+      title: 'Demande reçue | Beyond the Factory',
+      description: 'Merci de nous avoir contactés. Nous vous répondrons sous 24 heures ouvrées.',
     },
     privacy: {
-      title: 'Confidentialité et cookies — XXX',
-      description: 'Informations sur le traitement des données personnelles et l’utilisation des cookies sur le site XXX.',
+      title: 'Confidentialité et cookies | Beyond the Factory',
+      description: 'Informations sur le traitement des données personnelles et l’utilisation des cookies sur le site Beyond the Factory.',
+    },
+    area: {
+      title: 'Espace client | Beyond the Factory',
+      description: 'Suivez l’état de votre commande, consultez vos documents et écrivez à notre équipe.',
     },
     notFound: {
-      title: 'Page introuvable — XXX',
+      title: 'Page introuvable | Beyond the Factory',
       description: 'La page que vous recherchez n’existe pas ou a été déplacée.',
     },
   },
 
   nav: {
     services: 'Services',
+    projects: 'Projets',
     process: 'Méthode',
     about: 'À propos',
-    testimonials: 'Clients',
+    testimonials: 'Avis',
     faq: 'FAQ',
     contact: 'Contact',
+    area: 'Espace client',
     menu: 'Menu',
     close: 'Fermer le menu',
     skip: 'Aller au contenu',
     language: 'Langue',
-    home: 'Accueil XXX',
+    home: 'Beyond the Factory, accueil',
   },
 
   cta: 'Réserver une consultation',
 
   hero: {
-    eyebrow: 'Atelier d’aérodynamique moto',
-    title: 'Aérodynamique <em>sur mesure</em>.<br/>Sculptée pour votre moto.',
+    eyebrow: 'Bespoke motorcycle design',
+    title: 'We don’t follow the standard.<br/><em>We redefine it.</em>',
     lead:
-      'Des carénages et appendices aérodynamiques conçus autour de vous et de votre moto. Chaque pièce est unique, réalisée à la main dans les matériaux les plus évolués, du carbone pré-imprégné aux composites de compétition.',
+      'Motos one-off, carénages et pièces aérodynamiques conçus de zéro et fabriqués à la main. Chaque projet naît de vos besoins et devient une pièce unique et irremplaçable.',
     secondary: 'Découvrir les services',
     scroll: 'Défiler',
-    specs: ['Carbone pré-imprégné', 'Conception CAO/CFD', 'Pièce unique'],
+    specs: ['Motos one-off', 'Éditions limitées', 'Prototypage pour entreprises'],
     canvasLabel: 'Modèle 3D interactif d’un aileron aérodynamique en fibre de carbone aux finitions dorées',
   },
 
   services: {
     kicker: 'Services',
-    title: 'Chaque pièce naît <em>pour une seule moto</em>',
-    lead:
-      'Nous ne vendons pas de produits sur catalogue. Nous concevons des composants qui répondent à vos objectifs : plus de vitesse, plus de stabilité, une esthétique qui n’existe nulle part ailleurs.',
+    title: 'Trois façons d’aller <em>au-delà de l’usine</em>',
+    lead: 'Nous ne vendons pas de produits sur catalogue. Nous concevons et fabriquons des pièces uniques, pour ceux qui roulent et pour ceux qui produisent.',
     items: [
       {
-        title: 'Carénages sur mesure',
+        title: 'Motos one-off',
         text:
-          'Carénages complets ou partiels, conçus sur les cotes réelles de votre moto. Lignes d’origine ou dessinées de zéro, avec fixations et tolérances de compétition.',
-        spec: 'Racing · Route · Restomod',
+          'Nous réinterprétons votre moto de A à Z : lignes, carénages, habillage et détails dessinés de zéro. Le résultat est un exemplaire unique, avec une identité qui n’appartient qu’à vous.',
+        spec: 'Projet complet · Pièce unique',
         image: 'servizio-carene',
-        alt: 'Carénage sur mesure en fibre de carbone monté sur une moto sportive',
+        alt: 'Moto one-off avec carénages sur mesure en fibre de carbone',
       },
       {
-        title: 'Appendices aérodynamiques',
+        title: 'Pièces esthétiques et aérodynamiques',
         text:
-          'Winglets, ailerons avant, déflecteurs et profils étudiés pour générer de l’appui et limiter le cabrage à l’accélération, sans sacrifier la vitesse de pointe.',
-        spec: 'Winglets · Ailerons · Déflecteurs',
+          'Carénages personnalisés, winglets, têtes de fourche, coques arrière et appendices aérodynamiques. Chaque pièce est conçue sur les cotes réelles de la moto pour améliorer stabilité, appui et caractère.',
+        spec: 'Carénages · Winglets · Appendices',
         image: 'servizio-aero',
         alt: 'Paire de winglets aérodynamiques montés sur la tête de fourche d’une moto',
       },
       {
-        title: 'Personnalisation et finitions',
+        title: 'Conception de prototypes pour entreprises',
         text:
-          'Carbone apparent, peintures assorties, détails à la feuille d’or, logos et livrées exclusifs. La technique devient signature, jusqu’au dernier millimètre.',
-        spec: 'Livrées · Vernis · Feuille d’or',
+          'Nous accompagnons constructeurs, préparateurs et marques dans le développement de prototypes : du concept à la modélisation 3D, jusqu’aux moules et pièces fonctionnelles prêtes pour les essais.',
+        spec: 'Concept · CAO · Prototypes',
         image: 'servizio-finiture',
-        alt: 'Détail d’une finition carbone brillante avec un filet doré',
+        alt: 'Prototype de pièce moto en cours de développement',
       },
     ],
     materialsTitle: 'Matériaux',
@@ -94,37 +99,112 @@ export default {
     ],
   },
 
+  projects: {
+    kicker: 'Projets',
+    title: 'Des pièces <em>uniques</em>, des histoires différentes',
+    lead: 'Une sélection de nos réalisations. Choisissez un projet dans la liste pour lire son histoire.',
+    indexLabel: 'Liste des projets',
+    prev: 'Projet précédent',
+    next: 'Projet suivant',
+    items: [
+      {
+        id: 'v4-one-off',
+        title: 'Panigale V4 « Nero Oro »',
+        category: 'Moto one-off',
+        year: '2025',
+        text: 'Carénage complet redessiné de zéro, coque arrière monoplace et winglets intégrés à la tête de fourche. Carbone apparent avec filets à la feuille d’or.',
+        image: 'progetto-1',
+        alt: 'Ducati Panigale V4 one-off noire et or',
+      },
+      {
+        id: 'limited-01',
+        title: 'Limited Edition 01',
+        category: 'Édition limitée · 25 exemplaires',
+        year: '2025',
+        text: 'Notre première série numérotée : un roadster réinterprété avec réservoir, flancs et caches en composite, chaque exemplaire portant une plaque numérotée.',
+        image: 'progetto-2',
+        alt: 'Roadster de la Limited Edition 01',
+      },
+      {
+        id: 'r1m-aero',
+        title: 'Kit aéro R1M',
+        category: 'Pièces aérodynamiques',
+        year: '2024',
+        text: 'Winglets à double profil et déflecteurs latéraux conçus pour le circuit : plus d’appui à l’avant et moins de cabrage en sortie de virage.',
+        image: 'progetto-3',
+        alt: 'Kit de winglets en carbone pour Yamaha R1M',
+      },
+      {
+        id: 'proto-oem',
+        title: 'Prototype pour un constructeur',
+        category: 'Conception de prototypes',
+        year: '2024',
+        text: 'Développement d’une tête de fourche expérimentale pour un constructeur : modélisation CAO, prototypes imprimés en 3D et moules pour essais en soufflerie. Détails sous NDA.',
+        image: 'progetto-4',
+        alt: 'Prototype de tête de fourche en phase d’essai',
+      },
+      {
+        id: 'cafe-racer',
+        title: 'Café racer « Officina »',
+        category: 'Moto one-off',
+        year: '2023',
+        text: 'Une classique transformée en café racer : demi-carénage, selle et coque arrière sur mesure, peinture assortie et détails en aluminium brossé.',
+        image: 'progetto-5',
+        alt: 'Café racer one-off avec demi-carénage sur mesure',
+      },
+    ],
+  },
+
   process: {
     kicker: 'Méthode',
-    title: 'Pourquoi <em>il n’y a pas de tarif</em>',
-    lead:
-      'Chaque projet part de zéro : la moto, le pilote, l’usage et les objectifs changent tout. C’est pourquoi le devis n’arrive qu’après vous avoir écouté.',
+    title: 'Une méthode, <em>trois voies</em>',
+    lead: 'Chaque projet commence par les trois mêmes étapes. Puis il prend la voie adaptée au résultat que vous recherchez.',
     steps: [
-      { title: 'Consultation', text: 'Nous analysons votre moto, votre style de pilotage et vos objectifs : circuit, route ou exposition.' },
-      { title: 'Relevé 3D', text: 'Scan et mesures de la moto pour travailler sur des cotes réelles, au dixième de millimètre.' },
-      { title: 'Conception', text: 'Modélisation CAO, validation aérodynamique et choix des matériaux. Vous validez chaque détail.' },
-      { title: 'Production', text: 'Moules, stratification et cuisson en autoclave. Contrôle qualité sur chaque pièce.' },
-      { title: 'Livraison', text: 'Montage, vérification finale et livraison. Nous vous accompagnons ensuite, sur circuit comme sur route.' },
+      { title: 'Consultation', text: 'Nous écoutons vos idées, vos besoins et l’usage prévu : route, circuit, collection ou production.' },
+      { title: 'Conception', text: 'Relevé 3D, modélisation CAO, étude des formes et choix des matériaux.' },
+      { title: 'Échange avec le client', text: 'Rendus et plans à valider ensemble. Nous affinons jusqu’à ce que le projet soit exactement comme vous le vouliez.' },
+    ],
+    branchesLabel: 'À partir d’ici, trois voies',
+    branches: [
+      {
+        title: 'Motos one-off',
+        text: 'Démontage, fabrication des moules et des pièces, peinture, assemblage et essais de la moto complète.',
+      },
+      {
+        title: 'Pièces esthétiques et aérodynamiques',
+        text: 'Production dans le matériau choisi, finitions, contrôle du montage puis expédition ou installation.',
+      },
+      {
+        title: 'Prototypage pour entreprises',
+        text: 'Prototypes fonctionnels, itérations d’essais, documentation technique et accompagnement jusqu’à la présérie.',
+      },
     ],
   },
 
   about: {
     kicker: 'À propos',
-    title: 'Artisans de la <em>vitesse</em>',
+    title: 'Beyond the Factory : <em>design et pièces sur mesure</em> pour votre moto',
+    claim: 'We don’t follow the standard. We redefine it.',
     paragraphs: [
-      'XXX est né de la rencontre entre la passion de la course et l’obsession du détail. Notre atelier allie la main de l’artisan aux méthodes de l’ingénierie de compétition.',
-      'Nous travaillons pour des pilotes, des collectionneurs et des passionnés exigeants : des personnes qui veulent une moto plus rapide, plus stable et absolument unique. Chaque projet est suivi par un interlocuteur unique, du premier appel à la livraison.',
+      'Beyond the Factory est né pour dépasser les limites du design moto traditionnel. Nous concevons des pièces moto personnalisées et des solutions sur mesure qui font de chaque moto une pièce unique, distinctive et irremplaçable.',
+      'Nous unissons conception, recherche esthétique et innovation technique pour redéfinir les formes et le caractère des deux-roues.',
     ],
-    stats: [
-      { value: '15+', label: 'Années d’expérience' },
-      { value: '600+', label: 'Projets sur mesure' },
-      { value: '100%', label: 'Fait main' },
+    blocks: [
+      {
+        title: 'Bespoke Creations – Carénages et pièces moto sur mesure',
+        text: 'Nous concevons et réalisons des carénages personnalisés, des appendices aérodynamiques (winglets) et des éléments entièrement développés de zéro. Chaque création naît des besoins du client et devient un projet unique, pensé pour se distinguer de toute autre moto.',
+      },
+      {
+        title: 'Limited Editions – Motos en édition limitée',
+        text: 'Nous sélectionnons des modèles à réinterpréter selon notre vision et créons des motos en édition limitée : des versions exclusives, à l’identité esthétique précise et à la production rigoureusement numérotée, où design, exclusivité et recherche technique se rencontrent.',
+      },
     ],
-    imageAlt: 'L’atelier XXX pendant la stratification d’un carénage en carbone',
+    closing: 'Beyond the Factory. Beyond the Ordinary.',
+    imageAlt: 'L’atelier Beyond the Factory pendant la stratification d’un carénage en carbone',
   },
 
   testimonials: {
-    kicker: 'Clients',
+    kicker: 'Avis',
     title: 'La parole à <em>ceux qui roulent</em>',
     items: [
       {
@@ -137,17 +217,17 @@ export default {
         quote:
           'Je voulais une moto qui ne ressemble à aucune autre. Ils ont dessiné un carénage de zéro à partir d’un de mes croquis : le résultat est une pièce de musée.',
         name: 'Prénom Nom',
-        bike: 'BMW R nineT · Restomod',
+        bike: 'BMW R nineT · One-off',
       },
       {
         quote:
-          'Des conseils sérieux, des délais respectés et une qualité de carbone supérieure à l’origine. Le devis était clair dès le départ.',
+          'Nous leur avons confié le développement d’un prototype : une méthode rigoureuse, des délais respectés et un souci du détail rare.',
         name: 'Prénom Nom',
-        bike: 'Yamaha R1M · Route',
+        bike: 'Entreprise · Prototypage',
       },
     ],
-    prev: 'Témoignage précédent',
-    next: 'Témoignage suivant',
+    prev: 'Avis précédent',
+    next: 'Avis suivant',
   },
 
   faq: {
@@ -155,28 +235,28 @@ export default {
     title: 'Questions <em>fréquentes</em>',
     items: [
       {
-        q: 'Combien coûte un carénage sur mesure ?',
+        q: 'Combien coûte un projet sur mesure ?',
         a: 'Nous n’avons pas de tarif fixe car chaque pièce est unique : le prix dépend de la moto, des matériaux, de la complexité et des finitions. Après la consultation, vous recevez un devis détaillé et sans engagement.',
       },
       {
         q: 'Quels sont les délais de réalisation ?',
-        a: 'En général de 3 à 8 semaines selon le projet. Pour les appendices aérodynamiques sur des modèles déjà relevés, les délais peuvent être plus courts. Nous vous communiquons une date ferme avec le devis.',
+        a: 'Pour les pièces et appendices aérodynamiques, comptez en général de 3 à 8 semaines ; une moto one-off demande plus de temps. Nous vous communiquons une date ferme avec le devis.',
       },
       {
-        q: 'Travaillez-vous sur toutes les motos ?',
-        a: 'Oui : sportives, roadsters, routières, anciennes et customs. Si nous n’avons pas encore relevé votre modèle, nous réalisons un scan 3D à l’atelier.',
+        q: 'Comment fonctionnent les éditions limitées ?',
+        a: 'Chaque édition compte un nombre d’exemplaires fixe et numéroté. Nous annonçons les nouvelles séries sur nos réseaux sociaux : écrivez-nous pour être prévenu en avance.',
+      },
+      {
+        q: 'Travaillez-vous aussi pour des entreprises ?',
+        a: 'Oui. Nous développons des prototypes pour des constructeurs, préparateurs et marques, y compris sous accord de confidentialité (NDA).',
       },
       {
         q: 'Les appendices aérodynamiques sont-ils homologués pour la route ?',
         a: 'Cela dépend du composant et du pays. Lors de la consultation, nous vous indiquons ce qui est utilisable sur route et ce qui est réservé au circuit.',
       },
       {
-        q: 'Livrez-vous à l’étranger ?',
-        a: 'Oui, nous expédions dans le monde entier avec des emballages dédiés et assurés. Pour les projets plus complexes, nous pouvons organiser l’enlèvement et le retour de la moto.',
-      },
-      {
-        q: 'Puis-je voir le projet avant la production ?',
-        a: 'Bien sûr. Vous recevez rendus et plans du projet et validez chaque étape avant le passage aux moules et à la production.',
+        q: 'Puis-je suivre l’avancement de ma commande ?',
+        a: 'Oui. Dans l’espace client, vous voyez l’état de votre commande, consultez vos documents et écrivez directement à l’équipe. Vous recevez un e-mail à chaque nouveau message.',
       },
     ],
   },
@@ -184,18 +264,17 @@ export default {
   contact: {
     kicker: 'Contact',
     title: 'Réserver une <em>consultation</em>',
-    lead:
-      'Parlez-nous de votre moto et du résultat souhaité. L’un de nos techniciens vous recontacte sous 24 heures ouvrées pour fixer la consultation.',
+    lead: 'Parlez-nous de votre idée ou de votre projet. Nous vous répondons sous 24 heures ouvrées pour fixer la consultation.',
     form: {
       name: 'Nom et prénom',
       email: 'E-mail',
       phone: 'Téléphone',
-      bike: 'Moto (marque, modèle, année)',
+      bike: 'Moto ou projet',
       bikePlaceholder: 'Ex. Ducati Panigale V4 S 2023',
-      service: 'Type d’intervention',
-      serviceOptions: ['Carénage sur mesure', 'Appendices aérodynamiques', 'Personnalisation et finitions', 'Projet complet', 'Autre'],
+      service: 'Service',
+      serviceOptions: ['Moto one-off', 'Pièces esthétiques et aérodynamiques', 'Conception de prototypes pour entreprises', 'Édition limitée', 'Autre'],
       use: 'Utilisation',
-      useOptions: ['Route', 'Circuit', 'Route et circuit', 'Exposition / collection'],
+      useOptions: ['Route', 'Circuit', 'Route et circuit', 'Collection', 'Production industrielle'],
       message: 'Décrivez votre projet',
       privacy: 'J’ai lu la <a href="{privacy}">politique de confidentialité</a> et j’accepte le traitement de mes données afin de recevoir une réponse.',
       submit: 'Envoyer la demande',
@@ -207,44 +286,21 @@ export default {
       select: 'Choisir…',
     },
     info: {
-      address: 'Atelier',
-      phone: 'Téléphone',
       email: 'E-mail',
-      hours: 'Horaires',
-      closed: 'Fermé',
+      emailNote: 'Nous répondons sous 24 heures ouvrées.',
       social: 'Suivez-nous',
-      directions: 'Itinéraire',
-    },
-    map: {
-      title: 'Carte de l’atelier XXX',
-      consent: 'La carte est fournie par Google et utilise des cookies tiers.',
-      load: 'Afficher la carte',
     },
   },
 
   footer: {
-    tagline: 'Carénages et aérodynamique sur mesure pour moto.',
+    tagline: 'Beyond the Factory. Beyond the Ordinary.',
     rights: 'Tous droits réservés.',
     privacy: 'Confidentialité et cookies',
-    cookieSettings: 'Préférences cookies',
-  },
-
-  cookie: {
-    title: 'Nous respectons votre vie privée',
-    text: 'Nous utilisons uniquement des cookies techniques nécessaires. Avec votre accord, nous chargeons aussi des contenus tiers comme Google Maps.',
-    accept: 'Accepter',
-    reject: 'Nécessaires uniquement',
-    more: 'En savoir plus',
-  },
-
-  whatsapp: {
-    label: 'Écrivez-nous sur WhatsApp',
-    message: 'Bonjour XXX, je souhaiterais des informations pour un projet sur mesure pour ma moto.',
   },
 
   thanks: {
     title: 'Demande <em>reçue</em>',
-    text: 'Merci de nous avoir écrit. L’un de nos techniciens étudiera votre demande et vous recontactera sous 24 heures ouvrées.',
+    text: 'Merci de nous avoir écrit. Nous étudierons votre demande et vous recontacterons sous 24 heures ouvrées.',
     back: 'Retour à l’accueil',
   },
 
@@ -252,14 +308,14 @@ export default {
     title: 'Confidentialité et <em>cookies</em>',
     note: 'Texte provisoire : à remplacer par la politique rédigée par votre conseiller juridique.',
     sections: [
-      { h: 'Responsable du traitement', p: 'Le responsable du traitement est {legal}, {address}. E-mail : {email}.' },
+      { h: 'Responsable du traitement', p: 'Le responsable du traitement est {legal}. E-mail : {email}.' },
       {
         h: 'Données collectées et finalités',
-        p: 'Les données envoyées via le formulaire de contact (nom, e-mail, téléphone, informations sur la moto et message) sont utilisées exclusivement pour répondre à la demande et établir un devis.',
+        p: 'Les données envoyées via le formulaire de contact sont utilisées exclusivement pour répondre à la demande et établir un devis. Les données saisies dans l’espace client (coordonnées et adresse de livraison) servent à gérer et expédier la commande.',
       },
       {
-        h: 'Cookies',
-        p: 'Le site utilise des cookies techniques nécessaires à son fonctionnement et enregistre votre choix de consentement. Les contenus tiers (Google Maps), susceptibles de déposer leurs propres cookies, ne sont chargés qu’avec votre accord.',
+        h: 'Cookies et stockage local',
+        p: 'Le site n’utilise aucun cookie de profilage ni outil tiers. L’espace client enregistre dans le navigateur uniquement les informations techniques nécessaires pour rester connecté.',
       },
       { h: 'Vos droits', p: 'Vous pouvez à tout moment demander l’accès, la rectification ou l’effacement de vos données en écrivant à {email}.' },
     ],
@@ -271,5 +327,73 @@ export default {
     back: 'Retour à l’accueil',
   },
 
-  days: { mo: 'Lundi', tu: 'Mardi', we: 'Mercredi', th: 'Jeudi', fr: 'Vendredi', sa: 'Samedi', su: 'Dimanche' },
+  area: {
+    kicker: 'Espace client',
+    title: 'Votre <em>projet</em>, étape par étape',
+    notConfigured: 'L’espace client n’est pas encore actif. Revenez bientôt.',
+    loading: 'Chargement…',
+    error: 'Une erreur s’est produite. Veuillez réessayer dans quelques instants.',
+    login: {
+      title: 'Se connecter',
+      text: 'Saisissez l’e-mail utilisé pour votre commande : nous vous envoyons un lien de connexion, sans mot de passe.',
+      email: 'E-mail',
+      submit: 'Recevoir le lien',
+      sent: 'C’est fait. Consultez votre boîte mail (et les spams) et ouvrez le lien reçu.',
+    },
+    logout: 'Se déconnecter',
+    signedInAs: 'Connecté en tant que',
+    profile: {
+      title: 'Données de livraison',
+      text: 'Avant de continuer, complétez vos données : elles nous servent pour la facturation et l’expédition de la commande.',
+      edit: 'Modifier les données de livraison',
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      company: 'Société (facultatif)',
+      taxCode: 'Numéro fiscal ou de TVA',
+      phone: 'Téléphone',
+      address: 'Adresse et numéro',
+      postalCode: 'Code postal',
+      city: 'Ville',
+      province: 'Département / Région',
+      country: 'Pays',
+      notes: 'Notes pour le transporteur (facultatif)',
+      save: 'Enregistrer',
+      saved: 'Données enregistrées.',
+      cancel: 'Annuler',
+    },
+    orders: {
+      title: 'Vos commandes',
+      empty: 'Aucune commande n’est encore associée à votre e-mail. Dès que l’équipe ouvrira votre projet, vous le trouverez ici.',
+      code: 'Commande',
+      updated: 'Mise à jour le',
+      status: 'État',
+      tracking: 'Expédition',
+      history: 'Historique',
+    },
+    statuses: {
+      consultation: 'Consultation',
+      design: 'Conception',
+      review: 'Échange avec le client',
+      production: 'Production',
+      finishing: 'Finitions et contrôle qualité',
+      shipping: 'Expédiée',
+      delivered: 'Livrée',
+    },
+    docs: {
+      title: 'Documents',
+      empty: 'Aucun document pour le moment.',
+      upload: 'Ajouter un fichier',
+      uploading: 'Envoi…',
+      download: 'Télécharger',
+    },
+    chat: {
+      title: 'Messages',
+      empty: 'Aucun message. Écrivez à l’équipe pour toute question sur votre projet.',
+      placeholder: 'Écrire un message…',
+      send: 'Envoyer',
+      you: 'Vous',
+      team: 'Beyond the Factory',
+      notice: 'Vous recevrez un e-mail lorsque l’équipe vous répondra.',
+    },
+  },
 };

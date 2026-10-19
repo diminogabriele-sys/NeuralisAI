@@ -2,29 +2,45 @@
 import { dictionaries } from '../i18n/index.js';
 interface Props { lang: string }
 const t = dictionaries[Astro.props.lang].process;
+const letters = ['A', 'B', 'C'];
 ---
 
 <section id="process" class="section process" aria-labelledby="process-title">
   <div class="container">
     <header class="section-head section-head--split">
       <div>
-        <p class="kicker reveal" data-n="02">{t.kicker}</p>
+        <p class="kicker reveal" data-n="03">{t.kicker}</p>
         <h2 id="process-title" class="h-section reveal" set:html={t.title} />
       </div>
       <p class="lead reveal" style="--d:.15s">{t.lead}</p>
     </header>
 
-    <div class="steps-wrap" data-steps>
-    <span class="steps-track" aria-hidden="true"><span class="steps-fill" data-steps-fill></span></span>
-    <ol class="steps">
-      {t.steps.map((s, i) => (
-        <li class="step reveal" style={`--d:${i * 0.1}s`}>
-          <span class="step-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <h3>{s.title}</h3>
-          <p>{s.text}</p>
-        </li>
-      ))}
-    </ol>
+    <div class="flow">
+      <!-- Fasi comuni a tutti i progetti -->
+      <ol class="trunk">
+        {t.steps.map((s, i) => (
+          <li class="step reveal" style={`--d:${i * 0.12}s`}>
+            <span class="step-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p class="fork-label mono reveal"><span>{t.branchesLabel}</span></p>
+
+      <!-- Da qui il percorso si divide nei tre servizi -->
+      <ul class="branches">
+        {t.branches.map((b, i) => (
+          <li class="branch reveal" style={`--d:${0.1 + i * 0.12}s`}>
+            <span class="branch-n mono" aria-hidden="true">04{letters[i]}</span>
+            <h3>{b.title}</h3>
+            <p>{b.text}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   </div>
 </section>
@@ -36,68 +52,160 @@ const t = dictionaries[Astro.props.lang].process;
       var(--surface);
     border-block: 1px solid var(--line);
   }
-  .steps-wrap { position: relative; padding-left: 2.5rem; }
-  .steps {
+
+  .flow { --rail: 1px solid var(--gold-deep); }
+
+  /* Tronco: fasi in verticale con linea continua */
+  .trunk {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 0 0 2.5rem;
     display: grid;
-    gap: 2.75rem;
+    gap: 2.25rem;
+    border-left: var(--rail);
+    margin-left: 0.45rem;
+    padding-bottom: 2.25rem;
   }
-  .steps-track {
-    position: absolute;
-    left: 0.45rem;
-    top: 0.6rem;
-    bottom: 0.6rem;
-    width: 1px;
-    background: var(--line);
-  }
-  .steps-fill {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(var(--gold-light), var(--gold-deep));
-    transform: scaleY(var(--p, 0));
-    transform-origin: top;
-  }
-  .step { position: relative; }
+  .step { position: relative; display: grid; gap: 0.4rem; }
   .step::before {
     content: '';
     position: absolute;
-    left: calc(-2.5rem + 0.45rem - 4px);
-    top: 0.55rem;
+    left: calc(-2.5rem - 5px);
+    top: 0.9rem;
     width: 9px;
     height: 9px;
     transform: rotate(45deg);
-    background: var(--black);
+    background: var(--surface);
     border: 1px solid var(--gold);
   }
-  .step-n { display: block; font-family: var(--font-display); font-style: italic; font-size: 3rem; line-height: 1; color: var(--gold); margin-bottom: 0.6rem; }
-  .step h3 { font-size: 1.75rem; margin-bottom: 0.6rem; }
-  .step p { color: var(--muted); margin: 0; max-width: 38ch; }
+  .step-n { font-family: var(--font-display); font-style: italic; font-size: 2.6rem; line-height: 1; color: var(--gold); }
+  .step h3 { font-size: 1.75rem; margin-bottom: 0.4rem; }
+  .step p { color: var(--muted); margin: 0; max-width: 46ch; }
 
-  @media (min-width: 1024px) {
-    .steps-wrap { padding: 3rem 0 0; }
-    .steps { grid-template-columns: repeat(5, 1fr); gap: 2rem; }
-    .steps-track { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 1px; }
-    .steps-fill { transform: scaleX(var(--p, 0)); transform-origin: left; }
-    .step::before { left: 0; top: -3rem; margin-top: -4px; }
+  .fork-label {
+    position: relative;
+    margin: 0;
+    padding: 0 0 1.75rem 2.5rem;
+    margin-left: 0.45rem;
+    border-left: var(--rail);
+    color: var(--gold);
+    font-size: 0.68rem;
+  }
+
+  /* Rami: i tre servizi */
+  .branches {
+    list-style: none;
+    margin: 0 0 0 0.45rem;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .branch {
+    position: relative;
+    padding: 1.6rem 1.5rem 1.75rem;
+    margin-left: 2.5rem;
+    background: linear-gradient(160deg, var(--surface-2), var(--black));
+    border: 1px solid var(--line);
+  }
+  /* raccordo dal binario alla card (mobile) */
+  .branch::before {
+    content: '';
+    position: absolute;
+    left: calc(-2.5rem - 1px);
+    top: 2rem;
+    width: 2.5rem;
+    border-top: var(--rail);
+  }
+  .branch:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: calc(-2.5rem - 1px);
+    top: -1rem;
+    bottom: -1rem;
+    border-left: var(--rail);
+  }
+  .branch:first-child::after { top: -1px; }
+  .branch:last-child { margin-bottom: 0; }
+  .branch:last-child::after {
+    content: '';
+    position: absolute;
+    left: calc(-2.5rem - 1px);
+    top: -1rem;
+    height: 3rem;
+    border-left: var(--rail);
+  }
+  .branch-n { display: inline-block; color: var(--black); background: var(--gold); padding: 0.2rem 0.5rem; font-size: 0.66rem; margin-bottom: 1rem; }
+  .branch h3 { font-size: 1.6rem; margin-bottom: 0.6rem; }
+  .branch p { color: var(--muted); margin: 0; }
+
+  /* Desktop: tronco centrato e biforcazione in tre colonne */
+  @media (min-width: 1000px) {
+    .trunk, .fork-label {
+      width: min(560px, 100%);
+      margin-inline: auto;
+      padding-left: 0;
+      border-left: 0;
+    }
+    .trunk { position: relative; gap: 3rem; padding-bottom: 3rem; text-align: center; }
+    .trunk::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 1rem;
+      bottom: 0;
+      border-left: var(--rail);
+    }
+    .step { justify-items: center; background: var(--surface); padding-block: 0.5rem; }
+    .step::before { display: none; }
+    .step p { margin-inline: auto; }
+    .fork-label { text-align: center; padding: 0.6rem 0 2.75rem; position: relative; }
+    .fork-label::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      border-left: var(--rail);
+      z-index: 0;
+    }
+    .fork-label span { position: relative; z-index: 1; display: inline-block; padding: 0.4rem 0.9rem; background: var(--surface); }
+    .fork-label::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -5px;
+      width: 9px;
+      height: 9px;
+      margin-left: -4px;
+      transform: rotate(45deg);
+      background: var(--gold);
+    }
+
+    .branches {
+      position: relative;
+      margin: 0;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      padding-top: 3rem;
+    }
+    /* barra orizzontale che collega i tre rami */
+    .branches::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: calc((100% - 3rem) / 6);
+      right: calc((100% - 3rem) / 6);
+      border-top: var(--rail);
+    }
+    .branch { margin-left: 0; text-align: center; }
+    .branch::before {
+      left: 50%;
+      top: -3rem;
+      width: 0;
+      height: 3rem;
+      border-top: 0;
+      border-left: var(--rail);
+    }
+    .branch::after, .branch:last-child::after { display: none; }
   }
 </style>
-
-<script>
-  // Linea di avanzamento del processo legata allo scroll
-  const steps = document.querySelector<HTMLElement>('[data-steps]');
-  const fill = document.querySelector<HTMLElement>('[data-steps-fill]');
-  if (steps && fill) {
-    let ticking = false;
-    const update = () => {
-      const r = steps.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const p = Math.min(Math.max((vh * 0.85 - r.top) / (r.height + vh * 0.35), 0), 1);
-      fill.style.setProperty('--p', p.toFixed(3));
-      ticking = false;
-    };
-    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-    update();
-  }
-</script>

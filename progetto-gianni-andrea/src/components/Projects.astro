@@ -1,0 +1,241 @@
+---
+import { Picture } from 'astro:assets';
+import { dictionaries } from '../i18n/index.js';
+import { images } from '../lib/images.js';
+interface Props { lang: string }
+const t = dictionaries[Astro.props.lang].projects;
+---
+
+<section id="projects" class="section projects" aria-labelledby="projects-title">
+  <div class="container">
+    <header class="section-head section-head--split">
+      <div>
+        <p class="kicker reveal" data-n="02">{t.kicker}</p>
+        <h2 id="projects-title" class="h-section reveal" set:html={t.title} />
+      </div>
+      <p class="lead reveal" style="--d:.15s">{t.lead}</p>
+    </header>
+
+    <!-- Elenco progetti: un clic porta alla card corrispondente -->
+    <nav class="p-index reveal" aria-label={t.indexLabel}>
+      <ol>
+        {t.items.map((p, i) => (
+          <li>
+            <a href={`#progetto-${p.id}`} data-p-link={p.id} aria-current={i === 0 ? 'true' : undefined}>
+              <span class="p-index-n mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="p-index-t">{p.title}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="p-controls">
+      <button type="button" class="p-btn" data-p-prev aria-label={t.prev} aria-controls="p-track">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+      <button type="button" class="p-btn" data-p-next aria-label={t.next} aria-controls="p-track">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <ul class="p-track" id="p-track" data-p-track>
+    {t.items.map((p, i) => (
+      <li class="p-card" id={`progetto-${p.id}`} data-p-card={p.id} tabindex="-1">
+        <article aria-labelledby={`progetto-${p.id}-t`}>
+          <div class="p-media">
+            <Picture
+              src={images[p.image]}
+              alt={p.alt}
+              formats={['avif', 'webp']}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 1100px) 40vw, (min-width: 700px) 60vw, 88vw"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="p-body">
+            <p class="p-meta mono"><span>{p.category}</span><span>{p.year}</span></p>
+            <h3 id={`progetto-${p.id}-t`}>{p.title}</h3>
+            <p class="p-text">{p.text}</p>
+          </div>
+          <span class="p-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        </article>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .projects { overflow: hidden; }
+
+  .p-index { margin-bottom: 2rem; }
+  .p-index ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .p-index a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    min-height: 44px;
+    padding: 0.7rem 1.1rem;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s, border-color 0.3s, background 0.3s;
+  }
+  .p-index a:hover { color: var(--white); border-color: rgba(201, 164, 92, 0.5); }
+  .p-index a[aria-current='true'] { color: var(--black); background: var(--gold); border-color: var(--gold); }
+  .p-index a[aria-current='true'] .p-index-n { color: var(--black); }
+  .p-index-n { color: var(--gold); font-size: 0.7rem; }
+  .p-index-t { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.2; }
+
+  .p-controls { display: flex; justify-content: flex-end; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .p-btn {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: background 0.4s, color 0.4s, border-color 0.4s;
+  }
+  .p-btn svg { width: 20px; }
+  .p-btn:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  .p-btn:disabled { opacity: 0.35; pointer-events: none; }
+
+  /* Card una accanto all'altra, scorrimento orizzontale */
+  .p-track {
+    position: relative;
+    --edge: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter)));
+    list-style: none;
+    margin: 0;
+    padding: 0 var(--edge) 1rem;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(88vw, 420px);
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--edge);
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .p-track::-webkit-scrollbar { display: none; }
+  .p-card { scroll-snap-align: start; outline: none; }
+  .p-card article {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(160deg, var(--surface-2), var(--surface) 60%);
+    border: 1px solid var(--line);
+    transition: border-color 0.5s var(--ease), transform 0.6s var(--ease);
+  }
+  .p-card.is-active article { border-color: var(--gold); }
+  .p-card:focus-visible article { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+  .p-media { aspect-ratio: 4 / 3; overflow: hidden; }
+  .p-media :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .p-card:hover .p-media :global(img) { transform: scale(1.05); }
+  .p-body { padding: 1.5rem 1.5rem 2rem; display: grid; gap: 0.8rem; }
+  .p-meta { display: flex; justify-content: space-between; gap: 1rem; margin: 0; color: var(--gold); font-size: 0.66rem; }
+  .p-body h3 { font-size: clamp(1.8rem, 3vw, 2.3rem); }
+  .p-text { color: var(--muted); margin: 0; }
+  .p-n {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--gold);
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+  }
+
+  @media (min-width: 700px) {
+    .p-track { grid-auto-columns: min(60vw, 460px); gap: 1.5rem; }
+  }
+  @media (min-width: 1100px) {
+    .p-track { grid-auto-columns: calc((min(100vw, var(--max)) - 2 * var(--gutter) - 2 * 1.5rem) / 2.6); }
+  }
+</style>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-p-track]');
+  const section = document.getElementById('projects');
+  if (track && section) {
+    const cards = [...track.querySelectorAll<HTMLElement>('[data-p-card]')];
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-p-link]')];
+    const prev = document.querySelector<HTMLButtonElement>('[data-p-prev]')!;
+    const next = document.querySelector<HTMLButtonElement>('[data-p-next]')!;
+    let current = 0;
+    let lockUntil = 0; // durante lo scorrimento automatico non ricalcola il progetto attivo
+
+    const setActive = (i: number) => {
+      current = i;
+      cards.forEach((c, k) => c.classList.toggle('is-active', k === i));
+      links.forEach((l, k) => (k === i ? l.setAttribute('aria-current', 'true') : l.removeAttribute('aria-current')));
+      prev.disabled = i === 0;
+      next.disabled = i === cards.length - 1;
+    };
+
+    // Porta la card i-esima all'inizio della fila
+    const goTo = (i: number, focus = false) => {
+      const card = cards[Math.max(0, Math.min(i, cards.length - 1))];
+      const pad = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
+      lockUntil = Date.now() + 1000;
+      track.scrollTo({ left: card.offsetLeft - pad });
+      setActive(cards.indexOf(card));
+      if (focus) card.focus({ preventScroll: true });
+    };
+
+    links.forEach((link, i) =>
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        // prima scorre la pagina fino alla fila di card, poi la fila fino al progetto
+        const top = track.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.18;
+        if (Math.abs(window.scrollY - top) > 40) window.scrollTo({ top, behavior: 'smooth' });
+        goTo(i, true);
+        history.replaceState(null, '', link.hash);
+      })
+    );
+    prev.addEventListener('click', () => goTo(current - 1));
+    next.addEventListener('click', () => goTo(current + 1));
+
+    // Aggiorna l'elenco quando l'utente scorre le card a mano
+    let raf = 0;
+    track.addEventListener(
+      'scroll',
+      () => {
+        cancelAnimationFrame(raf);
+        if (Date.now() < lockUntil) return;
+        raf = requestAnimationFrame(() => {
+          const pad = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
+          const x = track.scrollLeft + pad;
+          let best = 0;
+          cards.forEach((c, k) => {
+            if (Math.abs(c.offsetLeft - x) < Math.abs(cards[best].offsetLeft - x)) best = k;
+          });
+          if (best !== current) setActive(best);
+        });
+      },
+      { passive: true }
+    );
+
+    // Apertura diretta da link con #progetto-...
+    const fromHash = cards.findIndex((c) => `#${c.id}` === location.hash);
+    setActive(0);
+    if (fromHash > 0) goTo(fromHash);
+  }
+</script>

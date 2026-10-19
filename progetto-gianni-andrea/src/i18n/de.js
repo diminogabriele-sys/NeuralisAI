@@ -1,4 +1,4 @@
-/** Deutsche Texte. "XXX" ist der Platzhalter für die Marke. */
+/** Deutsche Texte. */
 export default {
   code: 'de',
   htmlLang: 'de',
@@ -7,80 +7,85 @@ export default {
 
   meta: {
     home: {
-      title: 'XXX — Maßgefertigte Motorradverkleidungen & Aerodynamik',
+      title: 'Beyond the Factory | Motorradverkleidungen & Teile nach Maß',
       description:
-        'Maßgefertigte Motorradverkleidungen und Aero-Winglets, handgefertigt aus Carbon, Kevlar und Hochleistungs-Verbundwerkstoffen. Keine Preisliste: Jedes Teil beginnt mit einer Beratung. Jetzt buchen.',
+        'Verkleidungen, Aero-Anbauteile und Motorradteile nach Maß. Motorräder in limitierter Auflage mit exklusivem Design. Geben Sie Ihrem Bike eine neue Identität.',
     },
     thanks: {
-      title: 'Anfrage erhalten — XXX',
-      description: 'Vielen Dank für Ihre Nachricht. Einer unserer Techniker antwortet Ihnen innerhalb von 24 Arbeitsstunden.',
+      title: 'Anfrage erhalten | Beyond the Factory',
+      description: 'Vielen Dank für Ihre Nachricht. Wir antworten innerhalb von 24 Arbeitsstunden.',
     },
     privacy: {
-      title: 'Datenschutz & Cookies — XXX',
-      description: 'Informationen zur Verarbeitung personenbezogener Daten und zur Verwendung von Cookies auf der Website von XXX.',
+      title: 'Datenschutz & Cookies | Beyond the Factory',
+      description: 'Informationen zur Verarbeitung personenbezogener Daten und zur Verwendung von Cookies auf der Website von Beyond the Factory.',
+    },
+    area: {
+      title: 'Kundenbereich | Beyond the Factory',
+      description: 'Verfolgen Sie den Status Ihrer Bestellung, sehen Sie Ihre Dokumente ein und schreiben Sie unserem Team.',
     },
     notFound: {
-      title: 'Seite nicht gefunden — XXX',
+      title: 'Seite nicht gefunden | Beyond the Factory',
       description: 'Die gesuchte Seite existiert nicht oder wurde verschoben.',
     },
   },
 
   nav: {
     services: 'Leistungen',
+    projects: 'Projekte',
     process: 'Methode',
     about: 'Über uns',
-    testimonials: 'Kunden',
+    testimonials: 'Bewertungen',
     faq: 'FAQ',
     contact: 'Kontakt',
+    area: 'Kundenbereich',
     menu: 'Menü',
     close: 'Menü schließen',
     skip: 'Zum Inhalt springen',
     language: 'Sprache',
-    home: 'XXX Startseite',
+    home: 'Beyond the Factory, Startseite',
   },
 
   cta: 'Beratung buchen',
 
   hero: {
-    eyebrow: 'Atelier für Motorrad-Aerodynamik',
-    title: 'Aerodynamik <em>nach Maß</em>.<br/>Geformt für Ihr Motorrad.',
+    eyebrow: 'Bespoke motorcycle design',
+    title: 'We don’t follow the standard.<br/><em>We redefine it.</em>',
     lead:
-      'Verkleidungen und aerodynamische Anbauteile, entwickelt rund um Sie und Ihr Motorrad. Jedes Teil ist ein Unikat, von Hand gefertigt aus den fortschrittlichsten Materialien, von Prepreg-Carbon bis zu Rennsport-Verbundwerkstoffen.',
+      'One-off-Motorräder, Verkleidungen und Aero-Teile, von Grund auf entworfen und von Hand gefertigt. Jedes Projekt entsteht aus Ihren Wünschen und wird zu einem einzigartigen, unwiederholbaren Stück.',
     secondary: 'Leistungen entdecken',
     scroll: 'Scrollen',
-    specs: ['Prepreg-Carbon', 'CAD/CFD-Entwicklung', 'Unikat'],
+    specs: ['One-off-Motorräder', 'Limitierte Editionen', 'Prototyping für Unternehmen'],
     canvasLabel: 'Interaktives 3D-Modell eines aerodynamischen Carbon-Flügels mit goldenen Details',
   },
 
   services: {
     kicker: 'Leistungen',
-    title: 'Jedes Teil entsteht <em>für genau ein Motorrad</em>',
-    lead:
-      'Wir verkaufen keine Katalogprodukte. Wir entwickeln Komponenten, die Ihre Ziele erfüllen: mehr Geschwindigkeit, mehr Stabilität, eine Ästhetik, die es nirgendwo sonst gibt.',
+    title: 'Drei Wege <em>über die Fabrik hinaus</em>',
+    lead: 'Wir verkaufen keine Katalogprodukte. Wir entwerfen und bauen Unikate, für Fahrer und für Hersteller.',
     items: [
       {
-        title: 'Verkleidungen nach Maß',
+        title: 'One-off-Motorräder',
         text:
-          'Voll- oder Teilverkleidungen, konstruiert auf den realen Maßen Ihres Motorrads. Originale Linien oder komplett neu gezeichnet, mit Halterungen und Toleranzen aus dem Rennsport.',
-        spec: 'Racing · Straße · Restomod',
+          'Wir interpretieren Ihr Motorrad von Grund auf neu: Linien, Verkleidungen, Aufbauten und Details komplett neu gezeichnet. Das Ergebnis ist ein Unikat mit einer Identität, die nur Ihnen gehört.',
+        spec: 'Komplettprojekt · Unikat',
         image: 'servizio-carene',
-        alt: 'Maßgefertigte Carbon-Verkleidung an einem Sportmotorrad',
+        alt: 'One-off-Motorrad mit maßgefertigten Carbon-Verkleidungen',
       },
       {
-        title: 'Aerodynamische Anbauteile',
+        title: 'Design- & Aero-Komponenten',
         text:
-          'Winglets, Frontflügel, Deflektoren und Profile, die Abtrieb erzeugen und Wheelies beim Beschleunigen reduzieren, ohne Einbußen bei der Höchstgeschwindigkeit.',
-        spec: 'Winglets · Flügel · Deflektoren',
+          'Individuelle Verkleidungen, Winglets, Frontmasken, Heckteile und aerodynamische Anbauteile. Jedes Teil wird auf den realen Maßen des Motorrads konstruiert, für mehr Stabilität, Abtrieb und Charakter.',
+        spec: 'Verkleidungen · Winglets · Anbauteile',
         image: 'servizio-aero',
         alt: 'Ein Paar aerodynamischer Winglets an der Frontverkleidung eines Motorrads',
       },
       {
-        title: 'Individualisierung & Finish',
+        title: 'Prototypenentwicklung für Unternehmen',
         text:
-          'Sichtcarbon, Lackierungen im Farbton, Details in Blattgold, eigene Logos und Designs. Technik wird zur Handschrift, bis auf den letzten Millimeter.',
-        spec: 'Designs · Klarlack · Blattgold',
+          'Wir unterstützen Hersteller, Tuner und Marken bei der Entwicklung von Prototypen: vom Konzept über die 3D-Modellierung bis zu Formen und testfertigen Funktionsteilen.',
+        spec: 'Konzept · CAD · Prototypen',
         image: 'servizio-finiture',
-        alt: 'Detail eines glänzenden Carbon-Finishs mit goldener Zierlinie',
+        alt: 'Prototyp eines Motorradteils in der Entwicklung',
       },
     ],
     materialsTitle: 'Materialien',
@@ -94,37 +99,112 @@ export default {
     ],
   },
 
+  projects: {
+    kicker: 'Projekte',
+    title: '<em>Unikate</em>, verschiedene Geschichten',
+    lead: 'Eine Auswahl unserer Arbeiten. Wählen Sie ein Projekt aus der Liste, um seine Geschichte zu lesen.',
+    indexLabel: 'Projektliste',
+    prev: 'Vorheriges Projekt',
+    next: 'Nächstes Projekt',
+    items: [
+      {
+        id: 'v4-one-off',
+        title: 'Panigale V4 „Nero Oro“',
+        category: 'One-off-Motorrad',
+        year: '2025',
+        text: 'Komplette Verkleidung neu entworfen, Einsitzer-Heck und in die Frontmaske integrierte Winglets. Sichtcarbon mit Zierlinien in Blattgold.',
+        image: 'progetto-1',
+        alt: 'Schwarz-goldene One-off Ducati Panigale V4',
+      },
+      {
+        id: 'limited-01',
+        title: 'Limited Edition 01',
+        category: 'Limitierte Edition · 25 Stück',
+        year: '2025',
+        text: 'Unsere erste nummerierte Serie: ein Naked Bike, neu interpretiert mit Tank, Seitenteilen und Abdeckungen aus Verbundwerkstoff, jedes Exemplar mit nummerierter Plakette.',
+        image: 'progetto-2',
+        alt: 'Naked Bike der Limited Edition 01',
+      },
+      {
+        id: 'r1m-aero',
+        title: 'Aero-Kit R1M',
+        category: 'Aerodynamische Komponenten',
+        year: '2024',
+        text: 'Doppelprofil-Winglets und seitliche Deflektoren für die Rennstrecke: mehr Abtrieb an der Front und weniger Wheelies am Kurvenausgang.',
+        image: 'progetto-3',
+        alt: 'Carbon-Winglet-Kit für Yamaha R1M',
+      },
+      {
+        id: 'proto-oem',
+        title: 'Prototyp für ein Unternehmen',
+        category: 'Prototypenentwicklung',
+        year: '2024',
+        text: 'Entwicklung einer experimentellen Frontmaske für einen Hersteller: CAD-Modellierung, 3D-gedruckte Prototypen und Formen für Windkanaltests. Details unter NDA.',
+        image: 'progetto-4',
+        alt: 'Prototyp einer Frontmaske im Test',
+      },
+      {
+        id: 'cafe-racer',
+        title: 'Café Racer „Officina“',
+        category: 'One-off-Motorrad',
+        year: '2023',
+        text: 'Ein Klassiker als Café Racer: maßgefertigte Halbschale, Sitzbank und Heck, Lackierung im Farbton und Details aus gebürstetem Aluminium.',
+        image: 'progetto-5',
+        alt: 'One-off Café Racer mit maßgefertigter Halbschale',
+      },
+    ],
+  },
+
   process: {
     kicker: 'Methode',
-    title: 'Warum es <em>keine Preisliste gibt</em>',
-    lead:
-      'Jedes Projekt beginnt bei null: Motorrad, Fahrer, Einsatz und Ziele verändern alles. Deshalb erstellen wir das Angebot erst, nachdem wir Ihnen zugehört haben.',
+    title: 'Eine Methode, <em>drei Wege</em>',
+    lead: 'Jedes Projekt beginnt mit denselben drei Phasen. Danach nimmt es den richtigen Weg für das gewünschte Ergebnis.',
     steps: [
-      { title: 'Beratung', text: 'Wir analysieren Motorrad, Fahrstil und Ziele: Rennstrecke, Straße oder Ausstellung.' },
-      { title: '3D-Vermessung', text: 'Scan und Vermessung des Motorrads, um auf realen Maßen zu arbeiten, auf den Zehntelmillimeter genau.' },
-      { title: 'Konstruktion', text: 'CAD-Modellierung, aerodynamische Prüfung und Materialwahl. Sie geben jedes Detail frei.' },
-      { title: 'Fertigung', text: 'Formenbau, Laminieren und Aushärten im Autoklav. Qualitätskontrolle an jedem einzelnen Teil.' },
-      { title: 'Übergabe', text: 'Montage, Endkontrolle und Übergabe. Auch danach begleiten wir Sie, auf Strecke und Straße.' },
+      { title: 'Beratung', text: 'Wir hören uns Ideen, Wünsche und Einsatzzweck an: Straße, Rennstrecke, Sammlung oder Serie.' },
+      { title: 'Konstruktion', text: '3D-Vermessung, CAD-Modellierung, Formstudien und Materialwahl.' },
+      { title: 'Abstimmung mit dem Kunden', text: 'Renderings und Zeichnungen zur gemeinsamen Freigabe. Wir verfeinern, bis das Projekt genau Ihren Vorstellungen entspricht.' },
+    ],
+    branchesLabel: 'Ab hier, drei Wege',
+    branches: [
+      {
+        title: 'One-off-Motorräder',
+        text: 'Demontage, Formen- und Teilefertigung, Lackierung, Montage und Erprobung des kompletten Motorrads.',
+      },
+      {
+        title: 'Design- & Aero-Komponenten',
+        text: 'Fertigung im gewählten Material, Finish, Passprüfung und anschließend Versand oder Montage.',
+      },
+      {
+        title: 'Prototyping für Unternehmen',
+        text: 'Funktionsprototypen, Testiterationen, technische Dokumentation und Begleitung bis zur Vorserie.',
+      },
     ],
   },
 
   about: {
     kicker: 'Über uns',
-    title: 'Handwerker der <em>Geschwindigkeit</em>',
+    title: 'Beyond the Factory: <em>Design und Komponenten nach Maß</em> für Ihr Motorrad',
+    claim: 'We don’t follow the standard. We redefine it.',
     paragraphs: [
-      'XXX entstand dort, wo Leidenschaft für den Rennsport auf Liebe zum Detail trifft. Unsere Werkstatt verbindet die Hand des Handwerkers mit den Methoden der Rennsporttechnik.',
-      'Wir arbeiten für Rennfahrer, Sammler und Enthusiasten, die sich nicht zufriedengeben: Menschen, die ein schnelleres, stabileres und absolut einzigartiges Motorrad wollen. Jedes Projekt betreut ein fester Ansprechpartner, vom ersten Anruf bis zur Übergabe.',
+      'Beyond the Factory entstand, um die Grenzen des traditionellen Motorraddesigns zu überwinden. Wir entwickeln individuelle Motorradkomponenten und maßgeschneiderte Lösungen, die jedes Motorrad in ein einzigartiges, unverwechselbares und unwiederholbares Stück verwandeln.',
+      'Wir verbinden Konstruktion, ästhetische Forschung und technische Innovation, um Formen und Charakter des Zweirads neu zu definieren.',
     ],
-    stats: [
-      { value: '15+', label: 'Jahre Erfahrung' },
-      { value: '600+', label: 'Maßprojekte' },
-      { value: '100%', label: 'Handarbeit' },
+    blocks: [
+      {
+        title: 'Bespoke Creations – Verkleidungen und Motorradteile nach Maß',
+        text: 'Wir entwerfen und fertigen individuelle Verkleidungen, aerodynamische Anbauteile (Winglets) und komplett neu entwickelte Elemente. Jede Kreation entsteht aus den Wünschen des Kunden und wird zu einem einzigartigen Projekt, das sich von jedem anderen Motorrad abhebt.',
+      },
+      {
+        title: 'Limited Editions – Motorräder in limitierter Auflage',
+        text: 'Wir wählen Modelle aus, die wir mit unserer gestalterischen Vision neu interpretieren, und schaffen Motorräder in limitierter Auflage: exklusive Versionen mit klarer ästhetischer Identität und streng nummerierter Produktion, in der Design, Exklusivität und technische Forschung zusammenkommen.',
+      },
     ],
-    imageAlt: 'Die XXX-Werkstatt beim Laminieren einer Carbon-Verkleidung',
+    closing: 'Beyond the Factory. Beyond the Ordinary.',
+    imageAlt: 'Die Werkstatt von Beyond the Factory beim Laminieren einer Carbon-Verkleidung',
   },
 
   testimonials: {
-    kicker: 'Kunden',
+    kicker: 'Bewertungen',
     title: 'Das sagen <em>unsere Fahrer</em>',
     items: [
       {
@@ -137,13 +217,13 @@ export default {
         quote:
           'Ich wollte ein Motorrad, das keinem anderen gleicht. Aus einer meiner Skizzen haben sie eine komplett neue Verkleidung entworfen: Das Ergebnis gehört ins Museum.',
         name: 'Vorname Nachname',
-        bike: 'BMW R nineT · Restomod',
+        bike: 'BMW R nineT · One-off',
       },
       {
         quote:
-          'Seriöse Beratung, eingehaltene Termine und eine Carbon-Qualität, die über der des Originals liegt. Das Angebot war von Anfang an klar.',
+          'Wir haben ihnen die Entwicklung eines Prototyps anvertraut: eine strenge Methode, eingehaltene Termine und eine seltene Liebe zum Detail.',
         name: 'Vorname Nachname',
-        bike: 'Yamaha R1M · Straße',
+        bike: 'Unternehmen · Prototyping',
       },
     ],
     prev: 'Vorherige Bewertung',
@@ -155,28 +235,28 @@ export default {
     title: 'Häufige <em>Fragen</em>',
     items: [
       {
-        q: 'Was kostet eine Verkleidung nach Maß?',
+        q: 'Was kostet ein Projekt nach Maß?',
         a: 'Wir haben keine Preisliste, da jedes Teil ein Unikat ist: Der Preis hängt von Motorrad, Materialien, Komplexität und Finish ab. Nach der Beratung erhalten Sie ein detailliertes, unverbindliches Angebot.',
       },
       {
         q: 'Wie lang sind die Lieferzeiten?',
-        a: 'In der Regel 3 bis 8 Wochen, je nach Projekt. Aero-Anbauteile für bereits vermessene Modelle können schneller fertig sein. Einen verbindlichen Termin nennen wir Ihnen mit dem Angebot.',
+        a: 'Für Komponenten und Aero-Anbauteile in der Regel 3 bis 8 Wochen; ein One-off-Motorrad braucht länger. Einen verbindlichen Termin nennen wir Ihnen mit dem Angebot.',
       },
       {
-        q: 'Arbeiten Sie an jedem Motorrad?',
-        a: 'Ja: Superbikes, Naked Bikes, Tourer, Klassiker und Customs. Falls wir Ihr Modell noch nicht vermessen haben, führen wir in unserer Werkstatt einen 3D-Scan durch.',
+        q: 'Wie funktionieren die limitierten Editionen?',
+        a: 'Jede Edition hat eine festgelegte, nummerierte Stückzahl. Neue Serien kündigen wir auf unseren Social-Media-Kanälen an: Schreiben Sie uns, um vorab informiert zu werden.',
+      },
+      {
+        q: 'Arbeiten Sie auch für Unternehmen?',
+        a: 'Ja. Wir entwickeln Prototypen für Hersteller, Tuner und Marken, auch unter Geheimhaltungsvereinbarung (NDA).',
       },
       {
         q: 'Sind aerodynamische Anbauteile straßenzugelassen?',
         a: 'Das hängt vom Bauteil und vom Land ab. In der Beratung erklären wir Ihnen, was auf der Straße verwendet werden darf und was ausschließlich für die Rennstrecke bestimmt ist.',
       },
       {
-        q: 'Liefern Sie ins Ausland?',
-        a: 'Ja, wir versenden weltweit mit speziellen, versicherten Verpackungen. Bei komplexeren Projekten organisieren wir auch Abholung und Rücktransport des Motorrads.',
-      },
-      {
-        q: 'Kann ich das Projekt vor der Fertigung sehen?',
-        a: 'Selbstverständlich. Sie erhalten Renderings und Zeichnungen und geben jede Phase frei, bevor Formenbau und Fertigung beginnen.',
+        q: 'Kann ich den Fortschritt meiner Bestellung verfolgen?',
+        a: 'Ja. Im Kundenbereich sehen Sie den Status Ihrer Bestellung, Ihre Dokumente und können direkt mit dem Team schreiben. Bei jeder neuen Nachricht erhalten Sie eine E-Mail.',
       },
     ],
   },
@@ -184,18 +264,17 @@ export default {
   contact: {
     kicker: 'Kontakt',
     title: 'Beratung <em>buchen</em>',
-    lead:
-      'Erzählen Sie uns von Ihrem Motorrad und dem gewünschten Ergebnis. Einer unserer Techniker meldet sich innerhalb von 24 Arbeitsstunden, um die Beratung zu vereinbaren.',
+    lead: 'Erzählen Sie uns von Ihrer Idee oder Ihrem Projekt. Wir antworten innerhalb von 24 Arbeitsstunden, um die Beratung zu vereinbaren.',
     form: {
       name: 'Vor- und Nachname',
       email: 'E-Mail',
       phone: 'Telefon',
-      bike: 'Motorrad (Marke, Modell, Baujahr)',
+      bike: 'Motorrad oder Projekt',
       bikePlaceholder: 'z. B. Ducati Panigale V4 S 2023',
-      service: 'Art der Arbeit',
-      serviceOptions: ['Verkleidung nach Maß', 'Aerodynamische Anbauteile', 'Individualisierung & Finish', 'Komplettprojekt', 'Sonstiges'],
+      service: 'Leistung',
+      serviceOptions: ['One-off-Motorrad', 'Design- & Aero-Komponenten', 'Prototypenentwicklung für Unternehmen', 'Limitierte Edition', 'Sonstiges'],
       use: 'Einsatz',
-      useOptions: ['Straße', 'Rennstrecke', 'Straße und Rennstrecke', 'Ausstellung / Sammlung'],
+      useOptions: ['Straße', 'Rennstrecke', 'Straße und Rennstrecke', 'Sammlung', 'Serienfertigung'],
       message: 'Beschreiben Sie Ihr Projekt',
       privacy: 'Ich habe die <a href="{privacy}">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Daten zur Beantwortung meiner Anfrage zu.',
       submit: 'Anfrage senden',
@@ -207,44 +286,21 @@ export default {
       select: 'Bitte wählen…',
     },
     info: {
-      address: 'Werkstatt',
-      phone: 'Telefon',
       email: 'E-Mail',
-      hours: 'Öffnungszeiten',
-      closed: 'Geschlossen',
+      emailNote: 'Wir antworten innerhalb von 24 Arbeitsstunden.',
       social: 'Folgen Sie uns',
-      directions: 'Route planen',
-    },
-    map: {
-      title: 'Karte des XXX-Standorts',
-      consent: 'Die Karte wird von Google bereitgestellt und verwendet Cookies von Drittanbietern.',
-      load: 'Karte anzeigen',
     },
   },
 
   footer: {
-    tagline: 'Maßgefertigte Motorradverkleidungen und Aerodynamik.',
+    tagline: 'Beyond the Factory. Beyond the Ordinary.',
     rights: 'Alle Rechte vorbehalten.',
     privacy: 'Datenschutz & Cookies',
-    cookieSettings: 'Cookie-Einstellungen',
-  },
-
-  cookie: {
-    title: 'Wir respektieren Ihre Privatsphäre',
-    text: 'Wir verwenden nur technisch notwendige Cookies. Mit Ihrer Zustimmung laden wir auch Inhalte von Drittanbietern wie Google Maps.',
-    accept: 'Akzeptieren',
-    reject: 'Nur notwendige',
-    more: 'Mehr erfahren',
-  },
-
-  whatsapp: {
-    label: 'Schreiben Sie uns auf WhatsApp',
-    message: 'Hallo XXX, ich hätte gerne Informationen zu einem Maßprojekt für mein Motorrad.',
   },
 
   thanks: {
     title: 'Anfrage <em>erhalten</em>',
-    text: 'Vielen Dank für Ihre Nachricht. Einer unserer Techniker prüft Ihre Anfrage und meldet sich innerhalb von 24 Arbeitsstunden.',
+    text: 'Vielen Dank für Ihre Nachricht. Wir prüfen Ihre Anfrage und melden uns innerhalb von 24 Arbeitsstunden.',
     back: 'Zur Startseite',
   },
 
@@ -252,14 +308,14 @@ export default {
     title: 'Datenschutz & <em>Cookies</em>',
     note: 'Platzhaltertext: durch die von Ihrem Rechtsberater erstellte Erklärung ersetzen.',
     sections: [
-      { h: 'Verantwortlicher', p: 'Verantwortlich für die Datenverarbeitung ist {legal}, {address}. E-Mail: {email}.' },
+      { h: 'Verantwortlicher', p: 'Verantwortlich für die Datenverarbeitung ist {legal}. E-Mail: {email}.' },
       {
         h: 'Erhobene Daten und Zwecke',
-        p: 'Die über das Kontaktformular übermittelten Daten (Name, E-Mail, Telefon, Angaben zum Motorrad und Nachricht) werden ausschließlich zur Beantwortung der Anfrage und zur Erstellung eines Angebots verwendet.',
+        p: 'Die über das Kontaktformular übermittelten Daten werden ausschließlich zur Beantwortung der Anfrage und zur Erstellung eines Angebots verwendet. Die im Kundenbereich eingegebenen Daten (Personalien und Lieferadresse) dienen der Abwicklung und dem Versand der Bestellung.',
       },
       {
-        h: 'Cookies',
-        p: 'Die Website verwendet technisch notwendige Cookies und speichert Ihre Einwilligungsentscheidung. Inhalte von Drittanbietern (Google Maps), die eigene Cookies setzen können, werden nur mit Ihrer Zustimmung geladen.',
+        h: 'Cookies und lokale Speicherung',
+        p: 'Die Website verwendet keine Profiling-Cookies und keine Tools von Drittanbietern. Der Kundenbereich speichert im Browser nur die technischen Informationen, die für die Anmeldung erforderlich sind.',
       },
       { h: 'Ihre Rechte', p: 'Sie können jederzeit Auskunft, Berichtigung oder Löschung Ihrer Daten verlangen, indem Sie an {email} schreiben.' },
     ],
@@ -271,5 +327,73 @@ export default {
     back: 'Zur Startseite',
   },
 
-  days: { mo: 'Montag', tu: 'Dienstag', we: 'Mittwoch', th: 'Donnerstag', fr: 'Freitag', sa: 'Samstag', su: 'Sonntag' },
+  area: {
+    kicker: 'Kundenbereich',
+    title: 'Ihr <em>Projekt</em>, Schritt für Schritt',
+    notConfigured: 'Der Kundenbereich ist noch nicht aktiv. Schauen Sie bald wieder vorbei.',
+    loading: 'Wird geladen…',
+    error: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es gleich noch einmal.',
+    login: {
+      title: 'Anmelden',
+      text: 'Geben Sie die E-Mail-Adresse Ihrer Bestellung ein: Wir senden Ihnen einen Anmeldelink, ganz ohne Passwort.',
+      email: 'E-Mail',
+      submit: 'Link senden',
+      sent: 'Erledigt. Prüfen Sie Ihr Postfach (auch den Spam-Ordner) und öffnen Sie den Link.',
+    },
+    logout: 'Abmelden',
+    signedInAs: 'Angemeldet als',
+    profile: {
+      title: 'Versanddaten',
+      text: 'Bitte vervollständigen Sie zuerst Ihre Daten: Wir benötigen sie für Rechnung und Versand Ihrer Bestellung.',
+      edit: 'Versanddaten ändern',
+      firstName: 'Vorname',
+      lastName: 'Nachname',
+      company: 'Firma (optional)',
+      taxCode: 'Steuernummer oder USt-IdNr.',
+      phone: 'Telefon',
+      address: 'Straße und Hausnummer',
+      postalCode: 'PLZ',
+      city: 'Ort',
+      province: 'Bundesland / Region',
+      country: 'Land',
+      notes: 'Hinweise für den Kurier (optional)',
+      save: 'Daten speichern',
+      saved: 'Daten gespeichert.',
+      cancel: 'Abbrechen',
+    },
+    orders: {
+      title: 'Ihre Bestellungen',
+      empty: 'Mit Ihrer E-Mail-Adresse sind noch keine Bestellungen verknüpft. Sobald das Team Ihr Projekt anlegt, finden Sie es hier.',
+      code: 'Bestellung',
+      updated: 'Aktualisiert am',
+      status: 'Status',
+      tracking: 'Versand',
+      history: 'Verlauf',
+    },
+    statuses: {
+      consultation: 'Beratung',
+      design: 'Konstruktion',
+      review: 'Abstimmung mit dem Kunden',
+      production: 'Fertigung',
+      finishing: 'Finish & Qualitätskontrolle',
+      shipping: 'Versendet',
+      delivered: 'Zugestellt',
+    },
+    docs: {
+      title: 'Dokumente',
+      empty: 'Noch keine Dokumente.',
+      upload: 'Datei hochladen',
+      uploading: 'Wird hochgeladen…',
+      download: 'Herunterladen',
+    },
+    chat: {
+      title: 'Nachrichten',
+      empty: 'Noch keine Nachrichten. Schreiben Sie dem Team bei Fragen zu Ihrem Projekt.',
+      placeholder: 'Nachricht schreiben…',
+      send: 'Senden',
+      you: 'Sie',
+      team: 'Beyond the Factory',
+      notice: 'Sie erhalten eine E-Mail, wenn das Team antwortet.',
+    },
+  },
 };

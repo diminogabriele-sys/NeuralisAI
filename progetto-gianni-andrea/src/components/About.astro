@@ -7,36 +7,47 @@ const t = dictionaries[Astro.props.lang].about;
 ---
 
 <section id="about" class="section about" aria-labelledby="about-title">
-  <div class="container about-grid">
-    <div class="about-media reveal">
-      <div class="frame" data-parallax>
-        <Picture
-          src={images['chi-siamo']}
-          alt={t.imageAlt}
-          formats={['avif', 'webp']}
-          widths={[480, 800, 1200]}
-          sizes="(min-width: 960px) 45vw, 100vw"
-          loading="lazy"
-          decoding="async"
-        />
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-media reveal">
+        <div class="frame" data-parallax>
+          <Picture
+            src={images['chi-siamo']}
+            alt={t.imageAlt}
+            formats={['avif', 'webp']}
+            widths={[480, 800, 1200]}
+            sizes="(min-width: 960px) 45vw, 100vw"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <span class="frame-corner" aria-hidden="true"></span>
       </div>
-      <span class="frame-corner" aria-hidden="true"></span>
+
+      <div class="about-text">
+        <p class="kicker reveal" data-n="04">{t.kicker}</p>
+        <h1 id="about-title" class="about-h1 reveal" set:html={t.title} />
+        <p class="claim reveal" lang="en">{t.claim}</p>
+        {t.paragraphs.map((p, i) => <p class="reveal about-p" style={`--d:${0.1 + i * 0.1}s`}>{p}</p>)}
+      </div>
     </div>
 
-    <div class="about-text">
-      <p class="kicker reveal" data-n="03">{t.kicker}</p>
-      <h2 id="about-title" class="h-section reveal" set:html={t.title} />
-      {t.paragraphs.map((p, i) => <p class="reveal about-p" style={`--d:${0.1 + i * 0.1}s`}>{p}</p>)}
-
-      <dl class="stats">
-        {t.stats.map((s, i) => (
-          <div class="stat reveal" style={`--d:${0.2 + i * 0.1}s`}>
-            <dt class="mono">{s.label}</dt>
-            <dd data-count={s.value}>{s.value}</dd>
-          </div>
-        ))}
-      </dl>
+    <div class="pillars">
+      {t.blocks.map((b, i) => {
+        const [name, sub] = b.title.split(' – ');
+        return (
+          <article class="pillar reveal" style={`--d:${i * 0.12}s`}>
+            <h2>
+              <span class="pillar-name" lang="en">{name}</span>
+              <span class="pillar-sub">{sub}</span>
+            </h2>
+            <p>{b.text}</p>
+          </article>
+        );
+      })}
     </div>
+
+    <p class="closing reveal" lang="en">{t.closing}</p>
   </div>
 </section>
 
@@ -55,67 +66,60 @@ const t = dictionaries[Astro.props.lang].about;
     border-bottom: 1px solid var(--gold);
     pointer-events: none;
   }
-  .about-text h2 { margin-bottom: 2rem; }
-  .about-p { color: var(--muted); font-size: 1.05rem; max-width: 58ch; }
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin: 2.75rem 0 0;
-    padding-top: 2rem;
-    border-top: 1px solid var(--line);
-  }
-  .stat { display: flex; flex-direction: column-reverse; }
-  .stat dt { color: var(--muted); font-size: 0.62rem; line-height: 1.5; }
-  .stat dd {
-    margin: 0 0 0.4rem;
+  .about-h1 { font-size: clamp(2.2rem, 5.2vw, 4rem); margin-bottom: 1.75rem; }
+  .claim {
     font-family: var(--font-display);
-    font-size: clamp(2.4rem, 6vw, 4rem);
-    line-height: 1;
+    font-style: italic;
+    font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+    color: var(--gold);
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--gold);
+    margin-bottom: 1.75rem;
+  }
+  .about-p { color: var(--muted); font-size: 1.05rem; max-width: 60ch; }
+
+  .pillars { display: grid; gap: 1.25rem; margin-top: clamp(4rem, 8vw, 6rem); }
+  .pillar {
+    padding: 2rem 1.75rem 2.25rem;
+    border: 1px solid var(--line);
+    background: linear-gradient(160deg, var(--surface-2), var(--surface) 70%);
+  }
+  .pillar h2 { display: grid; gap: 0.4rem; margin-bottom: 1.25rem; }
+  .pillar-name { font-size: clamp(2rem, 3.6vw, 2.8rem); color: var(--gold); }
+  .pillar-sub { font-family: var(--font-body); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white); line-height: 1.5; }
+  .pillar p { color: var(--muted); margin: 0; }
+
+  .closing {
+    margin: clamp(3.5rem, 7vw, 5rem) 0 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+    line-height: 1.15;
     background: var(--gold-gradient);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    text-wrap: balance;
   }
+
   @media (min-width: 960px) {
-    .about-grid { grid-template-columns: 0.9fr 1fr; gap: 6rem; }
+    .about-grid { grid-template-columns: 0.85fr 1fr; gap: 6rem; }
+    .pillars { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
   }
 </style>
 
 <script>
-  // Contatori animati e leggero parallax dell'immagine
+  // Leggero parallax dell'immagine
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const counters = document.querySelectorAll<HTMLElement>('[data-count]');
-  if (!reduced && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (!e.isIntersecting) return;
-        const el = e.target as HTMLElement;
-        io.unobserve(el);
-        const raw = el.dataset.count!;
-        const n = parseInt(raw, 10);
-        const suffix = raw.replace(/^\d+/, '');
-        const t0 = performance.now();
-        const step = (now: number) => {
-          const p = Math.min((now - t0) / 1600, 1);
-          el.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))) + suffix;
-          if (p < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      });
-    }, { threshold: 0.6 });
-    counters.forEach((c) => io.observe(c));
-
-    const frame = document.querySelector<HTMLElement>('[data-parallax]');
-    if (frame) {
-      const onScroll = () => {
-        const r = frame.getBoundingClientRect();
-        const p = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
-        const py = Math.min(Math.max(-6.5 - p * 6.5, -13), 0);
-        frame.style.setProperty('--py', `${py.toFixed(2)}%`);
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-    }
+  const frame = document.querySelector<HTMLElement>('[data-parallax]');
+  if (frame && !reduced) {
+    const onScroll = () => {
+      const r = frame.getBoundingClientRect();
+      const p = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
+      const py = Math.min(Math.max(-6.5 - p * 6.5, -13), 0);
+      frame.style.setProperty('--py', `${py.toFixed(2)}%`);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
   }
 </script>

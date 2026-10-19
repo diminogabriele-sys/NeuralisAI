@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Services from '../components/Services.astro';
+import Projects from '../components/Projects.astro';
 import Process from '../components/Process.astro';
 import About from '../components/About.astro';
 import Testimonials from '../components/Testimonials.astro';
@@ -17,6 +18,7 @@ const m = dictionaries[lang].meta.home;
 <Base lang={lang} page="home" title={m.title} description={m.description} extraSchema={[faqSchema(lang)]}>
   <Hero lang={lang} />
   <Services lang={lang} />
+  <Projects lang={lang} />
   <Process lang={lang} />
   <About lang={lang} />
   <Testimonials lang={lang} />

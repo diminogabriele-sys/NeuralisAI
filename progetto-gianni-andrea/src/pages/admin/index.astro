@@ -1,0 +1,354 @@
+---
+/** Pannello del team (solo italiano, non indicizzato). Accesso consentito alle email nella tabella "admins". */
+import '@fontsource/cormorant-garamond/400.css';
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource-variable/manrope/index.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '../../styles/global.css';
+import '../../styles/portal.css';
+import Logo from '../../components/Logo.astro';
+import it from '../../i18n/it.js';
+
+const strings = { statuses: it.area.statuses, services: it.services.items.map((s) => s.title) };
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Pannello ordini | Beyond the Factory</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body class="admin">
+    <header class="adm-header">
+      <div class="container adm-header-in">
+        <a href="/" aria-label="Torna al sito"><Logo /></a>
+        <span class="mono adm-tag">Pannello ordini</span>
+      </div>
+    </header>
+
+    <main id="main" class="portal">
+      <div class="container">
+        <div data-admin aria-live="polite"><p class="pmsg">Caricamento…</p></div>
+      </div>
+    </main>
+
+    <script type="application/json" id="admin-i18n" set:html={JSON.stringify(strings)} />
+
+    <style>
+      .adm-header { position: fixed; inset: 0 0 auto; z-index: 50; height: var(--header-h); background: rgba(10, 10, 11, 0.9); border-bottom: 1px solid var(--line); backdrop-filter: blur(10px); }
+      .adm-header-in { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+      .adm-tag { color: var(--gold); font-size: 0.66rem; }
+      .admin .portal { padding-top: calc(var(--header-h) + 2rem); }
+
+      :global(.adm) { display: grid; gap: 1.5rem; }
+      @media (min-width: 1000px) { :global(.adm) { grid-template-columns: 340px 1fr; align-items: start; } }
+      :global(.adm-list) { display: grid; gap: 0.75rem; align-content: start; }
+      @media (min-width: 1000px) { :global(.adm-list) { position: sticky; top: calc(var(--header-h) + 1rem); max-height: calc(100vh - var(--header-h) - 2rem); overflow: auto; } }
+      :global(.adm-filters) { display: grid; gap: 0.5rem; grid-template-columns: 1fr 1fr; margin-top: 0; }
+      :global(.adm-filters .pfield:first-child) { grid-column: 1 / -1; }
+      :global(.adm-orders) { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+      :global(.adm-orders button) {
+        width: 100%; text-align: left; display: grid; gap: 0.2rem; padding: 0.85rem 1rem; cursor: pointer;
+        background: var(--surface); border: 1px solid var(--line); color: var(--white);
+      }
+      :global(.adm-orders button[aria-current='true']) { border-color: var(--gold); background: rgba(201, 164, 92, 0.08); }
+      :global(.adm-orders .o-title) { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.2; }
+      :global(.adm-orders .o-meta) { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.75rem; color: var(--muted); }
+      :global(.adm-orders .o-status) { color: var(--gold); }
+      :global(.badge) { display: inline-block; padding: 0.1rem 0.45rem; background: var(--gold); color: var(--black); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+      :global(.adm-detail) { display: grid; gap: 1.25rem; min-width: 0; }
+      :global(.adm-detail > .pgrid) { grid-template-columns: 1fr; }
+      @media (min-width: 1400px) { :global(.adm-detail > .pgrid) { grid-template-columns: minmax(300px, 1fr) 1.3fr; } }
+      :global(.kv) { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; margin: 0; font-size: 0.92rem; }
+      :global(.kv dt) { color: var(--muted); }
+      :global(.kv dd) { margin: 0; overflow-wrap: anywhere; }
+    </style>
+
+    <script>
+      import {
+        supabase, esc, fmtDate, statusTrack, loadOrderDetail, watchOrder, chatHtml, docsHtml,
+        wireOrderActions, STATUSES, BUCKET, type Order, type Profile,
+      } from '../../lib/portal';
+      import type { RealtimeChannel } from '@supabase/supabase-js';
+
+      const S = JSON.parse(document.getElementById('admin-i18n')!.textContent!);
+      const root = document.querySelector<HTMLElement>('[data-admin]')!;
+      const LANG = 'it';
+      const SEEN_KEY = 'btf-admin-seen';
+      let orders: Order[] = [];
+      let lastClientMsg = new Map<string, string>();
+      let selected: string | null = location.hash.slice(1) || null;
+      let channel: RealtimeChannel | null = null;
+      let globalChannel: RealtimeChannel | null = null;
+      const filters = { q: '', status: '' };
+
+      const seen = (): Record<string, string> => {
+        try { return JSON.parse(localStorage.getItem(SEEN_KEY) || '{}'); } catch { return {}; }
+      };
+      const markSeen = (id: string) => {
+        try { const s = seen(); s[id] = new Date().toISOString(); localStorage.setItem(SEEN_KEY, JSON.stringify(s)); } catch {}
+      };
+      const showError = (e: unknown) => {
+        console.error(e);
+        const box = root.querySelector<HTMLElement>('[data-error]');
+        if (box) { box.hidden = false; box.textContent = `Errore: ${(e as any)?.message ?? e}`; }
+      };
+
+      /* ---------- accesso ---------- */
+      function renderLogin(msg = '') {
+        root.innerHTML = `<div class="pcard" style="max-width:560px">
+          <h1 style="font-size:2.4rem;margin-bottom:.75rem">Accesso team</h1>
+          <p>Inserisci la tua email: riceverai un link di accesso. Solo le email registrate come amministratori possono entrare.</p>
+          ${msg ? `<p class="pmsg err">${esc(msg)}</p>` : ''}
+          <form class="pform" data-login>
+            <div class="pfield"><label for="a-email">Email</label><input id="a-email" type="email" required autocomplete="email" /></div>
+            <div class="pform-actions"><button class="btn btn--solid">Inviami il link</button></div>
+            <p class="pmsg" data-msg hidden></p>
+          </form></div>`;
+        root.querySelector<HTMLFormElement>('[data-login]')!.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = (root.querySelector('#a-email') as HTMLInputElement).value.trim().toLowerCase();
+          const { error } = await supabase!.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/admin/' } });
+          const m = root.querySelector<HTMLElement>('[data-msg]')!;
+          m.hidden = false;
+          m.className = `pmsg ${error ? 'err' : 'ok'}`;
+          m.textContent = error ? 'Invio non riuscito: controlla che l’email sia registrata.' : 'Link inviato. Controlla la posta.';
+        });
+      }
+
+      /* ---------- elenco ordini ---------- */
+      async function loadOrders() {
+        const [o, m] = await Promise.all([
+          supabase!.from('orders').select('*').order('updated_at', { ascending: false }),
+          supabase!.from('messages').select('order_id, created_at').eq('from_admin', false).order('created_at', { ascending: false }).limit(1000),
+        ]);
+        if (o.error) throw o.error;
+        orders = o.data as Order[];
+        lastClientMsg = new Map();
+        for (const r of (m.data ?? []) as { order_id: string; created_at: string }[]) {
+          if (!lastClientMsg.has(r.order_id)) lastClientMsg.set(r.order_id, r.created_at);
+        }
+      }
+
+      function listHtml() {
+        const s = seen();
+        const q = filters.q.toLowerCase();
+        const rows = orders.filter(
+          (o) => (!filters.status || o.status === filters.status) &&
+            (!q || `${o.code} ${o.title} ${o.customer_email}`.toLowerCase().includes(q))
+        );
+        return rows.length
+          ? rows.map((o) => {
+              const last = lastClientMsg.get(o.id);
+              const unread = last && (!s[o.id] || last > s[o.id]) && o.id !== selected;
+              return `<li><button type="button" data-select="${o.id}" aria-current="${o.id === selected}">
+                <span class="o-meta"><span>${esc(o.code)}</span>${unread ? '<span class="badge">Nuovo messaggio</span>' : `<span>${fmtDate(o.updated_at, LANG)}</span>`}</span>
+                <span class="o-title">${esc(o.title)}</span>
+                <span class="o-meta"><span>${esc(o.customer_email)}</span><span class="o-status">${esc(S.statuses[o.status])}</span></span>
+              </button></li>`;
+            }).join('')
+          : '<li class="pnote">Nessun ordine.</li>';
+      }
+
+      function renderShell(email: string) {
+        root.innerHTML = `
+          <div class="pbar"><span>Accesso come <strong>${esc(email)}</strong></span>
+            <span class="pbar-actions"><button class="plink" data-new>+ Nuovo ordine</button><button class="plink" data-logout>Esci</button></span></div>
+          <p class="pmsg err" data-error hidden></p>
+          <div class="adm">
+            <aside class="adm-list" aria-label="Ordini">
+              <div class="pform adm-filters">
+                <div class="pfield"><label for="f-q">Cerca</label><input id="f-q" placeholder="Codice, titolo o email" value="${esc(filters.q)}" /></div>
+                <div class="pfield" style="grid-column:1/-1"><label for="f-st">Stato</label>
+                  <select id="f-st"><option value="">Tutti</option>${STATUSES.map((s) => `<option value="${s}"${filters.status === s ? ' selected' : ''}>${esc(S.statuses[s])}</option>`).join('')}</select></div>
+              </div>
+              <ul class="adm-orders" data-list>${listHtml()}</ul>
+            </aside>
+            <section class="adm-detail" data-detail aria-live="polite"></section>
+          </div>`;
+        root.querySelector('[data-logout]')!.addEventListener('click', async () => { await supabase!.auth.signOut(); start(); });
+        root.querySelector('[data-new]')!.addEventListener('click', () => { selected = null; history.replaceState(null, '', '#'); renderNew(); refreshList(); });
+        root.querySelector<HTMLInputElement>('#f-q')!.addEventListener('input', (e) => { filters.q = (e.target as HTMLInputElement).value; refreshList(); });
+        root.querySelector<HTMLSelectElement>('#f-st')!.addEventListener('change', (e) => { filters.status = (e.target as HTMLSelectElement).value; refreshList(); });
+      }
+
+      function refreshList() {
+        const list = root.querySelector<HTMLElement>('[data-list]');
+        if (!list) return;
+        list.innerHTML = listHtml();
+        list.querySelectorAll<HTMLButtonElement>('[data-select]').forEach((b) =>
+          b.addEventListener('click', () => select(b.dataset.select!))
+        );
+      }
+
+      /* ---------- nuovo ordine ---------- */
+      function renderNew() {
+        const detail = root.querySelector<HTMLElement>('[data-detail]')!;
+        detail.innerHTML = `<div class="pcard"><h2>Nuovo ordine</h2>
+          <p>Il cliente vedrà l’ordine accedendo all’area clienti con questa email. Il codice (es. BTF-2026-001) viene assegnato in automatico.</p>
+          <form class="pform" data-new-form>
+            <div class="pfield"><label for="n-email">Email del cliente <span>*</span></label><input id="n-email" name="customer_email" type="email" required /></div>
+            <div class="pfield"><label for="n-title">Titolo del progetto <span>*</span></label><input id="n-title" name="title" required placeholder="Es. Panigale V4 one-off" /></div>
+            <div class="pfield"><label for="n-service">Servizio</label><select id="n-service" name="service"><option value="">—</option>${S.services.map((s: string) => `<option>${esc(s)}</option>`).join('')}<option>Edizione limitata</option></select></div>
+            <div class="pform-actions"><button class="btn btn--solid">Crea ordine</button></div>
+          </form></div>`;
+        detail.querySelector<HTMLFormElement>('[data-new-form]')!.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const f = new FormData(e.target as HTMLFormElement);
+          const { data, error } = await supabase!.from('orders').insert({
+            customer_email: String(f.get('customer_email')).trim().toLowerCase(),
+            title: String(f.get('title')).trim(),
+            service: String(f.get('service')) || null,
+          }).select().single();
+          if (error) return showError(error);
+          await loadOrders();
+          select((data as Order).id);
+        });
+      }
+
+      /* ---------- dettaglio ordine ---------- */
+      async function select(id: string) {
+        selected = id;
+        history.replaceState(null, '', `#${id}`);
+        markSeen(id);
+        refreshList();
+        if (channel) supabase!.removeChannel(channel);
+        channel = watchOrder(id, () => renderDetail(id).catch(showError));
+        await renderDetail(id).catch(showError);
+        if (window.innerWidth < 1000) root.querySelector('[data-detail]')?.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      async function renderDetail(id: string) {
+        const detail = root.querySelector<HTMLElement>('[data-detail]')!;
+        const { data: o, error } = await supabase!.from('orders').select('*').eq('id', id).single();
+        if (error) throw error;
+        const order = o as Order;
+        const [{ data: prof }, det] = await Promise.all([
+          supabase!.from('profiles').select('*').eq('email', order.customer_email).maybeSingle(),
+          loadOrderDetail(id),
+        ]);
+        const p = prof as Profile | null;
+        const draft = detail.querySelector<HTMLTextAreaElement>('.chat-form textarea')?.value ?? '';
+        const shipping = p
+          ? `<dl class="kv">
+              <dt>Nome</dt><dd>${esc(p.first_name)} ${esc(p.last_name)}</dd>
+              ${p.company ? `<dt>Azienda</dt><dd>${esc(p.company)}</dd>` : ''}
+              <dt>CF / P.IVA</dt><dd>${esc(p.tax_code)}</dd>
+              <dt>Telefono</dt><dd>${esc(p.phone)}</dd>
+              <dt>Indirizzo</dt><dd>${esc(p.address)}<br>${esc(p.postal_code)} ${esc(p.city)} (${esc(p.province)})<br>${esc(p.country)}</dd>
+              ${p.notes ? `<dt>Note</dt><dd>${esc(p.notes)}</dd>` : ''}
+              <dt>Lingua</dt><dd>${esc(p.lang.toUpperCase())}</dd>
+            </dl>
+            <p><button type="button" class="plink" data-copy>Copia indirizzo di spedizione</button></p>`
+          : '<p class="pnote">Il cliente non ha ancora effettuato l’accesso né compilato i dati di spedizione.</p>';
+
+        detail.innerHTML = `
+          <div class="pcard">
+            <p class="order-code">${esc(order.code)} · creato il ${fmtDate(order.created_at, LANG)}</p>
+            <h2 style="margin-top:.5rem">${esc(order.title)}</h2>
+            <p>${esc(order.customer_email)}${order.service ? ` · ${esc(order.service)}` : ''}</p>
+            ${statusTrack(order.status, S.statuses)}
+            <form class="pform" data-edit>
+              <div class="row">
+                <div class="pfield"><label for="e-status">Stato</label><select id="e-status" name="status">${STATUSES.map((s) => `<option value="${s}"${s === order.status ? ' selected' : ''}>${esc(S.statuses[s])}</option>`).join('')}</select></div>
+                <div class="pfield"><label for="e-title">Titolo</label><input id="e-title" name="title" value="${esc(order.title)}" required /></div>
+              </div>
+              <div class="pfield"><label for="e-note">Nota visibile al cliente (facoltativa)</label><input id="e-note" name="status_note" value="${esc(order.status_note ?? '')}" placeholder="Es. Rilievo 3D completato" /></div>
+              <div class="row">
+                <div class="pfield"><label for="e-carrier">Corriere</label><input id="e-carrier" name="carrier" value="${esc(order.carrier ?? '')}" /></div>
+                <div class="pfield"><label for="e-tn">Numero di tracking</label><input id="e-tn" name="tracking_number" value="${esc(order.tracking_number ?? '')}" /></div>
+              </div>
+              <div class="pfield"><label for="e-tu">Link di tracking</label><input id="e-tu" name="tracking_url" type="url" value="${esc(order.tracking_url ?? '')}" placeholder="https://…" /></div>
+              <div class="pform-actions"><button class="btn btn--solid">Salva</button><span class="pnote" data-saved hidden>Salvato. Se hai cambiato lo stato, il cliente riceve un’email.</span></div>
+            </form>
+          </div>
+          <div class="pgrid">
+            <div class="pgrid">
+              <section class="pbox"><h3 class="pbox-title">Dati di spedizione</h3>${shipping}</section>
+              <section class="pbox"><h3 class="pbox-title">Cronologia</h3><ol class="history">${[...det.events].reverse().map((e) => `<li><strong>${esc(S.statuses[e.status])}</strong><time>${fmtDate(e.created_at, LANG, true)}</time>${e.note ? `<span class="note">${esc(e.note)}</span>` : ''}</li>`).join('')}</ol></section>
+              ${docsHtml(id, det.docs, { title: 'Documenti', empty: 'Nessun documento.', upload: 'Carica un file', uploading: 'Caricamento…', download: 'Apri' }, LANG, true)}
+            </div>
+            ${chatHtml(id, det.messages, { title: 'Chat con il cliente', empty: 'Nessun messaggio.', placeholder: 'Scrivi al cliente… (Ctrl+Invio per inviare)', send: 'Invia', team: 'Team', client: p ? p.first_name : 'Cliente', notice: 'Il cliente riceve un’email a ogni tuo messaggio.' }, LANG, true)}
+          </div>`;
+
+        const ta = detail.querySelector<HTMLTextAreaElement>('.chat-form textarea');
+        if (ta && draft) ta.value = draft;
+
+        detail.querySelector<HTMLFormElement>('[data-edit]')!.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const f = Object.fromEntries(new FormData(e.target as HTMLFormElement)) as Record<string, string>;
+          const patch: Record<string, string | null> = {};
+          for (const [k, v] of Object.entries(f)) patch[k] = v.trim() || null;
+          const { error } = await supabase!.from('orders').update(patch).eq('id', id);
+          if (error) return showError(error);
+          detail.querySelector<HTMLElement>('[data-saved]')!.hidden = false;
+          await loadOrders();
+          refreshList();
+        });
+        detail.querySelector('[data-copy]')?.addEventListener('click', async () => {
+          if (!p) return;
+          const txt = `${p.first_name} ${p.last_name}${p.company ? `\n${p.company}` : ''}\n${p.address}\n${p.postal_code} ${p.city} (${p.province})\n${p.country}\nTel. ${p.phone}`;
+          try { await navigator.clipboard.writeText(txt); } catch { /* clipboard non disponibile */ }
+        });
+        detail.querySelectorAll<HTMLButtonElement>('[data-doc-delete]').forEach((b) =>
+          b.addEventListener('click', async () => {
+            if (!confirm('Eliminare questo documento?')) return;
+            const rm = await supabase!.storage.from(BUCKET).remove([b.dataset.path!]);
+            const del = await supabase!.from('documents').delete().eq('id', b.dataset.docDelete!);
+            if (rm.error || del.error) return showError(rm.error || del.error);
+            renderDetail(id).catch(showError);
+          })
+        );
+        wireOrderActions(detail, showError, () => {
+          const box = detail.querySelector<HTMLTextAreaElement>('.chat-form textarea');
+          if (box) box.value = '';
+          markSeen(id);
+          renderDetail(id).catch(showError);
+        });
+        markSeen(id);
+      }
+
+      /* ---------- avvio ---------- */
+      async function start() {
+        if (!supabase) {
+          root.innerHTML = '<div class="pcard"><h1 style="font-size:2.2rem">Supabase non configurato</h1><p>Imposta PUBLIC_SUPABASE_URL e PUBLIC_SUPABASE_ANON_KEY (vedi supabase/README.md).</p></div>';
+          return;
+        }
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) return renderLogin();
+        const { data: isAdmin, error } = await supabase.rpc('is_admin');
+        if (error || !isAdmin) {
+          await supabase.auth.signOut();
+          return renderLogin('Questa email non è autorizzata ad accedere al pannello.');
+        }
+        await loadOrders();
+        renderShell(data.session.user.email ?? '');
+        refreshList();
+        if (selected && orders.some((o) => o.id === selected)) select(selected);
+        else if (orders.length) select(orders[0].id);
+        else renderNew();
+
+        // nuovi messaggi dei clienti su qualsiasi ordine → aggiorna l'elenco
+        if (globalChannel) supabase.removeChannel(globalChannel);
+        globalChannel = supabase
+          .channel('admin-all')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async () => { await loadOrders(); refreshList(); })
+          .subscribe();
+      }
+
+      // riavvia solo quando cambia l'utente collegato (non a ogni rinnovo della sessione)
+      let currentUser: string | null | undefined;
+      supabase?.auth.onAuthStateChange((_event, session) => {
+        const uid = session?.user.id ?? null;
+        if (uid === currentUser) return;
+        currentUser = uid;
+        start().catch(showError);
+      });
+      if (!supabase) start();
+    </script>
+  </body>
+</html>

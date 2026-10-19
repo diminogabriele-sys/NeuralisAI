@@ -9,15 +9,13 @@ import '../styles/global.css';
 
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import CookieBanner from '../components/CookieBanner.astro';
-import WhatsApp from '../components/WhatsApp.astro';
 import { dictionaries, locales, defaultLocale, path } from '../i18n/index.js';
 import { site } from '../config/site.js';
 import { businessSchema } from '../lib/schema.js';
 
 interface Props {
   lang: string;
-  page: 'home' | 'thanks' | 'privacy';
+  page: 'home' | 'thanks' | 'privacy' | 'area';
   title: string;
   description: string;
   noindex?: boolean;
@@ -77,8 +75,6 @@ const schema = [businessSchema(lang), ...extraSchema];
       <slot />
     </main>
     <Footer lang={lang} />
-    <WhatsApp lang={lang} />
-    <CookieBanner lang={lang} />
 
     <script>
       // Animazioni allo scroll: aggiunge .is-in quando l'elemento entra nel viewport

@@ -1,6 +1,6 @@
-# Sito XXX — Carene e aerodinamica su misura
+# Beyond the Factory: sito e area clienti
 
-Sito vetrina multilingua (IT · EN · ES · DE · FR) con hero 3D, costruito con **Astro** e **Three.js**.
+Sito multilingua (IT · EN · ES · DE · FR) con hero 3D, costruito con **Astro** e **Three.js**, più un'**area clienti** (stato ordini, documenti, chat con notifiche email) e un **pannello per il team** su **Supabase**. Per attivarli segui [`supabase/README.md`](supabase/README.md).
 
 ## Perché questo stack
 
@@ -17,21 +17,30 @@ npm run dev          # anteprima locale su http://localhost:4321
 npm run build        # genera il sito in dist/
 npm run preview      # anteprima della build
 npm run placeholders # rigenera le immagini segnaposto
+npm run check        # controllo dei tipi
 ```
 
 ## Cosa sostituire
 
 | Cosa | Dove |
 |---|---|
-| Nome, indirizzo, telefono, WhatsApp, email, orari, social, dominio, mappa | `src/config/site.js` (un solo file) |
-| Testi nelle 5 lingue ("XXX", testimonianze, numeri, FAQ…) | `src/i18n/it.js`, `en.js`, `es.js`, `de.js`, `fr.js` |
+| Email, social, dominio, P.IVA | `src/config/site.js` (un solo file) |
+| Testi nelle 5 lingue (progetti, recensioni, FAQ…) | `src/i18n/it.js`, `en.js`, `es.js`, `de.js`, `fr.js` |
+| Progetti | sezione `projects.items` nei file `src/i18n/*.js` + foto `progetto-1.jpg` … `progetto-5.jpg` |
 | Logo | `src/components/Logo.astro` (sostituisci l'SVG) + `public/favicon.svg` + `public/apple-touch-icon.png` (180×180) |
-| Foto servizi e laboratorio | `src/assets/images/` — sovrascrivi i file **con lo stesso nome** (`servizio-carene.jpg`, `servizio-aero.jpg`, `servizio-finiture.jpg`, `chi-siamo.jpg`). Consigliato: almeno 1600 px di larghezza, 4:3 per i servizi, 4:5 per il laboratorio |
+| Foto | `src/assets/images/`: sovrascrivi i file **con lo stesso nome** (`servizio-*.jpg`, `progetto-*.jpg`, `chi-siamo.jpg`). Consigliato: almeno 1600 px di larghezza, 4:3 (laboratorio 4:5) |
 | Immagine per le condivisioni social | `public/og-image.jpg` (1200×630) |
 | Informativa privacy | testo segnaposto in `privacy` dentro ogni file `src/i18n/*.js` |
-| Modello 3D (facoltativo) | `src/lib/hero3d.js`: `buildWing()` genera l'ala; con un modello reale `.glb` si può caricare con `GLTFLoader` |
+| Modello 3D (facoltativo) | `src/lib/hero3d.js`: `buildWing()` genera l'ala; un modello reale `.glb` si può caricare con `GLTFLoader` |
 
-> Cerca "XXX" in tutto il progetto per trovare ogni segnaposto del marchio.
+Per aggiungere un progetto, copia un blocco in `projects.items` (in tutte e 5 le lingue, con lo stesso `id`) e aggiungi la foto `src/assets/images/progetto-6.jpg`.
+
+## Area clienti e pannello admin
+
+- `/area-clienti/` (e `/en/client-area/`, ecc.): accesso via link email, dati di spedizione obbligatori, stato dell'ordine, cronologia, documenti, chat.
+- `/admin/`: pannello del team (italiano, non indicizzato) per creare ordini, cambiare stato, caricare documenti e rispondere ai clienti.
+- Database e regole di sicurezza: `supabase/schema.sql`. Email: `supabase/functions/notify`.
+- Guida completa all'attivazione: [`supabase/README.md`](supabase/README.md).
 
 ## Modulo contatti
 
@@ -47,7 +56,8 @@ In `src/config/site.js`:
 2. **Base directory:** `progetto-gianni-andrea`. Build command e publish directory vengono letti da `netlify.toml`.
 3. **Deploy.** Poi collega il dominio in *Domain management*.
 4. Aggiorna `url` in `src/config/site.js` con il dominio definitivo (serve per sitemap, canonical e Open Graph).
-5. Invia `https://tuodominio/sitemap.xml` a Google Search Console.
+5. Per l'area clienti aggiungi le variabili `PUBLIC_SUPABASE_URL` e `PUBLIC_SUPABASE_ANON_KEY` (vedi `supabase/README.md`).
+6. Invia `https://tuodominio/sitemap.xml` a Google Search Console.
 
 ### Vercel
 1. Su vercel.com: **Add New → Project** e importa il repository.
@@ -56,10 +66,9 @@ In `src/config/site.js`:
 
 ## Funzioni incluse
 
-- Home one-page: hero 3D interattivo, servizi con card 3D, metodo, chi siamo, testimonianze, FAQ, contatti.
+- Home one-page: hero 3D interattivo, servizi, progetti (elenco cliccabile + card scorrevoli), metodo con biforcazione nei tre servizi, chi siamo, recensioni, FAQ, contatti (email e social).
 - 5 lingue con URL dedicati (`/`, `/en/`, `/es/`, `/de/`, `/fr/`) e `hreflang`.
-- SEO: title e meta description per pagina, canonical, Open Graph e Twitter card, `sitemap.xml`, `robots.txt`, schema.org `AutoPartsStore` (LocalBusiness) + `FAQPage`.
-- Cookie banner. Google Maps si carica solo dopo il consenso.
-- Pulsante WhatsApp con messaggio precompilato nella lingua della pagina.
+- SEO: title e meta description per pagina, canonical, Open Graph e Twitter card, `sitemap.xml`, `robots.txt`, schema.org `Organization` + `FAQPage`.
+- Nessun cookie di terze parti (font self-hosted, niente mappe o analytics), quindi nessun cookie banner necessario.
 - Animazioni allo scroll, che rispettano l'impostazione "riduci movimento".
 - Accessibilità: link "salta al contenuto", focus visibile, menu mobile con tastiera ed Esc, FAQ con `<details>`, contrasti AA.
