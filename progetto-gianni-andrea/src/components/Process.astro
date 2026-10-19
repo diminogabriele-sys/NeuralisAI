@@ -29,18 +29,22 @@ const letters = ['A', 'B', 'C'];
         ))}
       </ol>
 
-      <p class="fork-label mono reveal"><span>{t.branchesLabel}</span></p>
-
       <!-- Da qui il percorso si divide nei tre servizi -->
-      <ul class="branches">
-        {t.branches.map((b, i) => (
-          <li class="branch reveal" style={`--d:${0.1 + i * 0.12}s`}>
-            <span class="branch-n mono" aria-hidden="true">04{letters[i]}</span>
-            <h3>{b.title}</h3>
-            <p>{b.text}</p>
-          </li>
-        ))}
-      </ul>
+      <div class="paths">
+        <p class="fork-label mono reveal"><span>{t.branchesLabel}</span></p>
+        <ul class="branches">
+          {t.branches.map((b, i) => (
+            <li class="branch reveal" style={`--d:${0.1 + i * 0.12}s`}>
+              <span class="branch-link" aria-hidden="true"></span>
+              <span class="branch-n mono" aria-hidden="true">04{letters[i]}</span>
+              <div class="branch-body">
+                <h3>{b.title}</h3>
+                <p>{b.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -94,6 +98,7 @@ const letters = ['A', 'B', 'C'];
 
   /* Rami: i tre servizi */
   .branches {
+    position: relative;
     list-style: none;
     margin: 0 0 0 0.45rem;
     padding: 0;
@@ -138,74 +143,100 @@ const letters = ['A', 'B', 'C'];
   .branch h3 { font-size: 1.6rem; margin-bottom: 0.6rem; }
   .branch p { color: var(--muted); margin: 0; }
 
-  /* Desktop: tronco centrato e biforcazione in tre colonne */
-  @media (min-width: 1000px) {
-    .trunk, .fork-label {
-      width: min(560px, 100%);
-      margin-inline: auto;
-      padding-left: 0;
+  .branch-link { display: none; }
+
+  /* Desktop: schema orizzontale. Le tre fasi da sinistra a destra, poi la linea
+     si divide nei tre rami, uno per riga, sulla destra. */
+  @media (min-width: 1100px) {
+    .flow {
+      --ly: 2.4rem; /* altezza della linea principale */
+      --rail-gap: 3rem; /* distanza tra la linea verticale dei rami e le card */
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .trunk {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2rem;
+      margin: 0;
+      padding: 0 2.5rem 0 0;
       border-left: 0;
     }
-    .trunk { position: relative; gap: 3rem; padding-bottom: 3rem; text-align: center; }
+    /* linea che attraversa le tre fasi e prosegue fino ai rami */
     .trunk::before {
       content: '';
       position: absolute;
-      left: 50%;
-      top: 1rem;
-      bottom: 0;
-      border-left: var(--rail);
+      top: var(--ly);
+      left: 0;
+      right: 0;
+      border-top: var(--rail);
     }
-    .step { justify-items: center; background: var(--surface); padding-block: 0.5rem; }
-    .step::before { display: none; }
-    .step p { margin-inline: auto; }
-    .fork-label { text-align: center; padding: 0.6rem 0 2.75rem; position: relative; }
-    .fork-label::before {
-      content: '';
+    .step { padding-top: calc(var(--ly) + 1.6rem); }
+    .step::before { left: 0; top: calc(var(--ly) - 5px); }
+    .step-n { position: absolute; top: 0; left: 1.5rem; font-size: 2.2rem; }
+    .step h3 { font-size: 1.6rem; }
+
+    .paths { position: relative; }
+    /* su PC la biforcazione disegnata sostituisce la scritta (resta per i lettori di schermo) */
+    .fork-label {
       position: absolute;
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      border-left: var(--rail);
-      z-index: 0;
-    }
-    .fork-label span { position: relative; z-index: 1; display: inline-block; padding: 0.4rem 0.9rem; background: var(--surface); }
-    .fork-label::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      bottom: -5px;
-      width: 9px;
-      height: 9px;
-      margin-left: -4px;
-      transform: rotate(45deg);
-      background: var(--gold);
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      margin: 0;
+      padding: 0;
+      border: 0;
     }
 
-    .branches {
-      position: relative;
-      margin: 0;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      padding-top: 3rem;
+    .branches { margin: 0; padding: 0 0 0 var(--rail-gap); gap: 1rem; }
+    .branch {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0 1.25rem;
+      align-items: start;
+      margin-left: 0;
+      padding: 1.4rem 1.5rem;
     }
-    /* barra orizzontale che collega i tre rami */
+    .branch-n { margin: 0.35rem 0 0; }
+    .branch h3 { font-size: 1.5rem; margin-bottom: 0.35rem; }
+    /* collegamento orizzontale dalla linea verticale alla card */
+    .branch::before {
+      left: calc(-1 * var(--rail-gap) - 1px);
+      top: calc(var(--ly) - 1px);
+      width: var(--rail-gap);
+    }
+    /* linea verticale: dal collegamento di questa card fino al fondo dello spazio sotto */
+    .branch:not(:last-child)::after,
+    .branch:first-child::after {
+      left: calc(-1 * var(--rail-gap) - 1px);
+      top: calc(var(--ly) - 1px);
+      bottom: -1rem;
+      height: auto;
+    }
+    .branch:last-child::after { display: none; }
+    /* tratto verticale dall'alto della card fino al suo collegamento */
+    .branch:not(:first-child) .branch-link {
+      display: block;
+      position: absolute;
+      left: calc(-1 * var(--rail-gap) - 1px);
+      top: -1px;
+      height: var(--ly);
+      border-left: var(--rail);
+    }
+    /* il primo ramo parte esattamente dalla linea principale: tratto che le unisce */
     .branches::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: calc((100% - 3rem) / 6);
-      right: calc((100% - 3rem) / 6);
-      border-top: var(--rail);
+      top: calc(var(--ly) - 5px);
+      left: -5px;
+      width: 9px;
+      height: 9px;
+      transform: rotate(45deg);
+      background: var(--gold);
     }
-    .branch { margin-left: 0; text-align: center; }
-    .branch::before {
-      left: 50%;
-      top: -3rem;
-      width: 0;
-      height: 3rem;
-      border-top: 0;
-      border-left: var(--rail);
-    }
-    .branch::after, .branch:last-child::after { display: none; }
   }
 </style>
