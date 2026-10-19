@@ -44,6 +44,9 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
       .adm-tag { color: var(--gold); font-size: 0.66rem; }
       .admin .portal { padding-top: calc(var(--header-h) + 2rem); }
 
+      /* accesso team: casella al centro della pagina */
+      :global(.adm-login) { min-height: calc(100svh - var(--header-h) - 6rem); display: grid; place-items: center; }
+      :global(.adm-login .pcard) { width: min(560px, 100%); }
       :global(.adm) { display: grid; gap: 1.5rem; }
       @media (min-width: 1000px) { :global(.adm) { grid-template-columns: 340px 1fr; align-items: start; } }
       :global(.adm-list) { display: grid; gap: 0.75rem; align-content: start; }
@@ -100,7 +103,7 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
 
       /* ---------- accesso ---------- */
       function renderLogin(msg = '') {
-        root.innerHTML = `<div class="pcard" style="max-width:560px">
+        root.innerHTML = `<div class="adm-login"><div class="pcard">
           <h1 style="font-size:2.4rem;margin-bottom:.75rem">Accesso team</h1>
           <p>Inserisci la tua email: riceverai un link di accesso. Solo le email registrate come amministratori possono entrare.</p>
           ${msg ? `<p class="pmsg err">${esc(msg)}</p>` : ''}
@@ -108,7 +111,7 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
             <div class="pfield"><label for="a-email">Email</label><input id="a-email" type="email" required autocomplete="email" /></div>
             <div class="pform-actions"><button class="btn btn--solid">Inviami il link</button></div>
             <p class="pmsg" data-msg hidden></p>
-          </form></div>`;
+          </form></div></div>`;
         root.querySelector<HTMLFormElement>('[data-login]')!.addEventListener('submit', async (e) => {
           e.preventDefault();
           const email = (root.querySelector('#a-email') as HTMLInputElement).value.trim().toLowerCase();
@@ -315,7 +318,7 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
       /* ---------- avvio ---------- */
       async function start() {
         if (!supabase) {
-          root.innerHTML = '<div class="pcard"><h1 style="font-size:2.2rem">Supabase non configurato</h1><p>Imposta PUBLIC_SUPABASE_URL e PUBLIC_SUPABASE_ANON_KEY (vedi supabase/README.md).</p></div>';
+          root.innerHTML = '<div class="adm-login"><div class="pcard"><h1 style="font-size:2.2rem">Supabase non configurato</h1><p>Imposta PUBLIC_SUPABASE_URL e PUBLIC_SUPABASE_ANON_KEY (vedi supabase/README.md).</p></div></div>';
           return;
         }
         const { data } = await supabase.auth.getSession();
