@@ -7,24 +7,24 @@ export default {
 
   meta: {
     home: {
-      title: 'Beyond the Factory | Motorradverkleidungen & Teile nach Maß',
+      title: 'Orion | Motorradverkleidungen & Teile nach Maß',
       description:
         'Verkleidungen, Aero-Anbauteile und Motorradteile nach Maß. Motorräder in limitierter Auflage mit exklusivem Design. Geben Sie Ihrem Bike eine neue Identität.',
     },
     thanks: {
-      title: 'Anfrage erhalten | Beyond the Factory',
+      title: 'Anfrage erhalten | Orion',
       description: 'Vielen Dank für Ihre Nachricht. Wir antworten innerhalb von 24 Arbeitsstunden.',
     },
     privacy: {
-      title: 'Datenschutz & Cookies | Beyond the Factory',
-      description: 'Informationen zur Verarbeitung personenbezogener Daten und zur Verwendung von Cookies auf der Website von Beyond the Factory.',
+      title: 'Datenschutz & Cookies | Orion',
+      description: 'Informationen zur Verarbeitung personenbezogener Daten und zur Verwendung von Cookies auf der Website von Orion.',
     },
     area: {
-      title: 'Kundenbereich | Beyond the Factory',
+      title: 'Kundenbereich | Orion',
       description: 'Verfolgen Sie den Status Ihrer Bestellung, sehen Sie Ihre Dokumente ein und schreiben Sie unserem Team.',
     },
     notFound: {
-      title: 'Seite nicht gefunden | Beyond the Factory',
+      title: 'Seite nicht gefunden | Orion',
       description: 'Die gesuchte Seite existiert nicht oder wurde verschoben.',
     },
   },
@@ -42,7 +42,7 @@ export default {
     close: 'Menü schließen',
     skip: 'Zum Inhalt springen',
     language: 'Sprache',
-    home: 'Beyond the Factory, Startseite',
+    home: 'Orion, Startseite',
   },
 
   cta: 'Beratung buchen',
@@ -183,10 +183,10 @@ export default {
 
   about: {
     kicker: 'Über uns',
-    title: 'Beyond the Factory: <em>Design und Komponenten nach Maß</em> für Ihr Motorrad',
+    title: 'Orion: <em>Design und Komponenten nach Maß</em> für Ihr Motorrad',
     claim: 'We don’t follow the standard. We redefine it.',
     paragraphs: [
-      'Beyond the Factory entstand, um die Grenzen des traditionellen Motorraddesigns zu überwinden. Wir entwickeln individuelle Motorradkomponenten und maßgeschneiderte Lösungen, die jedes Motorrad in ein einzigartiges, unverwechselbares und unwiederholbares Stück verwandeln.',
+      'Orion entstand, um die Grenzen des traditionellen Motorraddesigns zu überwinden. Wir entwickeln individuelle Motorradkomponenten und maßgeschneiderte Lösungen, die jedes Motorrad in ein einzigartiges, unverwechselbares und unwiederholbares Stück verwandeln.',
       'Wir verbinden Konstruktion, ästhetische Forschung und technische Innovation, um Formen und Charakter des Zweirads neu zu definieren.',
     ],
     blocks: [
@@ -199,8 +199,8 @@ export default {
         text: 'Wir wählen Modelle aus, die wir mit unserer gestalterischen Vision neu interpretieren, und schaffen Motorräder in limitierter Auflage: exklusive Versionen mit klarer ästhetischer Identität und streng nummerierter Produktion, in der Design, Exklusivität und technische Forschung zusammenkommen.',
       },
     ],
-    closing: 'Beyond the Factory. Beyond the Ordinary.',
-    imageAlt: 'Die Werkstatt von Beyond the Factory beim Laminieren einer Carbon-Verkleidung',
+    closing: 'Orion. Beyond the Ordinary.',
+    imageAlt: 'Die Werkstatt von Orion beim Laminieren einer Carbon-Verkleidung',
   },
 
   testimonials: {
@@ -293,7 +293,7 @@ export default {
   },
 
   footer: {
-    tagline: 'Beyond the Factory. Beyond the Ordinary.',
+    tagline: 'Orion. Beyond the Ordinary.',
     rights: 'Alle Rechte vorbehalten.',
     privacy: 'Datenschutz & Cookies',
   },
@@ -392,7 +392,7 @@ export default {
       placeholder: 'Nachricht schreiben…',
       send: 'Senden',
       you: 'Sie',
-      team: 'Beyond the Factory',
+      team: 'Orion',
       notice: 'Sie erhalten eine E-Mail, wenn das Team antwortet.',
     },
   },

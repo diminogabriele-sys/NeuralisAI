@@ -1,5 +1,5 @@
 -- =====================================================================
---  Beyond the Factory — Area clienti
+--  Orion — Area clienti
 --  Da eseguire UNA VOLTA in Supabase → SQL Editor → New query → Run.
 --  Crea tabelle, regole di sicurezza (RLS), archivio documenti e
 --  notifiche email. Leggi supabase/README.md prima di eseguirlo.
@@ -83,10 +83,10 @@ exception when duplicate_object then null; end $$;
 
 create sequence if not exists public.order_code_seq;
 
--- codice leggibile: BTF-2026-001
+-- codice leggibile: ORN-2026-001
 create or replace function public.next_order_code()
 returns text language sql volatile as $$
-  select 'BTF-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('public.order_code_seq')::text, 3, '0')
+  select 'ORN-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('public.order_code_seq')::text, 3, '0')
 $$;
 
 create table if not exists public.orders (

@@ -18,7 +18,7 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Pannello ordini | Beyond the Factory</title>
+    <title>Pannello ordini | Orion</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
@@ -78,7 +78,7 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
       const S = JSON.parse(document.getElementById('admin-i18n')!.textContent!);
       const root = document.querySelector<HTMLElement>('[data-admin]')!;
       const LANG = 'it';
-      const SEEN_KEY = 'btf-admin-seen';
+      const SEEN_KEY = 'orion-admin-seen';
       let orders: Order[] = [];
       let lastClientMsg = new Map<string, string>();
       let selected: string | null = location.hash.slice(1) || null;
@@ -189,7 +189,7 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
       function renderNew() {
         const detail = root.querySelector<HTMLElement>('[data-detail]')!;
         detail.innerHTML = `<div class="pcard"><h2>Nuovo ordine</h2>
-          <p>Il cliente vedrà l’ordine accedendo all’area clienti con questa email. Il codice (es. BTF-2026-001) viene assegnato in automatico.</p>
+          <p>Il cliente vedrà l’ordine accedendo all’area clienti con questa email. Il codice (es. ORN-2026-001) viene assegnato in automatico.</p>
           <form class="pform" data-new-form>
             <div class="pfield"><label for="n-email">Email del cliente <span>*</span></label><input id="n-email" name="customer_email" type="email" required /></div>
             <div class="pfield"><label for="n-title">Titolo del progetto <span>*</span></label><input id="n-title" name="title" required placeholder="Es. Panigale V4 one-off" /></div>

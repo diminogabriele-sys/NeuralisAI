@@ -7,24 +7,24 @@ export default {
 
   meta: {
     home: {
-      title: 'Beyond the Factory | Bespoke Motorcycle Fairings & Parts',
+      title: 'Orion | Bespoke Motorcycle Fairings & Parts',
       description:
         'Bespoke fairings, aerodynamic wings and motorcycle parts. Limited-edition motorcycles with exclusive design. Give your bike a new identity.',
     },
     thanks: {
-      title: 'Request received | Beyond the Factory',
+      title: 'Request received | Orion',
       description: 'Thank you for contacting us. We will reply within 24 business hours.',
     },
     privacy: {
-      title: 'Privacy & cookies | Beyond the Factory',
-      description: 'Information on the processing of personal data and the use of cookies on the Beyond the Factory website.',
+      title: 'Privacy & cookies | Orion',
+      description: 'Information on the processing of personal data and the use of cookies on the Orion website.',
     },
     area: {
-      title: 'Client area | Beyond the Factory',
+      title: 'Client area | Orion',
       description: 'Track your order status, read your documents and message our team.',
     },
     notFound: {
-      title: 'Page not found | Beyond the Factory',
+      title: 'Page not found | Orion',
       description: 'The page you are looking for does not exist or has been moved.',
     },
   },
@@ -42,7 +42,7 @@ export default {
     close: 'Close menu',
     skip: 'Skip to content',
     language: 'Language',
-    home: 'Beyond the Factory, home',
+    home: 'Orion, home',
   },
 
   cta: 'Book a consultation',
@@ -183,10 +183,10 @@ export default {
 
   about: {
     kicker: 'About',
-    title: 'Beyond the Factory: <em>bespoke design and parts</em> for your motorcycle',
+    title: 'Orion: <em>bespoke design and parts</em> for your motorcycle',
     claim: 'We don’t follow the standard. We redefine it.',
     paragraphs: [
-      'Beyond the Factory was founded to push past the limits of traditional motorcycle design. We design custom motorcycle parts and bespoke solutions that turn every bike into a unique, distinctive, unrepeatable piece.',
+      'Orion was founded to push past the limits of traditional motorcycle design. We design custom motorcycle parts and bespoke solutions that turn every bike into a unique, distinctive, unrepeatable piece.',
       'We combine engineering, aesthetic research and technical innovation to redefine the shapes and character of two wheels.',
     ],
     blocks: [
@@ -199,8 +199,8 @@ export default {
         text: 'We select models to reinterpret through our design vision and create limited-edition motorcycles: exclusive versions with a precise aesthetic identity and strictly numbered production, where design, exclusivity and technical research coexist.',
       },
     ],
-    closing: 'Beyond the Factory. Beyond the Ordinary.',
-    imageAlt: 'The Beyond the Factory workshop laminating a carbon-fibre fairing',
+    closing: 'Orion. Beyond the Ordinary.',
+    imageAlt: 'The Orion workshop laminating a carbon-fibre fairing',
   },
 
   testimonials: {
@@ -293,7 +293,7 @@ export default {
   },
 
   footer: {
-    tagline: 'Beyond the Factory. Beyond the Ordinary.',
+    tagline: 'Orion. Beyond the Ordinary.',
     rights: 'All rights reserved.',
     privacy: 'Privacy & cookies',
   },
@@ -392,7 +392,7 @@ export default {
       placeholder: 'Write a message…',
       send: 'Send',
       you: 'You',
-      team: 'Beyond the Factory',
+      team: 'Orion',
       notice: 'You will receive an email when the team replies.',
     },
   },

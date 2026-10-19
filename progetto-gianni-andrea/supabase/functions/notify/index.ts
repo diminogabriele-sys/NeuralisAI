@@ -5,8 +5,8 @@
 //
 // Variabili richieste (Supabase → Edge Functions → Secrets):
 //   RESEND_API_KEY   chiave API di resend.com
-//   MAIL_FROM        mittente verificato, es. "Beyond the Factory <noreply@beyondthefactory.it>"
-//   SITE_URL         es. https://www.beyondthefactory.it
+//   MAIL_FROM        mittente verificato, es. "Orion <noreply@orion.it>"
+//   SITE_URL         es. https://www.orion.it
 //   WEBHOOK_SECRET   la stessa stringa salvata in private.settings
 //   ADMIN_EMAILS     (facoltativo) email del team separate da virgola; se vuoto usa la tabella admins
 // SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY sono già disponibili in automatico.
@@ -32,11 +32,11 @@ const STATUS: Record<Lang, Record<string, string>> = {
 };
 
 const TXT: Record<Lang, { msgSubject: string; msgIntro: string; statusSubject: string; statusIntro: string; note: string; open: string }> = {
-  it: { msgSubject: 'Nuovo messaggio sul tuo ordine {code}', msgIntro: 'Il team di Beyond the Factory ti ha scritto:', statusSubject: 'Ordine {code}: {status}', statusIntro: 'Lo stato del tuo ordine è stato aggiornato a', note: 'Nota del team', open: 'Apri l’area clienti' },
-  en: { msgSubject: 'New message about your order {code}', msgIntro: 'The Beyond the Factory team wrote to you:', statusSubject: 'Order {code}: {status}', statusIntro: 'Your order status has been updated to', note: 'Note from the team', open: 'Open the client area' },
-  es: { msgSubject: 'Nuevo mensaje sobre tu pedido {code}', msgIntro: 'El equipo de Beyond the Factory te ha escrito:', statusSubject: 'Pedido {code}: {status}', statusIntro: 'El estado de tu pedido se ha actualizado a', note: 'Nota del equipo', open: 'Abrir el área de clientes' },
-  de: { msgSubject: 'Neue Nachricht zu Ihrer Bestellung {code}', msgIntro: 'Das Team von Beyond the Factory hat Ihnen geschrieben:', statusSubject: 'Bestellung {code}: {status}', statusIntro: 'Der Status Ihrer Bestellung wurde aktualisiert auf', note: 'Hinweis des Teams', open: 'Kundenbereich öffnen' },
-  fr: { msgSubject: 'Nouveau message sur votre commande {code}', msgIntro: 'L’équipe Beyond the Factory vous a écrit :', statusSubject: 'Commande {code} : {status}', statusIntro: 'L’état de votre commande a été mis à jour :', note: 'Note de l’équipe', open: 'Ouvrir l’espace client' },
+  it: { msgSubject: 'Nuovo messaggio sul tuo ordine {code}', msgIntro: 'Il team di Orion ti ha scritto:', statusSubject: 'Ordine {code}: {status}', statusIntro: 'Lo stato del tuo ordine è stato aggiornato a', note: 'Nota del team', open: 'Apri l’area clienti' },
+  en: { msgSubject: 'New message about your order {code}', msgIntro: 'The Orion team wrote to you:', statusSubject: 'Order {code}: {status}', statusIntro: 'Your order status has been updated to', note: 'Note from the team', open: 'Open the client area' },
+  es: { msgSubject: 'Nuevo mensaje sobre tu pedido {code}', msgIntro: 'El equipo de Orion te ha escrito:', statusSubject: 'Pedido {code}: {status}', statusIntro: 'El estado de tu pedido se ha actualizado a', note: 'Nota del equipo', open: 'Abrir el área de clientes' },
+  de: { msgSubject: 'Neue Nachricht zu Ihrer Bestellung {code}', msgIntro: 'Das Team von Orion hat Ihnen geschrieben:', statusSubject: 'Bestellung {code}: {status}', statusIntro: 'Der Status Ihrer Bestellung wurde aktualisiert auf', note: 'Hinweis des Teams', open: 'Kundenbereich öffnen' },
+  fr: { msgSubject: 'Nouveau message sur votre commande {code}', msgIntro: 'L’équipe Orion vous a écrit :', statusSubject: 'Commande {code} : {status}', statusIntro: 'L’état de votre commande a été mis à jour :', note: 'Note de l’équipe', open: 'Ouvrir l’espace client' },
 };
 
 const env = (k: string) => Deno.env.get(k) ?? '';
@@ -45,7 +45,7 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 function layout(body: string, ctaHref: string, ctaLabel: string) {
   return `<!doctype html><html><body style="margin:0;background:#0a0a0b;padding:32px 16px;font-family:Helvetica,Arial,sans-serif;color:#f4f1ea">
   <table role="presentation" width="100%" style="max-width:560px;margin:0 auto;background:#121214;border:1px solid #3a3122">
-    <tr><td style="padding:28px 32px;border-bottom:1px solid #3a3122;font-family:Georgia,serif;font-size:20px;letter-spacing:4px;color:#c9a45c">BEYOND THE FACTORY</td></tr>
+    <tr><td style="padding:28px 32px;border-bottom:1px solid #3a3122;font-family:Georgia,serif;font-size:20px;letter-spacing:4px;color:#c9a45c">ORION</td></tr>
     <tr><td style="padding:28px 32px;font-size:15px;line-height:1.6">${body}
       <p style="margin:28px 0 0"><a href="${ctaHref}" style="display:inline-block;background:#c9a45c;color:#0a0a0b;text-decoration:none;padding:14px 22px;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase">${ctaLabel}</a></p>
     </td></tr>

@@ -1,4 +1,4 @@
-# Beyond the Factory: sito e area clienti
+# Orion: sito e area clienti
 
 Sito multilingua (IT · EN · ES · DE · FR) con hero 3D, costruito con **Astro** e **Three.js**, più un'**area clienti** (stato ordini, documenti, chat con notifiche email) e un **pannello per il team** su **Supabase**. Per attivarli segui [`supabase/README.md`](supabase/README.md).
 

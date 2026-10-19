@@ -43,7 +43,7 @@ const svg = (w, h, label, big = false) => `
   <g fill="none" stroke="url(#gold)" stroke-width="3">
     <path d="M60 140V60h80M${w - 140} 60h80v80M${w - 60} ${h - 140}v80h-80M140 ${h - 60}H60v-80"/>
   </g>
-  <text x="50%" y="${h / 2 - (big ? 40 : 10)}" text-anchor="middle" font-family="DejaVu Serif, Georgia, serif" font-size="${big ? 76 : 56}" fill="url(#gold)" letter-spacing="10">BEYOND THE FACTORY</text>
+  <text x="50%" y="${h / 2 - (big ? 40 : 10)}" text-anchor="middle" font-family="DejaVu Serif, Georgia, serif" font-size="${big ? 76 : 56}" fill="url(#gold)" letter-spacing="10">ORION</text>
   <text x="50%" y="${h / 2 + (big ? 50 : 60)}" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="${big ? 34 : 30}" fill="#F4F1EA" letter-spacing="6">${label.toUpperCase()}</text>
   <text x="50%" y="${h / 2 + (big ? 100 : 110)}" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="22" fill="#A39E94" letter-spacing="3">PLACEHOLDER · ${w}×${h}</text>
 </svg>`;

@@ -7,24 +7,24 @@ export default {
 
   meta: {
     home: {
-      title: 'Beyond the Factory | Componenti e Carene Moto su Misura',
+      title: 'Orion | Componenti e Carene Moto su Misura',
       description:
         'Carene, appendici aerodinamiche e componenti moto su misura. Moto in edizione limitata con design esclusivo. Dai alla tua moto una nuova identità.',
     },
     thanks: {
-      title: 'Richiesta ricevuta | Beyond the Factory',
+      title: 'Richiesta ricevuta | Orion',
       description: 'Grazie per averci contattato. Ti risponderemo entro 24 ore lavorative.',
     },
     privacy: {
-      title: 'Privacy e cookie | Beyond the Factory',
-      description: 'Informativa sul trattamento dei dati personali e sull’uso dei cookie del sito Beyond the Factory.',
+      title: 'Privacy e cookie | Orion',
+      description: 'Informativa sul trattamento dei dati personali e sull’uso dei cookie del sito Orion.',
     },
     area: {
-      title: 'Area clienti | Beyond the Factory',
+      title: 'Area clienti | Orion',
       description: 'Segui lo stato del tuo ordine, consulta i documenti e scrivi al nostro team.',
     },
     notFound: {
-      title: 'Pagina non trovata | Beyond the Factory',
+      title: 'Pagina non trovata | Orion',
       description: 'La pagina che cerchi non esiste o è stata spostata.',
     },
   },
@@ -42,7 +42,7 @@ export default {
     close: 'Chiudi menu',
     skip: 'Vai al contenuto',
     language: 'Lingua',
-    home: 'Beyond the Factory, home',
+    home: 'Orion, home',
   },
 
   cta: 'Prenota una consulenza',
@@ -184,10 +184,10 @@ export default {
 
   about: {
     kicker: 'Chi siamo',
-    title: 'Beyond the Factory: <em>design e componenti su misura</em> per la tua moto',
+    title: 'Orion: <em>design e componenti su misura</em> per la tua moto',
     claim: 'We don’t follow the standard. We redefine it.',
     paragraphs: [
-      'Beyond the Factory nasce per superare i limiti del design motociclistico tradizionale. Progettiamo componenti moto personalizzati e soluzioni su misura che trasformano ogni moto in un pezzo unico, distintivo e irripetibile.',
+      'Orion nasce per superare i limiti del design motociclistico tradizionale. Progettiamo componenti moto personalizzati e soluzioni su misura che trasformano ogni moto in un pezzo unico, distintivo e irripetibile.',
       'Uniamo progettazione, ricerca estetica e innovazione tecnica per ridefinire le forme e il carattere delle due ruote.',
     ],
     blocks: [
@@ -200,8 +200,8 @@ export default {
         text: 'Selezioniamo modelli da reinterpretare con la nostra visione progettuale e creiamo moto in edizione limitata: versioni esclusive, con un’identità estetica precisa e una produzione rigorosamente numerata, dove design, esclusività e ricerca tecnica convivono.',
       },
     ],
-    closing: 'Beyond the Factory. Beyond the Ordinary.',
-    imageAlt: 'Il laboratorio Beyond the Factory durante la laminazione di una carena in carbonio',
+    closing: 'Orion. Beyond the Ordinary.',
+    imageAlt: 'Il laboratorio Orion durante la laminazione di una carena in carbonio',
   },
 
   testimonials: {
@@ -295,7 +295,7 @@ export default {
   },
 
   footer: {
-    tagline: 'Beyond the Factory. Beyond the Ordinary.',
+    tagline: 'Orion. Beyond the Ordinary.',
     rights: 'Tutti i diritti riservati.',
     privacy: 'Privacy e cookie',
   },
@@ -400,7 +400,7 @@ export default {
       placeholder: 'Scrivi un messaggio…',
       send: 'Invia',
       you: 'Tu',
-      team: 'Beyond the Factory',
+      team: 'Orion',
       notice: 'Riceverai una email quando il team ti risponde.',
     },
   },

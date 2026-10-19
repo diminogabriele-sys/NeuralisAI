@@ -5,19 +5,19 @@
  * ============================================================
  */
 export const site = {
-  name: 'Beyond the Factory',
+  name: 'Orion',
   /** Ragione sociale e P.IVA mostrate nel footer (segnaposto) */
-  legalName: 'Beyond the Factory',
+  legalName: 'Orion',
   vat: 'P.IVA 00000000000',
-  /** Dominio definitivo, senza slash finale (serve per canonical, sitemap, Open Graph) */
-  url: 'https://www.beyondthefactory.it',
+  /** SEGNAPOSTO — dominio definitivo, senza slash finale (serve per canonical, sitemap, Open Graph) */
+  url: 'https://www.orion.it',
 
-  /** Email di contatto (unico recapito pubblico per ora) */
-  email: 'info@beyondthefactory.it',
+  /** SEGNAPOSTO — email di contatto (unico recapito pubblico per ora) */
+  email: 'info@orion.it',
 
-  /** Social: lascia vuoto ('') quelli che non usi */
+  /** SEGNAPOSTO — social: lascia vuoto ('') quelli che non usi */
   social: {
-    instagram: 'https://www.instagram.com/beyondthefactory',
+    instagram: 'https://www.instagram.com/orion',
     facebook: '',
     youtube: '',
     tiktok: '',

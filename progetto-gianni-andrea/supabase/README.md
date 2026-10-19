@@ -32,17 +32,17 @@ on conflict (key) do update set value = excluded.value;
 Le email in `admins` vanno scritte **in minuscolo**. Sono le uniche che possono entrare in `/admin/`.
 
 ## 3. Configura le email (Resend)
-1. Registrati su **resend.com**, aggiungi il vostro dominio (es. `beyondthefactory.it`) e segui le istruzioni DNS per verificarlo.
+1. Registrati su **resend.com**, aggiungi il vostro dominio (es. `orion.it`) e segui le istruzioni DNS per verificarlo.
 2. Crea una **API key**.
 3. **Email di accesso:** in Supabase apri **Authentication → Emails → SMTP Settings**, attiva *Custom SMTP* e inserisci:
    - Host `smtp.resend.com`, porta `465`
    - Utente `resend`, password = la API key di Resend
-   - Mittente: `noreply@beyondthefactory.it`, nome *Beyond the Factory*
+   - Mittente: `noreply@orion.it`, nome *Orion*
 
    Senza questo passaggio Supabase invia pochissime email all'ora, e solo agli indirizzi del team.
 4. **Indirizzi consentiti:** apri **Authentication → URL Configuration**:
-   - *Site URL*: `https://www.beyondthefactory.it`
-   - *Redirect URLs*: aggiungi `https://www.beyondthefactory.it/**`. Se usi l'anteprima di Netlify, aggiungi anche `https://*.netlify.app/**`.
+   - *Site URL*: `https://www.orion.it`
+   - *Redirect URLs*: aggiungi `https://www.orion.it/**`. Se usi l'anteprima di Netlify, aggiungi anche `https://*.netlify.app/**`.
 5. *(Facoltativo)* In **Authentication → Emails → Templates → Magic Link** puoi tradurre o personalizzare il testo dell'email di accesso.
 
 ## 4. Pubblica la funzione delle notifiche
@@ -53,8 +53,8 @@ npx supabase login
 npx supabase link --project-ref abcd1234        # il codice nel tuo Project URL
 npx supabase secrets set \
   RESEND_API_KEY=re_xxxxxxxx \
-  MAIL_FROM="Beyond the Factory <noreply@beyondthefactory.it>" \
-  SITE_URL=https://www.beyondthefactory.it \
+  MAIL_FROM="Orion <noreply@orion.it>" \
+  SITE_URL=https://www.orion.it \
   WEBHOOK_SECRET=una-frase-segreta-lunga-e-casuale
 npx supabase functions deploy notify --no-verify-jwt
 ```
@@ -79,7 +79,7 @@ Poi esegui **Deploys → Trigger deploy**. In locale puoi copiare `.env.example`
 
 **Voi (team)**
 1. Andate su `/admin/` e accedete con la vostra email: riceverete un link.
-2. Con **+ Nuovo ordine** inserite l'email del cliente e il titolo del progetto. Il codice (`BTF-2026-001`) viene assegnato da solo.
+2. Con **+ Nuovo ordine** inserite l'email del cliente e il titolo del progetto. Il codice (`ORN-2026-001`) viene assegnato da solo.
 3. Nella scheda dell'ordine potete:
    - cambiare lo stato: il cliente riceve un'email;
    - aggiungere una nota e i dati di tracking;

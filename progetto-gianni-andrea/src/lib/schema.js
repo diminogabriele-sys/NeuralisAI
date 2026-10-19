@@ -9,7 +9,7 @@ export function businessSchema(lang) {
     '@type': 'Organization',
     '@id': `${site.url}/#organization`,
     name: site.name,
-    slogan: 'Beyond the Factory. Beyond the Ordinary.',
+    slogan: 'Orion. Beyond the Ordinary.',
     description: t.meta.home.description,
     url: new URL(path('home', lang), site.url).href,
     logo: `${site.url}/favicon.svg`,
