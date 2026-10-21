@@ -128,7 +128,163 @@ function buildWing(carbonMat, goldLineMat) {
 
   // filetti oro sugli spigoli vivi
   group.add(new LineSegments(new EdgesGeometry(geo, 30), goldLineMat));
+  group.userData.geo = geo;
   return group;
+}
+
+/* ---------- Linee di flusso (galleria del vento) ----------
+   Si calcola una "mappa d'ingombro" dell'ala (quota superiore e inferiore per ogni punto
+   in pianta) e si tracciano linee che scorrono dal muso verso la coda, salendo sopra il
+   profilo o passando sotto. Lungo ogni linea corrono impulsi luminosi dorati. */
+function buildStreamlines(geo, { lines = 15 } = {}) {
+  geo.computeBoundingBox();
+  const bb = geo.boundingBox;
+  const NX = 64, NZ = 48;
+  const top = new Float32Array(NX * NZ).fill(-Infinity);
+  const bot = new Float32Array(NX * NZ).fill(Infinity);
+  const cx = (x) => Math.min(NX - 1, Math.max(0, Math.floor(((x - bb.min.x) / (bb.max.x - bb.min.x)) * NX)));
+  const cz = (z) => Math.min(NZ - 1, Math.max(0, Math.floor(((z - bb.min.z) / (bb.max.z - bb.min.z)) * NZ)));
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const k = cz(p.getZ(i)) * NX + cx(p.getX(i));
+    top[k] = Math.max(top[k], p.getY(i));
+    bot[k] = Math.min(bot[k], p.getY(i));
+  }
+  // riempie i piccoli vuoti tra i vertici
+  for (let pass = 0; pass < 2; pass++) {
+    const t2 = top.slice(), b2 = bot.slice();
+    for (let z = 0; z < NZ; z++) for (let x = 0; x < NX; x++) {
+      const k = z * NX + x;
+      if (top[k] > -Infinity) continue;
+      for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const xx = x + dx, zz = z + dz;
+        if (xx < 0 || zz < 0 || xx >= NX || zz >= NZ) continue;
+        const kk = zz * NX + xx;
+        if (top[kk] > -Infinity) { t2[k] = Math.max(t2[k], top[kk]); b2[k] = Math.min(b2[k], bot[kk]); }
+      }
+    }
+    top.set(t2); bot.set(b2);
+  }
+
+  const chord = bb.max.x - bb.min.x;
+  const x0 = bb.min.x - chord * 0.75, x1 = bb.max.x + chord * 0.95;
+  const ymid = (bb.min.y + bb.max.y) / 2, h = bb.max.y - bb.min.y;
+  const M = 90; // punti per linea
+  const clear = h * 0.12;
+  const levels = [ymid + h * 0.35, ymid - h * 0.05, ymid - h * 0.45];
+  const pos = [], u = [], seed = [];
+  let n = 0;
+  for (let li = 0; li < lines; li++) {
+    const z = bb.min.z + ((li + 0.5) / lines) * (bb.max.z - bb.min.z) * 1.04 - (bb.max.z - bb.min.z) * 0.02;
+    for (const yl of levels) {
+      const ys = [];
+      for (let j = 0; j < M; j++) {
+        const x = x0 + (j / (M - 1)) * (x1 - x0);
+        let y = yl;
+        if (x >= bb.min.x && x <= bb.max.x) {
+          const k = cz(z) * NX + cx(x);
+          if (top[k] > -Infinity) {
+            const mid = (top[k] + bot[k]) / 2;
+            y = yl >= mid ? Math.max(yl, top[k] + clear) : Math.min(yl, bot[k] - clear);
+          }
+        }
+        ys.push(y);
+      }
+      // ammorbidisce la deviazione: la linea comincia a salire prima del bordo d'attacco
+      const sm = ys.map((_, j) => {
+        let acc = 0, w = 0;
+        for (let d = -6; d <= 6; d++) {
+          const jj = Math.min(M - 1, Math.max(0, j + d));
+          const ww = 1 - Math.abs(d) / 7;
+          acc += ys[jj] * ww; w += ww;
+        }
+        return acc / w;
+      });
+      const sd = Math.random();
+      for (let j = 0; j < M - 1; j++) {
+        for (const jj of [j, j + 1]) {
+          const x = x0 + (jj / (M - 1)) * (x1 - x0);
+          // curva morbida, ma mai dentro l'ala
+          const y = yl >= ymid ? Math.max(sm[jj], ys[jj]) : Math.min(sm[jj], ys[jj]);
+          pos.push(x, y, z);
+          u.push(jj / (M - 1));
+          seed.push(sd);
+        }
+      }
+      n++;
+    }
+  }
+  const g = new BufferGeometry();
+  g.setAttribute('position', new BufferAttribute(new Float32Array(pos), 3));
+  g.setAttribute('u', new BufferAttribute(new Float32Array(u), 1));
+  g.setAttribute('seed', new BufferAttribute(new Float32Array(seed), 1));
+  const mat = new ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 }, uColor: { value: GOLD } },
+    vertexShader: /* glsl */ `
+      attribute float u; attribute float seed; varying float vU; varying float vSeed;
+      void main(){ vU = u; vSeed = seed; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: /* glsl */ `
+      uniform float uTime; uniform float uOpacity; uniform vec3 uColor; varying float vU; varying float vSeed;
+      void main(){
+        float w = fract(vSeed + uTime * 0.32 - vU);   // 0 = testa dell'impulso
+        float glow = exp(-w * 9.0);
+        float fade = smoothstep(0.0, 0.1, vU) * (1.0 - smoothstep(0.88, 1.0, vU));
+        float a = (0.06 + glow * 0.75) * fade * uOpacity;
+        vec3 col = mix(uColor, vec3(1.0, 0.95, 0.85), glow * 0.6);
+        gl_FragColor = vec4(col * 1.3, a);
+      }`,
+  });
+  const obj = new LineSegments(g, mat);
+  obj.renderOrder = 2;
+
+  // comete: punti luminosi che percorrono le linee (più visibili delle linee sottili)
+  const segPerLine = (M - 1) * 2;
+  const heads = 1; // comete per linea
+  const cpos = new Float32Array(n * heads * 3);
+  const cg = new BufferGeometry();
+  cg.setAttribute('position', new BufferAttribute(cpos, 3));
+  const cmat = new ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    uniforms: { uColor: { value: GOLD }, uOpacity: { value: 0 }, uSize: { value: 34 * Math.min(window.devicePixelRatio, 1.75) } },
+    vertexShader: /* glsl */ `
+      uniform float uSize;
+      void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = uSize / -mv.z; gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uColor; uniform float uOpacity;
+      void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d); gl_FragColor = vec4(mix(uColor, vec3(1.0, 0.96, 0.88), a * 0.6) * 1.4, a * a * 0.85 * uOpacity); }`,
+  });
+  const comets = new Points(cg, cmat);
+  comets.renderOrder = 3;
+  const P = g.attributes.position.array;
+  const S = g.attributes.seed.array;
+  /** sposta le comete lungo le linee: stessa formula degli impulsi nello shader */
+  const update = (time) => {
+    for (let l = 0; l < n; l++) {
+      const base = l * segPerLine;
+      const sd = S[base];
+      for (let hh = 0; hh < heads; hh++) {
+        // posizione della testa: u tale che fract((sd + time*0.32 - u) * 1.6) = 0
+        // testa dell'impulso: u = fract(seed + tempo*velocità), come nello shader
+        let uu = sd + time * 0.32 + hh / heads;
+        uu = Math.min(Math.max(uu - Math.floor(uu), 0), 0.999);
+        const f = uu * (M - 1);
+        const j = Math.floor(f), tt = f - j;
+        const v = (base + j * 2) * 3; // primo punto del segmento j
+        const o = (l * heads + hh) * 3;
+        for (let k = 0; k < 3; k++) cpos[o + k] = P[v + k] + (P[v + 3 + k] - P[v + k]) * tt;
+      }
+    }
+    cg.attributes.position.needsUpdate = true;
+  };
+  update(0);
+  const group = new Group();
+  group.add(obj, comets);
+  return { obj: group, mat, cmat, update, count: n };
 }
 
 /* ---------- Particelle del flusso d'aria ---------- */
@@ -212,12 +368,17 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
 
   // Flusso d'aria nel sistema di riferimento dell'ala
   const size = box.getSize(new Vector3());
-  const flow = buildFlow(isSmall() ? 260 : 520, {
+  const flow = buildFlow(isSmall() ? 50 : 90, {
     x0: -size.x * 1.4, x1: size.x * 1.4,
     y0: -size.y * 1.6, y1: size.y * 1.6,
     z0: -size.z * 0.55, z1: size.z * 0.55,
   });
   pivot.add(flow.points);
+
+  // linee di flusso attorno all'ala reale
+  const stream = buildStreamlines(wing.userData.geo, { lines: isSmall() ? 7 : 9 });
+  pivot.add(stream.obj);
+  if (reducedMotion) { stream.mat.uniforms.uOpacity.value = 1; stream.cmat.uniforms.uOpacity.value = 1; }
 
   // Anello "piattaforma" sotto il modello
   const ring = new Mesh(new RingGeometry(2.05, 2.06, 128), new MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.35, side: DoubleSide }));
@@ -236,6 +397,9 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
   pivot.rotation.set(BASE_RX, BASE_RY, 0);
   scene.add(pivot);
 
+  let baseScale = 1;
+  const startedAt = performance.now();
+  let baseY = 0;
   /* Layout responsive: modello a destra su desktop, in alto su mobile */
   const layout = () => {
     const w = canvas.clientWidth, h = canvas.clientHeight;
@@ -250,6 +414,8 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     const s = wide ? Math.min(0.4 * visW, 0.72 * visH) / MODEL : (0.8 * visW) / MODEL;
     const offX = wide ? visW * 0.24 : 0;
     const offY = wide ? 0.1 : 0.15;
+    baseScale = s;
+    baseY = offY;
     pivot.scale.setScalar(s);
     pivot.position.set(offX, offY, 0);
     ring.position.set(offX, offY - 0.95 * s, 0);
@@ -310,7 +476,17 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
     t += dt;
-    const ry = BASE_RY + Math.sin(t * 0.25) * 0.3 + target.x * 0.35 + scrollP * 1.0;
+    // entrata: l'ala ruota e cresce fino alla posizione di riposo nei primi 2,4 secondi
+    // tempo reale (non per fotogramma): entrata e impulsi hanno la stessa durata su ogni dispositivo
+    const wall = (now - startedAt) / 1000;
+    const intro = 1 - Math.pow(1 - Math.min(wall / 2.4, 1), 3);
+    pivot.scale.setScalar(baseScale * (0.82 + 0.18 * intro));
+    pivot.position.y = baseY + Math.sin(t * 1.1) * 0.035 * baseScale;
+    stream.mat.uniforms.uTime.value = wall;
+    stream.mat.uniforms.uOpacity.value = MathUtils.clamp((wall - 0.9) / 1.2, 0, 1);
+    stream.cmat.uniforms.uOpacity.value = stream.mat.uniforms.uOpacity.value;
+    stream.update(wall);
+    const ry = BASE_RY - (1 - intro) * 1.1 + Math.sin(t * 0.25) * 0.3 + target.x * 0.35 + scrollP * 1.0;
     const rx = BASE_RX + Math.sin(t * 0.4) * 0.05 + target.y * 0.12 - scrollP * 0.3;
     pivot.rotation.y = MathUtils.damp(pivot.rotation.y, ry, 3, dt);
     pivot.rotation.x = MathUtils.damp(pivot.rotation.x, rx, 3, dt);
