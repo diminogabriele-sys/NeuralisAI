@@ -461,9 +461,9 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     const visH = 2 * 9 * Math.tan(MathUtils.degToRad(camera.fov / 2));
     const visW = visH * camera.aspect;
     const wide = camera.aspect > 1.05;
-    const MODEL = 3.8; // ingombro apparente del modello a scala 1
+    const MODEL = 2.9; // ingombro apparente del modello a scala 1
     const s = wide ? Math.min(0.4 * visW, 0.72 * visH) / MODEL : (0.8 * visW) / MODEL;
-    const offX = wide ? visW * 0.25 : 0;
+    const offX = wide ? visW * 0.28 : 0;
     const offY = wide ? 0.1 : 0.15;
     baseScale = s;
     baseY = offY;
@@ -477,10 +477,16 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
   layout();
 
   /* Interazione: mouse (desktop) e scroll */
+  const target = { x: 0, y: 0 };
   let scrollP = 0;
+  const onPointer = (e) => {
+    target.x = (e.clientX / window.innerWidth - 0.5) * 2;
+    target.y = (e.clientY / window.innerHeight - 0.5) * 2;
+  };
   const onScroll = () => {
     scrollP = MathUtils.clamp(window.scrollY / window.innerHeight, 0, 1);
   };
+  window.addEventListener('pointermove', onPointer, { passive: true });
   window.addEventListener('scroll', onScroll, { passive: true });
   const ro = new ResizeObserver(() => {
     layout();
@@ -529,10 +535,10 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     pivot.position.y = baseY + Math.sin(t * 1.1) * 0.035 * baseScale;
     stream.mat.uniforms.uTime.value = wall;
     stream.mat.uniforms.uOpacity.value = MathUtils.clamp((wall - 0.9) / 1.2, 0, 1);
-    // rotazione continua e regolare attorno all'asse verticale (un giro ogni 28 s), come su una piattaforma girevole;
-    // il mouse non influisce più sull'oggetto
-    pivot.rotation.y = BASE_RY - (1 - intro) * 0.9 + wall * ((Math.PI * 2) / 28);
-    pivot.rotation.x = BASE_RX;
+    const ry = BASE_RY - (1 - intro) * 0.9 + Math.sin(t * 0.25) * 0.12 + target.x * 0.2 + scrollP * 0.6;
+    const rx = BASE_RX + Math.sin(t * 0.4) * 0.05 + target.y * 0.12 - scrollP * 0.3;
+    pivot.rotation.y = MathUtils.damp(pivot.rotation.y, ry, 3, dt);
+    pivot.rotation.x = MathUtils.damp(pivot.rotation.x, rx, 3, dt);
     camera.position.z = MathUtils.damp(camera.position.z, 9 + scrollP * 2.5, 4, dt);
     updateFlow(dt);
     renderer.render(scene, camera);
