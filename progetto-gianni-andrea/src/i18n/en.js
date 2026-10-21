@@ -287,6 +287,7 @@ export default {
     tagline: 'Orion. Beyond the Ordinary.',
     rights: 'All rights reserved.',
     privacy: 'Privacy & cookies',
+    team: 'Team login',
   },
 
   thanks: {
@@ -321,6 +322,7 @@ export default {
   area: {
     kicker: 'Client area',
     title: 'Your <em>project</em>, step by step',
+    demoNotice: 'Demo mode: the client area is not connected to the server yet. Enter any email to sign in: sample data stays on this device only and no emails are sent.',
     notConfigured: 'The client area is not active yet. Please check back soon.',
     loading: 'Loading…',
     error: 'Something went wrong. Please try again shortly.',

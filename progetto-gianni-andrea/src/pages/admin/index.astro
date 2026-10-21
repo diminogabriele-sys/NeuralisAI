@@ -32,6 +32,7 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
 
     <main id="main" class="portal">
       <div class="container">
+        <p class="pmsg demo-notice" data-demo hidden>Modalità dimostrativa: Supabase non è ancora collegato. Inserisci un’email qualsiasi per entrare come team. Ordini e messaggi di prova restano solo in questo browser: apri l’area clienti in un’altra scheda per vedere gli aggiornamenti in tempo reale.</p>
         <div data-admin aria-live="polite"><p class="pmsg">Caricamento…</p></div>
       </div>
     </main>
@@ -73,13 +74,14 @@ const strings = { statuses: it.area.statuses, services: it.services.items.map((s
 
     <script>
       import {
-        supabase, esc, fmtDate, statusTrack, loadOrderDetail, watchOrder, chatHtml, docsHtml,
+        supabase, isDemo, esc, fmtDate, statusTrack, loadOrderDetail, watchOrder, chatHtml, docsHtml,
         wireOrderActions, STATUSES, BUCKET, type Order, type Profile,
       } from '../../lib/portal';
       import type { RealtimeChannel } from '@supabase/supabase-js';
 
       const S = JSON.parse(document.getElementById('admin-i18n')!.textContent!);
       const root = document.querySelector<HTMLElement>('[data-admin]')!;
+      if (isDemo) document.querySelector<HTMLElement>('[data-demo]')!.hidden = false;
       const LANG = 'it';
       const SEEN_KEY = 'orion-admin-seen';
       let orders: Order[] = [];

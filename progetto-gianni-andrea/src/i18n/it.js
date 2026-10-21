@@ -289,6 +289,7 @@ export default {
     tagline: 'Orion. Beyond the Ordinary.',
     rights: 'Tutti i diritti riservati.',
     privacy: 'Privacy e cookie',
+    team: 'Accesso team',
   },
 
   thanks: {
@@ -329,6 +330,7 @@ export default {
   area: {
     kicker: 'Area clienti',
     title: 'Il tuo <em>progetto</em>, passo dopo passo',
+    demoNotice: 'Modalità dimostrativa: l’area clienti non è ancora collegata al server. Inserisci un’email qualsiasi per entrare: i dati di esempio restano solo su questo dispositivo e nessuna email viene inviata.',
     notConfigured: 'L’area clienti non è ancora attiva. Torna a trovarci presto.',
     loading: 'Caricamento…',
     error: 'Si è verificato un errore. Riprova tra poco.',

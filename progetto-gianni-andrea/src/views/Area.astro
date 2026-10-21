@@ -18,6 +18,7 @@ const strings = { lang, ...t };
         <h1 set:html={t.title} />
       </header>
 
+      <p class="pmsg demo-notice" data-demo hidden>{t.demoNotice}</p>
       <div data-area aria-live="polite" tabindex="-1">
         <p class="pmsg">{t.loading}</p>
       </div>
@@ -28,7 +29,7 @@ const strings = { lang, ...t };
 
 <script>
   import {
-    supabase, esc, fmtDate, statusTrack, loadOrderDetail, watchOrder, chatHtml, docsHtml,
+    supabase, isDemo, esc, fmtDate, statusTrack, loadOrderDetail, watchOrder, chatHtml, docsHtml,
     wireOrderActions, PROFILE_FIELDS, type Order, type Profile,
   } from '../lib/portal';
   import type { RealtimeChannel } from '@supabase/supabase-js';
@@ -36,6 +37,7 @@ const strings = { lang, ...t };
   const t = JSON.parse(document.getElementById('area-i18n')!.textContent!);
   const lang: string = t.lang;
   const root = document.querySelector<HTMLElement>('[data-area]')!;
+  if (isDemo) document.querySelector<HTMLElement>('[data-demo]')!.hidden = false;
   const channels = new Map<string, RealtimeChannel>();
   let editingProfile = false;
 

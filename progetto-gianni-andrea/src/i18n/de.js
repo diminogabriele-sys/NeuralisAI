@@ -287,6 +287,7 @@ export default {
     tagline: 'Orion. Beyond the Ordinary.',
     rights: 'Alle Rechte vorbehalten.',
     privacy: 'Datenschutz & Cookies',
+    team: 'Team-Login',
   },
 
   thanks: {
@@ -321,6 +322,7 @@ export default {
   area: {
     kicker: 'Kundenbereich',
     title: 'Ihr <em>Projekt</em>, Schritt für Schritt',
+    demoNotice: 'Demo-Modus: Der Kundenbereich ist noch nicht mit dem Server verbunden. Geben Sie eine beliebige E-Mail-Adresse ein: Die Beispieldaten bleiben nur auf diesem Gerät, es werden keine E-Mails versendet.',
     notConfigured: 'Der Kundenbereich ist noch nicht aktiv. Schauen Sie bald wieder vorbei.',
     loading: 'Wird geladen…',
     error: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es gleich noch einmal.',

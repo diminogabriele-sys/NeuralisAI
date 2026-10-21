@@ -22,6 +22,7 @@ const home = path('home', lang);
       <ul>
         <li><a href={path('privacy', lang)}>{t.footer.privacy}</a></li>
         <li><a href={path('area', lang)}>{t.nav.area}</a></li>
+        <li><a href="/admin/" rel="nofollow">{t.footer.team}</a></li>
       </ul>
     </div>
   </div>
@@ -33,7 +34,7 @@ const home = path('home', lang);
   .footer-top { display: grid; gap: 1.5rem; justify-items: start; margin-bottom: 3rem; }
   .f-brand :global(.logo) { height: 40px; }
   .f-tag { font-family: var(--font-display); font-size: 1.6rem; font-style: italic; color: var(--muted); margin: 0; }
-  .footer-bottom { display: grid; gap: 1rem; padding-top: 2rem; font-size: 0.8rem; color: var(--muted); }
+  .footer-bottom { position: relative; z-index: 1; display: grid; gap: 1rem; padding-top: 2rem; font-size: 0.8rem; color: var(--muted); }
   .footer-bottom p { margin: 0; }
   .footer-bottom ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
   .footer-bottom a, .footer-bottom button { display: inline-block; line-height: 1.5; font-family: var(--font-body); color: var(--muted); background: none; border: 0; padding: 0.5rem 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-size: 0.8rem; }
@@ -50,6 +51,7 @@ const home = path('home', lang);
     background-clip: text;
     color: transparent;
     user-select: none;
+    pointer-events: none; /* decorativa: non deve coprire i link del footer */
   }
   @media (min-width: 900px) {
     .footer-top { grid-template-columns: auto 1fr auto; align-items: center; gap: 3rem; }

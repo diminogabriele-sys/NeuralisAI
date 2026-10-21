@@ -138,3 +138,5 @@
 .chat-form { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; align-items: end; }
 .chat-form textarea { min-height: 52px; resize: vertical; }
 .chat-form .btn { --pad: 0.9rem 1.2rem; }
+
+.demo-notice { margin-bottom: 1.5rem; border-color: var(--gold-deep); border-style: dashed; color: var(--gold-light); font-size: 0.9rem; }

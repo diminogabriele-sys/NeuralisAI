@@ -4,6 +4,7 @@
  * (file .env in locale, "Environment variables" su Netlify).
  */
 import { createClient, type SupabaseClient, type RealtimeChannel } from '@supabase/supabase-js';
+import { createDemoClient } from './demo';
 
 export const STATUSES = ['consultation', 'design', 'review', 'production', 'finishing', 'shipping', 'delivered'] as const;
 export type Status = (typeof STATUSES)[number];
@@ -59,7 +60,11 @@ export const PROFILE_FIELDS = [
 const url = import.meta.env.PUBLIC_SUPABASE_URL as string | undefined;
 const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string | undefined;
 
-export const supabase: SupabaseClient | null = url && key ? createClient(url, key) : null;
+/** true quando Supabase non è configurato: area clienti e pannello girano in modalità dimostrativa */
+export const isDemo = !(url && key);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const supabase: SupabaseClient | null = isDemo ? (createDemoClient() as any) : createClient(url!, key!);
 
 export const BUCKET = 'order-docs';
 
