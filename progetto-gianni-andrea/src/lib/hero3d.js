@@ -167,25 +167,19 @@ function buildStreamlines(geo, { lines = 15 } = {}) {
   }
 
   const chord = bb.max.x - bb.min.x;
-  const spanZ = bb.max.z - bb.min.z;
-  const x0 = bb.min.x - chord * 0.65, x1 = bb.max.x + chord * 1.4;
+  const x0 = bb.min.x - chord * 0.75, x1 = bb.max.x + chord * 0.95;
   const ymid = (bb.min.y + bb.max.y) / 2, h = bb.max.y - bb.min.y;
-  const M = 120; // punti per linea
-  const clear = h * 0.07;
-  const NL = 9; // quote per ogni sezione
-  const levels = Array.from({ length: NL }, (_, i) => ymid + h * (0.95 - (1.9 * i) / (NL - 1)));
-  const dx = (x1 - x0) / (M - 1);
-  let rnd = 7;
-  const rand = () => ((rnd = (rnd * 16807) % 2147483647) / 2147483647); // pseudo-casuale ripetibile
-
-  const linesData = [];
+  const M = 90; // punti per linea
+  const clear = h * 0.12;
+  const levels = [ymid + h * 0.55, ymid + h * 0.25, ymid - h * 0.05, ymid - h * 0.35, ymid - h * 0.65];
+  const pos = [], u = [], seed = [], vel = [];
+  let n = 0;
   for (let li = 0; li < lines; li++) {
-    const z = bb.min.z - spanZ * 0.03 + ((li + 0.5) / lines) * spanZ * 1.06;
+    const z = bb.min.z + ((li + 0.5) / lines) * (bb.max.z - bb.min.z) * 1.04 - (bb.max.z - bb.min.z) * 0.02;
     for (const yl of levels) {
-      // 1) quota "rigida": sopra o sotto l'ala dove la attraversa
       const ys = [];
       for (let j = 0; j < M; j++) {
-        const x = x0 + j * dx;
+        const x = x0 + (j / (M - 1)) * (x1 - x0);
         let y = yl;
         if (x >= bb.min.x && x <= bb.max.x) {
           const k = cz(z) * NX + cx(x);
@@ -196,117 +190,90 @@ function buildStreamlines(geo, { lines = 15 } = {}) {
         }
         ys.push(y);
       }
-      // 2) ammorbidita: la linea si alza prima del bordo d'attacco e ricade dolcemente
-      const above = yl >= ymid;
+      // ammorbidisce la deviazione: la linea comincia a salire prima del bordo d'attacco
       const sm = ys.map((_, j) => {
         let acc = 0, w = 0;
-        for (let d = -9; d <= 9; d++) {
+        for (let d = -6; d <= 6; d++) {
           const jj = Math.min(M - 1, Math.max(0, j + d));
-          const ww = 1 - Math.abs(d) / 10;
+          const ww = 1 - Math.abs(d) / 7;
           acc += ys[jj] * ww; w += ww;
         }
         return acc / w;
       });
+      const sd = Math.random();
+      // curva morbida, ma mai dentro l'ala
+      const above = yl >= ymid;
       const fy = sm.map((v, j) => (above ? Math.max(v, ys[j]) : Math.min(v, ys[j])));
-
-      // 3) scia turbolenta dietro il bordo d'uscita (ampiezza crescente)
-      const ph = rand() * 6.28, ph2 = rand() * 6.28, fr = 0.8 + rand() * 0.9;
-      const nearMid = Math.exp(-Math.abs(yl - ymid) / (h * 0.9));
-      const pts = [], vel = [];
-      for (let j = 0; j < M; j++) {
+      // velocità stimata (0 = lenta, 1 = veloce) per la mappa colori stile CFD:
+      // rallenta davanti al muso (ristagno), accelera vicino alla superficie superiore, scia dietro
+      const FREE = 0.42;
+      const dx = (x1 - x0) / (M - 1);
+      const vRaw = fy.map((y, j) => {
         const x = x0 + j * dx;
-        let y = fy[j], zz = z;
-        const wake = Math.max(0, (x - bb.max.x) / chord);
-        if (wake > 0) {
-          // scia: ondulazione morbida e crescente, come le linee dietro il pilota nel riferimento
-          const amp = Math.min(wake, 1.4) * h * 0.3 * nearMid;
-          y += Math.sin(ph + wake * fr * 3.0) * amp + Math.sin(ph2 + wake * 2.1) * amp * 0.3;
-          zz += Math.sin(ph2 + wake * fr * 1.6) * amp * 0.35;
-        }
-        pts.push(new Vector3(x, y, zz));
-
-        // velocità stimata: blu nel flusso libero, rosso dove accelera aderendo alla superficie
-        let v = 0;
+        const ya = fy[Math.max(0, j - 2)], yb = fy[Math.min(M - 1, j + 2)];
+        const slope = (yb - ya) / (4 * dx);          // >0 la linea sale (davanti al profilo)
+        const curv = (yb - 2 * y + ya) / (4 * dx * dx); // curvatura della traiettoria
+        let v = FREE;
         const k = cz(z) * NX + cx(Math.min(Math.max(x, bb.min.x), bb.max.x));
-        if (x >= bb.min.x - chord * 0.08 && x <= bb.max.x + chord * 0.05 && top[k] > -Infinity) {
-          const gap = above ? fy[j] - top[k] : bot[k] - fy[j];
-          const hug = Math.exp(-Math.max(gap, 0) / (h * 0.22)); // quanto la linea "abbraccia" la superficie
-          v += (above ? 1.0 : 0.55) * hug;
+        const onWing = x >= bb.min.x - chord * 0.05 && x <= bb.max.x && top[k] > -Infinity;
+        if (onWing) {
+          const gap = above ? y - top[k] : bot[k] - y;
+          const near = Math.exp(-Math.max(gap, 0) / (h * 1.1));
+          v += above ? 0.75 * near : -0.25 * near;   // sopra accelera, sotto rallenta
         }
-        // accelerazione dove la linea si piega sopra il profilo
-        const slope = Math.abs((fy[Math.min(M - 1, j + 2)] - fy[Math.max(0, j - 2)]) / (4 * dx));
-        v += Math.min(slope * 0.6, 0.35) * (above ? 1 : 0.5);
-        // nella scia l'aria è più lenta e mescolata
-        if (wake > 0) v = v * Math.exp(-wake * 2.5) + 0.14 * nearMid * Math.exp(-wake * 0.9) * (0.5 + 0.5 * Math.sin(ph + wake * 4));
-        vel.push(Math.min(v, 1));
-      }
-      // velocità ammorbidita lungo la linea
-      const vs = vel.map((_, j) => {
+        // ristagno: dove la linea viene deviata verso l'alto davanti al muso
+        v -= 0.35 * Math.exp(-Math.abs(x - bb.min.x) / (chord * 0.35)) * Math.exp(-Math.abs(y - ymid) / h) + Math.abs(slope) * 0.3;
+        // la curvatura convessa sopra il dorso accelera ulteriormente
+        v += above ? Math.min(Math.max(-curv * h * 0.25, 0), 0.25) : 0;
+        // scia dietro il bordo d'uscita
+        if (x > bb.max.x) v -= 0.4 * Math.exp(-(x - bb.max.x) / (chord * 1.2)) * Math.exp(-Math.abs(y - ymid) / (h * 1.2));
+        return v;
+      });
+      const vs = vRaw.map((_, j) => {
         let acc = 0, w = 0;
-        for (let d = -3; d <= 3; d++) { const jj = Math.min(M - 1, Math.max(0, j + d)); acc += vel[jj]; w++; }
+        for (let d = -3; d <= 3; d++) { const jj = Math.min(M - 1, Math.max(0, j + d)); acc += vRaw[jj]; w++; }
         return acc / w;
       });
-      linesData.push({ pts, vel: vs, seed: rand() });
-    }
-  }
-
-  // ---- tubi: ogni linea diventa un tubicino con normali per l'ombreggiatura ----
-  const RAD = 6;
-  const radius = h * 0.014;
-  const P = [], N = [], V = [], U = [], S = [], I = [];
-  const t = new Vector3(), n = new Vector3(), b2 = new Vector3(), up = new Vector3(0, 1, 0), side = new Vector3(0, 0, 1);
-  let base = 0;
-  for (const L of linesData) {
-    for (let j = 0; j < M; j++) {
-      const a = L.pts[Math.max(0, j - 1)], c = L.pts[Math.min(M - 1, j + 1)];
-      t.subVectors(c, a).normalize();
-      n.crossVectors(t, Math.abs(t.dot(up)) > 0.9 ? side : up).normalize();
-      b2.crossVectors(t, n).normalize();
-      for (let r = 0; r < RAD; r++) {
-        const ang = (r / RAD) * Math.PI * 2;
-        const ox = n.x * Math.cos(ang) + b2.x * Math.sin(ang);
-        const oy = n.y * Math.cos(ang) + b2.y * Math.sin(ang);
-        const oz = n.z * Math.cos(ang) + b2.z * Math.sin(ang);
-        const p = L.pts[j];
-        P.push(p.x + ox * radius, p.y + oy * radius, p.z + oz * radius);
-        N.push(ox, oy, oz);
-        V.push(L.vel[j]);
-        U.push(j / (M - 1));
-        S.push(L.seed);
-      }
-      if (j < M - 1) {
-        for (let r = 0; r < RAD; r++) {
-          const r2 = (r + 1) % RAD;
-          const i0 = base + j * RAD + r, i1 = base + j * RAD + r2, i2 = base + (j + 1) * RAD + r, i3 = base + (j + 1) * RAD + r2;
-          I.push(i0, i2, i1, i1, i2, i3);
+      for (let j = 0; j < M - 1; j++) {
+        for (const jj of [j, j + 1]) {
+          pos.push(x0 + (jj / (M - 1)) * (x1 - x0), fy[jj], z);
+          u.push(jj / (M - 1));
+          seed.push(sd);
+          vel.push(vs[jj]);
         }
       }
+      n++;
     }
-    base += M * RAD;
+  }
+  // normalizza le velocità sull'intero campo (percentili 3–97) per usare tutta la scala colori
+  // l'ordine (più lento → più veloce) resta quello fisico; metà lineare e metà per percentile,
+  // così la scala blu → rosso viene usata tutta come in una simulazione CFD
+  const sorted = [...vel].sort((a, b) => a - b);
+  const lo = sorted[Math.floor(sorted.length * 0.02)], hi = sorted[Math.floor(sorted.length * 0.98)];
+  const rank = (v) => {
+    let a = 0, b = sorted.length - 1;
+    while (a < b) { const m = (a + b) >> 1; if (sorted[m] < v) a = m + 1; else b = m; }
+    return a / sorted.length;
+  };
+  for (let i = 0; i < vel.length; i++) {
+    const lin = Math.min(Math.max((vel[i] - lo) / (hi - lo || 1), 0), 1);
+    vel[i] = 0.5 * lin + 0.5 * rank(vel[i]);
   }
   const g = new BufferGeometry();
-  g.setAttribute('position', new BufferAttribute(new Float32Array(P), 3));
-  g.setAttribute('normal', new BufferAttribute(new Float32Array(N), 3));
-  g.setAttribute('vel', new BufferAttribute(new Float32Array(V), 1));
-  g.setAttribute('u', new BufferAttribute(new Float32Array(U), 1));
-  g.setAttribute('seed', new BufferAttribute(new Float32Array(S), 1));
-  g.setIndex(I);
-
+  g.setAttribute('position', new BufferAttribute(new Float32Array(pos), 3));
+  g.setAttribute('u', new BufferAttribute(new Float32Array(u), 1));
+  g.setAttribute('seed', new BufferAttribute(new Float32Array(seed), 1));
+  g.setAttribute('vel', new BufferAttribute(new Float32Array(vel), 1));
   const mat = new ShaderMaterial({
     transparent: true,
-    uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 } },
+    depthWrite: false,
+    blending: AdditiveBlending,
+    uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 }, uColor: { value: GOLD } },
     vertexShader: /* glsl */ `
-      attribute float vel; attribute float u; attribute float seed;
-      varying float vVel; varying float vU; varying float vSeed; varying vec3 vN; varying vec3 vView;
-      void main(){
-        vVel = vel; vU = u; vSeed = seed;
-        vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        vN = normalize(normalMatrix * normal); vView = normalize(-mv.xyz);
-        gl_Position = projectionMatrix * mv;
-      }`,
+      attribute float u; attribute float seed; attribute float vel; varying float vU; varying float vSeed; varying float vVel;
+      void main(){ vU = u; vSeed = seed; vVel = vel; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: /* glsl */ `
-      uniform float uTime; uniform float uOpacity;
-      varying float vVel; varying float vU; varying float vSeed; varying vec3 vN; varying vec3 vView;
+      uniform float uTime; uniform float uOpacity; uniform vec3 uColor; varying float vU; varying float vSeed; varying float vVel;
       vec3 turbo(float x) {
         const vec4 kR = vec4(0.13572138, 4.61539260, -42.66032258, 132.13108234);
         const vec4 kG = vec4(0.09140261, 2.19418839, 4.84296658, -14.18503333);
@@ -320,21 +287,80 @@ function buildStreamlines(geo, { lines = 15 } = {}) {
         return vec3(dot(v4, kR) + dot(v2, kR2), dot(v4, kG) + dot(v2, kG2), dot(v4, kB) + dot(v2, kB2));
       }
       void main(){
-        // scala: blu (flusso libero) → ciano → verde → giallo → rosso (massima velocità)
-        vec3 col = turbo(0.16 + vVel * 0.8);
-        // tubo lucido: luce diffusa + riflesso speculare
-        vec3 L = normalize(vec3(-0.4, 0.8, 0.6));
-        float diff = 0.55 + 0.45 * max(dot(vN, L), 0.0);
-        float spec = pow(max(dot(reflect(-L, vN), vView), 0.0), 24.0) * 0.35;
-        // leggero scorrimento di luce lungo il tubo: il flusso "si muove"
-        float pulse = exp(-fract(vSeed + uTime * 0.18 - vU) * 6.0) * 0.35;
-        float fade = smoothstep(0.0, 0.08, vU) * (1.0 - smoothstep(0.9, 1.0, vU));
-        gl_FragColor = vec4(col * diff * (1.0 + pulse) + spec, fade * uOpacity);
+        float w = fract(vSeed + uTime * 0.32 - vU);   // 0 = testa dell'impulso
+        float glow = exp(-w * 9.0);
+        float fade = smoothstep(0.0, 0.1, vU) * (1.0 - smoothstep(0.88, 1.0, vU));
+        vec3 col = turbo(0.08 + vVel * 0.86);         // colore = velocità dell'aria (blu lenta → rosso veloce)
+        col = mix(col, vec3(1.0), glow * 0.45);       // l'impulso schiarisce verso il bianco
+        float a = (0.34 + glow * 0.7) * fade * uOpacity;
+        gl_FragColor = vec4(col, a);
       }`,
   });
-  const obj = new Mesh(g, mat);
+  const obj = new LineSegments(g, mat);
   obj.renderOrder = 2;
-  return { obj, mat, count: linesData.length };
+
+  // comete: punti luminosi che percorrono le linee (più visibili delle linee sottili)
+  const segPerLine = (M - 1) * 2;
+  const heads = 1; // comete per linea
+  const cpos = new Float32Array(n * heads * 3);
+  const cvel = new Float32Array(n * heads);
+  const cg = new BufferGeometry();
+  cg.setAttribute('position', new BufferAttribute(cpos, 3));
+  cg.setAttribute('vel', new BufferAttribute(cvel, 1));
+  const cmat = new ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    uniforms: { uColor: { value: GOLD }, uOpacity: { value: 0 }, uSize: { value: 34 * Math.min(window.devicePixelRatio, 1.75) } },
+    vertexShader: /* glsl */ `
+      uniform float uSize; attribute float vel; varying float vVel;
+      void main(){ vVel = vel; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = uSize / -mv.z; gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uColor; uniform float uOpacity; varying float vVel;
+      vec3 turbo(float x) {
+        const vec4 kR = vec4(0.13572138, 4.61539260, -42.66032258, 132.13108234);
+        const vec4 kG = vec4(0.09140261, 2.19418839, 4.84296658, -14.18503333);
+        const vec4 kB = vec4(0.10667330, 12.64194608, -60.58204836, 110.36276771);
+        const vec2 kR2 = vec2(-152.94239396, 59.28637943);
+        const vec2 kG2 = vec2(4.27729857, 2.82956604);
+        const vec2 kB2 = vec2(-89.90310912, 27.34824973);
+        x = clamp(x, 0.0, 1.0);
+        vec4 v4 = vec4(1.0, x, x * x, x * x * x);
+        vec2 v2 = v4.zw * v4.z;
+        return vec3(dot(v4, kR) + dot(v2, kR2), dot(v4, kG) + dot(v2, kG2), dot(v4, kB) + dot(v2, kB2));
+      }
+      void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d); vec3 c = mix(turbo(0.08 + vVel * 0.86), vec3(1.0), a * 0.5); gl_FragColor = vec4(c * 1.2, a * a * 0.9 * uOpacity); }`,
+  });
+  const comets = new Points(cg, cmat);
+  comets.renderOrder = 3;
+  const P = g.attributes.position.array;
+  const S = g.attributes.seed.array;
+  const V = g.attributes.vel.array;
+  /** sposta le comete lungo le linee: stessa formula degli impulsi nello shader */
+  const update = (time) => {
+    for (let l = 0; l < n; l++) {
+      const base = l * segPerLine;
+      const sd = S[base];
+      for (let hh = 0; hh < heads; hh++) {
+        // posizione della testa: u tale che fract((sd + time*0.32 - u) * 1.6) = 0
+        // testa dell'impulso: u = fract(seed + tempo*velocità), come nello shader
+        let uu = sd + time * 0.32 + hh / heads;
+        uu = Math.min(Math.max(uu - Math.floor(uu), 0), 0.999);
+        const f = uu * (M - 1);
+        const j = Math.floor(f), tt = f - j;
+        const v = (base + j * 2) * 3; // primo punto del segmento j
+        const o = (l * heads + hh) * 3;
+        for (let k = 0; k < 3; k++) cpos[o + k] = P[v + k] + (P[v + 3 + k] - P[v + k]) * tt;
+        cvel[l * heads + hh] = V[v / 3];
+      }
+    }
+    cg.attributes.position.needsUpdate = true;
+    cg.attributes.vel.needsUpdate = true;
+  };
+  update(0);
+  const group = new Group();
+  group.add(obj, comets);
+  return { obj: group, mat, cmat, update, count: n };
 }
 
 /* ---------- Particelle del flusso d'aria ---------- */
@@ -426,9 +452,9 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
   pivot.add(flow.points);
 
   // linee di flusso attorno all'ala reale
-  const stream = buildStreamlines(wing.userData.geo, { lines: isSmall() ? 6 : 7 });
+  const stream = buildStreamlines(wing.userData.geo, { lines: isSmall() ? 9 : 13 });
   pivot.add(stream.obj);
-  if (reducedMotion) stream.mat.uniforms.uOpacity.value = 1;
+  if (reducedMotion) { stream.mat.uniforms.uOpacity.value = 1; stream.cmat.uniforms.uOpacity.value = 1; }
 
   // Anello "piattaforma" sotto il modello
   const ring = new Mesh(new RingGeometry(2.05, 2.06, 128), new MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.35, side: DoubleSide }));
@@ -441,10 +467,9 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
   ring2.scale.setScalar(1.35);
   scene.add(ring2);
 
-  // vista laterale 3/4 come in galleria del vento: il flusso scorre da sinistra a destra,
-  // le due winglet si vedono in prospettiva
-  const BASE_RY = -0.22;
-  const BASE_RX = 0.2;
+  // vista 3/4 dall'alto: apertura in orizzontale, muso verso chi guarda
+  const BASE_RY = Math.PI / 2 - 0.42;
+  const BASE_RX = 0.42;
   pivot.rotation.set(BASE_RX, BASE_RY, 0);
   scene.add(pivot);
 
@@ -461,9 +486,9 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     const visH = 2 * 9 * Math.tan(MathUtils.degToRad(camera.fov / 2));
     const visW = visH * camera.aspect;
     const wide = camera.aspect > 1.05;
-    const MODEL = 2.9; // ingombro apparente del modello a scala 1
+    const MODEL = 3.7; // ingombro apparente del modello a scala 1
     const s = wide ? Math.min(0.4 * visW, 0.72 * visH) / MODEL : (0.8 * visW) / MODEL;
-    const offX = wide ? visW * 0.28 : 0;
+    const offX = wide ? visW * 0.24 : 0;
     const offY = wide ? 0.1 : 0.15;
     baseScale = s;
     baseY = offY;
@@ -535,7 +560,9 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     pivot.position.y = baseY + Math.sin(t * 1.1) * 0.035 * baseScale;
     stream.mat.uniforms.uTime.value = wall;
     stream.mat.uniforms.uOpacity.value = MathUtils.clamp((wall - 0.9) / 1.2, 0, 1);
-    const ry = BASE_RY - (1 - intro) * 0.9 + Math.sin(t * 0.25) * 0.12 + target.x * 0.2 + scrollP * 0.6;
+    stream.cmat.uniforms.uOpacity.value = stream.mat.uniforms.uOpacity.value;
+    stream.update(wall);
+    const ry = BASE_RY - (1 - intro) * 1.1 + Math.sin(t * 0.25) * 0.3 + target.x * 0.35 + scrollP * 1.0;
     const rx = BASE_RX + Math.sin(t * 0.4) * 0.05 + target.y * 0.12 - scrollP * 0.3;
     pivot.rotation.y = MathUtils.damp(pivot.rotation.y, ry, 3, dt);
     pivot.rotation.x = MathUtils.damp(pivot.rotation.x, rx, 3, dt);
