@@ -2,18 +2,15 @@
  * Scena 3D dell'hero: winglet in fibra di carbonio con filetti oro e flusso d'aria animato.
  * Caricata in modo differito (vedi Hero.astro) solo se il browser supporta WebGL.
  *
- * Quando avrai il modello 3D reale (.glb) potrai sostituire buildWing() con GLTFLoader.
+ * L'ala è il modello reale (models/ala.stl): per cambiarlo sostituisci il file e lancia `npm run wing`.
  */
 import {
   WebGLRenderer,
   Scene,
   PerspectiveCamera,
   Group,
-  Shape,
-  ExtrudeGeometry,
   Mesh,
   MeshPhysicalMaterial,
-  MeshStandardMaterial,
   CanvasTexture,
   RepeatWrapping,
   SRGBColorSpace,
@@ -22,10 +19,11 @@ import {
   AmbientLight,
   DirectionalLight,
   PointLight,
-  CatmullRomCurve3,
-  TubeGeometry,
   Vector3,
   BufferGeometry,
+  LineSegments,
+  EdgesGeometry,
+  LineBasicMaterial,
   BufferAttribute,
   Points,
   ShaderMaterial,
@@ -38,6 +36,8 @@ import {
   Color,
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { toCreasedNormals } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { WING_DATA, WING_INDEX32 } from './wing-data.js';
 
 const GOLD = new Color('#c9a45c');
 
@@ -67,101 +67,67 @@ function carbonTexture() {
   return tex;
 }
 
-/* ---------- Profilo alare NACA 4 cifre ---------- */
-function airfoil(chord, m = 0.06, p = 0.4, t = 0.12, n = 36) {
-  const up = [];
-  const lo = [];
-  for (let i = 0; i <= n; i++) {
-    const x = (1 - Math.cos((i / n) * Math.PI)) / 2; // distribuzione coseno
-    const yt = 5 * t * (0.2969 * Math.sqrt(x) - 0.126 * x - 0.3516 * x ** 2 + 0.2843 * x ** 3 - 0.1036 * x ** 4);
-    const yc = x < p ? (m / p ** 2) * (2 * p * x - x ** 2) : (m / (1 - p) ** 2) * (1 - 2 * p + 2 * p * x - x ** 2);
-    up.push([x * chord, (yc + yt) * chord]);
-    lo.push([x * chord, (yc - yt) * chord]);
+/* ---------- Ala reale (dal file STL convertito con scripts/convert-wing.mjs) ---------- */
+function decodeWing() {
+  const bytes = Uint8Array.from(atob(WING_DATA), (c) => c.charCodeAt(0));
+  const dv = new DataView(bytes.buffer);
+  const nV = dv.getUint32(0, true);
+  const nI = dv.getUint32(4, true);
+  const min = [0, 1, 2].map((k) => dv.getFloat32(8 + k * 4, true));
+  const max = [0, 1, 2].map((k) => dv.getFloat32(20 + k * 4, true));
+  const pos = new Float32Array(nV * 3);
+  for (let i = 0; i < nV; i++) {
+    const p = [0, 1, 2].map((k) => min[k] + (dv.getUint16(32 + i * 6 + k * 2, true) / 65535) * (max[k] - min[k]));
+    // STL: X = apertura, Y = direzione di marcia, Z = alto  →  scena: X = marcia, Y = alto, Z = apertura
+    pos[i * 3] = p[1];
+    pos[i * 3 + 1] = p[2];
+    pos[i * 3 + 2] = p[0];
   }
-  const shape = new Shape();
-  shape.moveTo(up[n][0], up[n][1]);
-  for (let i = n - 1; i >= 0; i--) shape.lineTo(up[i][0], up[i][1]);
-  for (let i = 1; i <= n; i++) shape.lineTo(lo[i][0], lo[i][1]);
-  shape.closePath();
-  return { shape, up };
+  const off = 32 + nV * 6;
+  const index = WING_INDEX32
+    ? new Uint32Array(bytes.buffer.slice(off, off + nI * 4))
+    : new Uint16Array(bytes.buffer.slice(off, off + nI * 2));
+  const geo = new BufferGeometry();
+  geo.setAttribute('position', new BufferAttribute(pos, 3));
+  geo.setIndex(new BufferAttribute(index, 1));
+  return geo;
 }
 
-/** Estrude il profilo lungo l'apertura con rastremazione, freccia e diedro */
-function wingElement(chord, span, { taper = 0.4, sweep = 0.9, dihedral = 0.25, camber = 0.06, thick = 0.12 } = {}) {
-  const { shape, up } = airfoil(chord, camber, 0.4, thick);
-  const geo = new ExtrudeGeometry(shape, { depth: span, steps: 48, bevelEnabled: false, curveSegments: 1 });
-  const pos = geo.attributes.position;
-  const warp = (x, y, z) => {
-    const s = z / span;
-    const k = 1 - taper * s;
-    return [x * k + sweep * s * s, y * k + dihedral * s * s, z];
-  };
-  for (let i = 0; i < pos.count; i++) {
-    const [x, y, z] = warp(pos.getX(i), pos.getY(i), pos.getZ(i));
-    pos.setXYZ(i, x, y, z);
+/** UV a proiezione "a scatola": ogni triangolo prende la trama del carbonio dal piano più vicino */
+function boxUVs(geo, scale = 1.6) {
+  const p = geo.attributes.position;
+  const uv = new Float32Array(p.count * 2);
+  const a = new Vector3(), b = new Vector3(), c = new Vector3(), n = new Vector3();
+  for (let i = 0; i < p.count; i += 3) {
+    a.fromBufferAttribute(p, i); b.fromBufferAttribute(p, i + 1); c.fromBufferAttribute(p, i + 2);
+    n.subVectors(c, b).cross(a.clone().sub(b));
+    const ax = Math.abs(n.x), ay = Math.abs(n.y), az = Math.abs(n.z);
+    for (let k = 0; k < 3; k++) {
+      const v = [a, b, c][k];
+      const [u, w] = ax >= ay && ax >= az ? [v.z, v.y] : ay >= az ? [v.x, v.z] : [v.x, v.y];
+      uv[(i + k) * 2] = u * scale;
+      uv[(i + k) * 2 + 1] = w * scale;
+    }
   }
-  geo.computeVertexNormals();
-  // Curva del bordo d'attacco (per il filetto oro)
-  const lead = [];
-  for (let j = 0; j <= 24; j++) {
-    const z = (j / 24) * span;
-    const [x, y] = warp(up[1][0] * 0.2, 0.004, z);
-    lead.push(new Vector3(x, y, z));
-  }
-  return { geo, lead, warp };
+  geo.setAttribute('uv', new BufferAttribute(uv, 2));
 }
 
-/** Profilo dell'endplate: bordo d'attacco arrotondato e coda più alta, come nelle winglet da gara */
-function endplateShape() {
-  const sh = new Shape();
-  sh.moveTo(0.05, 0.28);
-  sh.quadraticCurveTo(0.02, 0.02, 0.35, 0.0);
-  sh.lineTo(1.3, -0.04);
-  sh.quadraticCurveTo(1.46, -0.04, 1.46, 0.1);
-  sh.lineTo(1.46, 0.68);
-  sh.quadraticCurveTo(1.46, 0.8, 1.32, 0.8);
-  sh.lineTo(0.55, 0.72);
-  sh.quadraticCurveTo(0.08, 0.66, 0.05, 0.28);
-  return sh;
-}
-
-/** Winglet "a scatola" stile MotoGP: due profili sovrapposti chiusi da due endplate */
-function buildWing(carbonMat, goldMat) {
+function buildWing(carbonMat, goldLineMat) {
   const group = new Group();
-  const span = 2.2;
-  const opts = { taper: 0.18, sweep: 0.35, dihedral: 0.12 };
+  const geo = decodeWing();
+  geo.computeBoundingBox();
+  const c = geo.boundingBox.getCenter(new Vector3());
+  const span = geo.boundingBox.max.z - geo.boundingBox.min.z;
+  geo.translate(-c.x, -c.y, -c.z);
+  geo.scale(3.1 / span, 3.1 / span, 3.1 / span); // apertura ~3.1 unità, come la vecchia ala
 
-  const lower = wingElement(1.25, span, { ...opts, camber: 0.07, thick: 0.11 });
-  group.add(new Mesh(lower.geo, carbonMat));
+  // superfici lisce con spigoli vivi (angolo di piega 32°)
+  const shaded = toCreasedNormals(geo, MathUtils.degToRad(32));
+  boxUVs(shaded);
+  group.add(new Mesh(shaded, carbonMat));
 
-  const upper = wingElement(1.0, span, { ...opts, camber: 0.08, thick: 0.1 });
-  const upperMesh = new Mesh(upper.geo, carbonMat);
-  upperMesh.position.set(0.3, 0.42, 0);
-  upperMesh.rotation.z = -0.12;
-  group.add(upperMesh);
-
-  // Filetti oro sui bordi d'attacco
-  group.add(new Mesh(new TubeGeometry(new CatmullRomCurve3(lower.lead), 64, 0.011, 8, false), goldMat));
-  const upLead = new Mesh(new TubeGeometry(new CatmullRomCurve3(upper.lead), 64, 0.011, 8, false), goldMat);
-  upLead.position.copy(upperMesh.position);
-  upLead.rotation.copy(upperMesh.rotation);
-  group.add(upLead);
-
-  // Endplate interno ed esterno con cornice oro
-  const plate = endplateShape();
-  const plateGeo = new ExtrudeGeometry(plate, { depth: 0.03, bevelEnabled: true, bevelSize: 0.01, bevelThickness: 0.01, bevelSegments: 2, curveSegments: 12 });
-  const trimPts = plate.getSpacedPoints(120).map((p) => new Vector3(p.x, p.y, 0));
-  const trimGeo = new TubeGeometry(new CatmullRomCurve3(trimPts, true), 200, 0.014, 6, true);
-  for (const z of [0, span]) {
-    const tip = lower.warp(0, 0, z);
-    const holder = new Group();
-    holder.position.set(tip[0] - 0.1, tip[1] - 0.2, z - 0.015);
-    holder.add(new Mesh(plateGeo, carbonMat));
-    const trim = new Mesh(trimGeo, goldMat);
-    trim.position.z = z === 0 ? -0.012 : 0.045;
-    holder.add(trim);
-    group.add(holder);
-  }
+  // filetti oro sugli spigoli vivi
+  group.add(new LineSegments(new EdgesGeometry(geo, 30), goldLineMat));
   return group;
 }
 
@@ -222,7 +188,7 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     clearcoatRoughness: 0.06,
     side: DoubleSide,
   });
-  const gold = new MeshStandardMaterial({ color: '#d4ae63', metalness: 1, roughness: 0.22, envMapIntensity: 1.4 });
+  const goldLines = new LineBasicMaterial({ color: '#e6c77f', transparent: true, opacity: 0.95 });
 
   // Luci: chiave calda, controluce oro, riempimento freddo
   scene.add(new AmbientLight('#ffffff', 0.12));
@@ -238,7 +204,7 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
 
   // Modello centrato
   const pivot = new Group();
-  const wing = buildWing(carbon, gold);
+  const wing = buildWing(carbon, goldLines);
   const box = new Box3().setFromObject(wing);
   const center = box.getCenter(new Vector3());
   wing.position.sub(center);
@@ -264,7 +230,10 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
   ring2.scale.setScalar(1.35);
   scene.add(ring2);
 
-  pivot.rotation.set(0.35, -0.7, -0.08);
+  // vista 3/4 dall'alto: apertura in orizzontale, muso verso chi guarda
+  const BASE_RY = Math.PI / 2 - 0.42;
+  const BASE_RX = 0.42;
+  pivot.rotation.set(BASE_RX, BASE_RY, 0);
   scene.add(pivot);
 
   /* Layout responsive: modello a destra su desktop, in alto su mobile */
@@ -277,7 +246,7 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     const visH = 2 * 9 * Math.tan(MathUtils.degToRad(camera.fov / 2));
     const visW = visH * camera.aspect;
     const wide = camera.aspect > 1.05;
-    const MODEL = 2.8; // ingombro apparente del modello a scala 1
+    const MODEL = 3.7; // ingombro apparente del modello a scala 1
     const s = wide ? Math.min(0.4 * visW, 0.72 * visH) / MODEL : (0.8 * visW) / MODEL;
     const offX = wide ? visW * 0.24 : 0;
     const offY = wide ? 0.1 : 0.15;
@@ -341,8 +310,8 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
     t += dt;
-    const ry = -0.7 + Math.sin(t * 0.25) * 0.35 + target.x * 0.35 + scrollP * 1.2;
-    const rx = 0.35 + Math.sin(t * 0.4) * 0.05 + target.y * 0.12 - scrollP * 0.3;
+    const ry = BASE_RY + Math.sin(t * 0.25) * 0.3 + target.x * 0.35 + scrollP * 1.0;
+    const rx = BASE_RX + Math.sin(t * 0.4) * 0.05 + target.y * 0.12 - scrollP * 0.3;
     pivot.rotation.y = MathUtils.damp(pivot.rotation.y, ry, 3, dt);
     pivot.rotation.x = MathUtils.damp(pivot.rotation.x, rx, 3, dt);
     camera.position.z = MathUtils.damp(camera.position.z, 9 + scrollP * 2.5, 4, dt);

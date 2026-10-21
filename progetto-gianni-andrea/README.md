@@ -18,6 +18,7 @@ npm run build        # genera il sito in dist/
 npm run preview      # anteprima della build
 npm run placeholders # rigenera le immagini segnaposto
 npm run check        # controllo dei tipi
+npm run wing         # converte models/ala.stl per la scena 3D dell'hero
 ```
 
 ## Cosa sostituire
@@ -31,7 +32,7 @@ npm run check        # controllo dei tipi
 | Foto | `src/assets/images/`: sovrascrivi i file **con lo stesso nome** (`servizio-*.jpg`, `progetto-*.jpg`, `chi-siamo.jpg`). Consigliato: almeno 1600 px di larghezza, 4:3 (laboratorio 4:5) |
 | Immagine per le condivisioni social | `public/og-image.jpg` (1200×630) |
 | Informativa privacy | testo segnaposto in `privacy` dentro ogni file `src/i18n/*.js` |
-| Modello 3D (facoltativo) | `src/lib/hero3d.js`: `buildWing()` genera l'ala; un modello reale `.glb` si può caricare con `GLTFLoader` |
+| Modello 3D dell'ala | sostituisci `models/ala.stl` con il nuovo file STL e lancia `npm run wing` (lo converte in un formato leggero per il sito) |
 
 Per aggiungere un progetto, copia un blocco in `projects.items` (in tutte e 5 le lingue, con lo stesso `id`) e aggiungi la foto `src/assets/images/progetto-6.jpg`.
 
