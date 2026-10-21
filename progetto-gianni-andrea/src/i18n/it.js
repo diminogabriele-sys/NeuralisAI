@@ -56,6 +56,7 @@ export default {
     scroll: 'Scorri',
     specs: ['Moto one-off', 'Edizioni limitate', 'Prototipazione per aziende'],
     canvasLabel: 'Modello 3D interattivo di un’ala aerodinamica in fibra di carbonio con finiture oro',
+    legend: { title: 'Velocità del flusso', slow: 'lenta', fast: 'veloce' },
   },
 
   services: {

@@ -56,6 +56,7 @@ export default {
     scroll: 'Scrollen',
     specs: ['One-off-Motorräder', 'Limitierte Editionen', 'Prototyping für Unternehmen'],
     canvasLabel: 'Interaktives 3D-Modell eines aerodynamischen Carbon-Flügels mit goldenen Details',
+    legend: { title: 'Strömungsgeschwindigkeit', slow: 'langsam', fast: 'schnell' },
   },
 
   services: {

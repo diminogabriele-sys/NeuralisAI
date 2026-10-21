@@ -56,6 +56,7 @@ export default {
     scroll: 'Défiler',
     specs: ['Motos one-off', 'Éditions limitées', 'Prototypage pour entreprises'],
     canvasLabel: 'Modèle 3D interactif d’un aileron aérodynamique en fibre de carbone aux finitions dorées',
+    legend: { title: 'Vitesse du flux', slow: 'lente', fast: 'rapide' },
   },
 
   services: {

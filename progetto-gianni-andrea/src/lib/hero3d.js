@@ -171,8 +171,8 @@ function buildStreamlines(geo, { lines = 15 } = {}) {
   const ymid = (bb.min.y + bb.max.y) / 2, h = bb.max.y - bb.min.y;
   const M = 90; // punti per linea
   const clear = h * 0.12;
-  const levels = [ymid + h * 0.35, ymid - h * 0.05, ymid - h * 0.45];
-  const pos = [], u = [], seed = [];
+  const levels = [ymid + h * 0.55, ymid + h * 0.25, ymid - h * 0.05, ymid - h * 0.35, ymid - h * 0.65];
+  const pos = [], u = [], seed = [], vel = [];
   let n = 0;
   for (let li = 0; li < lines; li++) {
     const z = bb.min.z + ((li + 0.5) / lines) * (bb.max.z - bb.min.z) * 1.04 - (bb.max.z - bb.min.z) * 0.02;
@@ -201,40 +201,99 @@ function buildStreamlines(geo, { lines = 15 } = {}) {
         return acc / w;
       });
       const sd = Math.random();
+      // curva morbida, ma mai dentro l'ala
+      const above = yl >= ymid;
+      const fy = sm.map((v, j) => (above ? Math.max(v, ys[j]) : Math.min(v, ys[j])));
+      // velocità stimata (0 = lenta, 1 = veloce) per la mappa colori stile CFD:
+      // rallenta davanti al muso (ristagno), accelera vicino alla superficie superiore, scia dietro
+      const FREE = 0.42;
+      const dx = (x1 - x0) / (M - 1);
+      const vRaw = fy.map((y, j) => {
+        const x = x0 + j * dx;
+        const ya = fy[Math.max(0, j - 2)], yb = fy[Math.min(M - 1, j + 2)];
+        const slope = (yb - ya) / (4 * dx);          // >0 la linea sale (davanti al profilo)
+        const curv = (yb - 2 * y + ya) / (4 * dx * dx); // curvatura della traiettoria
+        let v = FREE;
+        const k = cz(z) * NX + cx(Math.min(Math.max(x, bb.min.x), bb.max.x));
+        const onWing = x >= bb.min.x - chord * 0.05 && x <= bb.max.x && top[k] > -Infinity;
+        if (onWing) {
+          const gap = above ? y - top[k] : bot[k] - y;
+          const near = Math.exp(-Math.max(gap, 0) / (h * 1.1));
+          v += above ? 0.75 * near : -0.25 * near;   // sopra accelera, sotto rallenta
+        }
+        // ristagno: dove la linea viene deviata verso l'alto davanti al muso
+        v -= 0.35 * Math.exp(-Math.abs(x - bb.min.x) / (chord * 0.35)) * Math.exp(-Math.abs(y - ymid) / h) + Math.abs(slope) * 0.3;
+        // la curvatura convessa sopra il dorso accelera ulteriormente
+        v += above ? Math.min(Math.max(-curv * h * 0.25, 0), 0.25) : 0;
+        // scia dietro il bordo d'uscita
+        if (x > bb.max.x) v -= 0.4 * Math.exp(-(x - bb.max.x) / (chord * 1.2)) * Math.exp(-Math.abs(y - ymid) / (h * 1.2));
+        return v;
+      });
+      const vs = vRaw.map((_, j) => {
+        let acc = 0, w = 0;
+        for (let d = -3; d <= 3; d++) { const jj = Math.min(M - 1, Math.max(0, j + d)); acc += vRaw[jj]; w++; }
+        return acc / w;
+      });
       for (let j = 0; j < M - 1; j++) {
         for (const jj of [j, j + 1]) {
-          const x = x0 + (jj / (M - 1)) * (x1 - x0);
-          // curva morbida, ma mai dentro l'ala
-          const y = yl >= ymid ? Math.max(sm[jj], ys[jj]) : Math.min(sm[jj], ys[jj]);
-          pos.push(x, y, z);
+          pos.push(x0 + (jj / (M - 1)) * (x1 - x0), fy[jj], z);
           u.push(jj / (M - 1));
           seed.push(sd);
+          vel.push(vs[jj]);
         }
       }
       n++;
     }
   }
+  // normalizza le velocità sull'intero campo (percentili 3–97) per usare tutta la scala colori
+  // l'ordine (più lento → più veloce) resta quello fisico; metà lineare e metà per percentile,
+  // così la scala blu → rosso viene usata tutta come in una simulazione CFD
+  const sorted = [...vel].sort((a, b) => a - b);
+  const lo = sorted[Math.floor(sorted.length * 0.02)], hi = sorted[Math.floor(sorted.length * 0.98)];
+  const rank = (v) => {
+    let a = 0, b = sorted.length - 1;
+    while (a < b) { const m = (a + b) >> 1; if (sorted[m] < v) a = m + 1; else b = m; }
+    return a / sorted.length;
+  };
+  for (let i = 0; i < vel.length; i++) {
+    const lin = Math.min(Math.max((vel[i] - lo) / (hi - lo || 1), 0), 1);
+    vel[i] = 0.5 * lin + 0.5 * rank(vel[i]);
+  }
   const g = new BufferGeometry();
   g.setAttribute('position', new BufferAttribute(new Float32Array(pos), 3));
   g.setAttribute('u', new BufferAttribute(new Float32Array(u), 1));
   g.setAttribute('seed', new BufferAttribute(new Float32Array(seed), 1));
+  g.setAttribute('vel', new BufferAttribute(new Float32Array(vel), 1));
   const mat = new ShaderMaterial({
     transparent: true,
     depthWrite: false,
     blending: AdditiveBlending,
     uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 }, uColor: { value: GOLD } },
     vertexShader: /* glsl */ `
-      attribute float u; attribute float seed; varying float vU; varying float vSeed;
-      void main(){ vU = u; vSeed = seed; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      attribute float u; attribute float seed; attribute float vel; varying float vU; varying float vSeed; varying float vVel;
+      void main(){ vU = u; vSeed = seed; vVel = vel; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: /* glsl */ `
-      uniform float uTime; uniform float uOpacity; uniform vec3 uColor; varying float vU; varying float vSeed;
+      uniform float uTime; uniform float uOpacity; uniform vec3 uColor; varying float vU; varying float vSeed; varying float vVel;
+      vec3 turbo(float x) {
+        const vec4 kR = vec4(0.13572138, 4.61539260, -42.66032258, 132.13108234);
+        const vec4 kG = vec4(0.09140261, 2.19418839, 4.84296658, -14.18503333);
+        const vec4 kB = vec4(0.10667330, 12.64194608, -60.58204836, 110.36276771);
+        const vec2 kR2 = vec2(-152.94239396, 59.28637943);
+        const vec2 kG2 = vec2(4.27729857, 2.82956604);
+        const vec2 kB2 = vec2(-89.90310912, 27.34824973);
+        x = clamp(x, 0.0, 1.0);
+        vec4 v4 = vec4(1.0, x, x * x, x * x * x);
+        vec2 v2 = v4.zw * v4.z;
+        return vec3(dot(v4, kR) + dot(v2, kR2), dot(v4, kG) + dot(v2, kG2), dot(v4, kB) + dot(v2, kB2));
+      }
       void main(){
         float w = fract(vSeed + uTime * 0.32 - vU);   // 0 = testa dell'impulso
         float glow = exp(-w * 9.0);
         float fade = smoothstep(0.0, 0.1, vU) * (1.0 - smoothstep(0.88, 1.0, vU));
-        float a = (0.06 + glow * 0.75) * fade * uOpacity;
-        vec3 col = mix(uColor, vec3(1.0, 0.95, 0.85), glow * 0.6);
-        gl_FragColor = vec4(col * 1.3, a);
+        vec3 col = turbo(0.08 + vVel * 0.86);         // colore = velocità dell'aria (blu lenta → rosso veloce)
+        col = mix(col, vec3(1.0), glow * 0.45);       // l'impulso schiarisce verso il bianco
+        float a = (0.34 + glow * 0.7) * fade * uOpacity;
+        gl_FragColor = vec4(col, a);
       }`,
   });
   const obj = new LineSegments(g, mat);
@@ -244,24 +303,39 @@ function buildStreamlines(geo, { lines = 15 } = {}) {
   const segPerLine = (M - 1) * 2;
   const heads = 1; // comete per linea
   const cpos = new Float32Array(n * heads * 3);
+  const cvel = new Float32Array(n * heads);
   const cg = new BufferGeometry();
   cg.setAttribute('position', new BufferAttribute(cpos, 3));
+  cg.setAttribute('vel', new BufferAttribute(cvel, 1));
   const cmat = new ShaderMaterial({
     transparent: true,
     depthWrite: false,
     blending: AdditiveBlending,
     uniforms: { uColor: { value: GOLD }, uOpacity: { value: 0 }, uSize: { value: 34 * Math.min(window.devicePixelRatio, 1.75) } },
     vertexShader: /* glsl */ `
-      uniform float uSize;
-      void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = uSize / -mv.z; gl_Position = projectionMatrix * mv; }`,
+      uniform float uSize; attribute float vel; varying float vVel;
+      void main(){ vVel = vel; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = uSize / -mv.z; gl_Position = projectionMatrix * mv; }`,
     fragmentShader: /* glsl */ `
-      uniform vec3 uColor; uniform float uOpacity;
-      void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d); gl_FragColor = vec4(mix(uColor, vec3(1.0, 0.96, 0.88), a * 0.6) * 1.4, a * a * 0.85 * uOpacity); }`,
+      uniform vec3 uColor; uniform float uOpacity; varying float vVel;
+      vec3 turbo(float x) {
+        const vec4 kR = vec4(0.13572138, 4.61539260, -42.66032258, 132.13108234);
+        const vec4 kG = vec4(0.09140261, 2.19418839, 4.84296658, -14.18503333);
+        const vec4 kB = vec4(0.10667330, 12.64194608, -60.58204836, 110.36276771);
+        const vec2 kR2 = vec2(-152.94239396, 59.28637943);
+        const vec2 kG2 = vec2(4.27729857, 2.82956604);
+        const vec2 kB2 = vec2(-89.90310912, 27.34824973);
+        x = clamp(x, 0.0, 1.0);
+        vec4 v4 = vec4(1.0, x, x * x, x * x * x);
+        vec2 v2 = v4.zw * v4.z;
+        return vec3(dot(v4, kR) + dot(v2, kR2), dot(v4, kG) + dot(v2, kG2), dot(v4, kB) + dot(v2, kB2));
+      }
+      void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d); vec3 c = mix(turbo(0.08 + vVel * 0.86), vec3(1.0), a * 0.5); gl_FragColor = vec4(c * 1.2, a * a * 0.9 * uOpacity); }`,
   });
   const comets = new Points(cg, cmat);
   comets.renderOrder = 3;
   const P = g.attributes.position.array;
   const S = g.attributes.seed.array;
+  const V = g.attributes.vel.array;
   /** sposta le comete lungo le linee: stessa formula degli impulsi nello shader */
   const update = (time) => {
     for (let l = 0; l < n; l++) {
@@ -277,9 +351,11 @@ function buildStreamlines(geo, { lines = 15 } = {}) {
         const v = (base + j * 2) * 3; // primo punto del segmento j
         const o = (l * heads + hh) * 3;
         for (let k = 0; k < 3; k++) cpos[o + k] = P[v + k] + (P[v + 3 + k] - P[v + k]) * tt;
+        cvel[l * heads + hh] = V[v / 3];
       }
     }
     cg.attributes.position.needsUpdate = true;
+    cg.attributes.vel.needsUpdate = true;
   };
   update(0);
   const group = new Group();
@@ -368,7 +444,7 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
 
   // Flusso d'aria nel sistema di riferimento dell'ala
   const size = box.getSize(new Vector3());
-  const flow = buildFlow(isSmall() ? 50 : 90, {
+  const flow = buildFlow(isSmall() ? 20 : 35, {
     x0: -size.x * 1.4, x1: size.x * 1.4,
     y0: -size.y * 1.6, y1: size.y * 1.6,
     z0: -size.z * 0.55, z1: size.z * 0.55,
@@ -376,7 +452,7 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
   pivot.add(flow.points);
 
   // linee di flusso attorno all'ala reale
-  const stream = buildStreamlines(wing.userData.geo, { lines: isSmall() ? 7 : 9 });
+  const stream = buildStreamlines(wing.userData.geo, { lines: isSmall() ? 9 : 13 });
   pivot.add(stream.obj);
   if (reducedMotion) { stream.mat.uniforms.uOpacity.value = 1; stream.cmat.uniforms.uOpacity.value = 1; }
 

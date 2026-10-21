@@ -56,6 +56,7 @@ export default {
     scroll: 'Desliza',
     specs: ['Motos one-off', 'Ediciones limitadas', 'Prototipado para empresas'],
     canvasLabel: 'Modelo 3D interactivo de un alerón aerodinámico de fibra de carbono con detalles dorados',
+    legend: { title: 'Velocidad del flujo', slow: 'lenta', fast: 'rápida' },
   },
 
   services: {

@@ -56,6 +56,7 @@ export default {
     scroll: 'Scroll',
     specs: ['One-off motorcycles', 'Limited editions', 'Prototyping for companies'],
     canvasLabel: 'Interactive 3D model of a carbon-fibre aerodynamic wing with gold details',
+    legend: { title: 'Airflow velocity', slow: 'slow', fast: 'fast' },
   },
 
   services: {
