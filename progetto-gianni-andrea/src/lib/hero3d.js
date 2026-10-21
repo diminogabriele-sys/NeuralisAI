@@ -502,16 +502,10 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
   layout();
 
   /* Interazione: mouse (desktop) e scroll */
-  const target = { x: 0, y: 0 };
   let scrollP = 0;
-  const onPointer = (e) => {
-    target.x = (e.clientX / window.innerWidth - 0.5) * 2;
-    target.y = (e.clientY / window.innerHeight - 0.5) * 2;
-  };
   const onScroll = () => {
     scrollP = MathUtils.clamp(window.scrollY / window.innerHeight, 0, 1);
   };
-  window.addEventListener('pointermove', onPointer, { passive: true });
   window.addEventListener('scroll', onScroll, { passive: true });
   const ro = new ResizeObserver(() => {
     layout();
@@ -562,10 +556,10 @@ export function initHero(canvas, { reducedMotion = false } = {}) {
     stream.mat.uniforms.uOpacity.value = MathUtils.clamp((wall - 0.9) / 1.2, 0, 1);
     stream.cmat.uniforms.uOpacity.value = stream.mat.uniforms.uOpacity.value;
     stream.update(wall);
-    const ry = BASE_RY - (1 - intro) * 1.1 + Math.sin(t * 0.25) * 0.3 + target.x * 0.35 + scrollP * 1.0;
-    const rx = BASE_RX + Math.sin(t * 0.4) * 0.05 + target.y * 0.12 - scrollP * 0.3;
-    pivot.rotation.y = MathUtils.damp(pivot.rotation.y, ry, 3, dt);
-    pivot.rotation.x = MathUtils.damp(pivot.rotation.x, rx, 3, dt);
+    // rotazione continua e regolare attorno all'asse verticale (un giro ogni 28 s), come su una piattaforma girevole;
+    // mouse e scroll non spostano l'oggetto
+    pivot.rotation.y = BASE_RY - (1 - intro) * 1.1 + wall * ((Math.PI * 2) / 28);
+    pivot.rotation.x = BASE_RX;
     camera.position.z = MathUtils.damp(camera.position.z, 9 + scrollP * 2.5, 4, dt);
     updateFlow(dt);
     renderer.render(scene, camera);
