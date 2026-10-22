@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><title>Day 02 Pixel art storia AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;600;700&display=block');
+/* Style: 16-bit pixel art side-scroller + "boomerang" rewind (library: "Opus 5.5 Pixel Art Boomerang LLM History",
+   "Cortometraggio in pixel art" — hand-placed pixels, game feel, chiptune). World drawn at 270x480, upscaled x4. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+#stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+#cv { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; image-rendering: pixelated; }
+.ps { font-family: 'Press Start 2P', monospace; }
+#hud { position: absolute; left: 0; width: 1080px; top: 250px; text-align: center; color: #fff; text-shadow: 6px 6px 0 #000; }
+#lab { font-size: 26px; letter-spacing: 4px; color: #FFE066; }
+#year { font-size: 92px; margin-top: 18px; }
+#title { font-size: 40px; margin-top: 26px; color: #7CF5FF; }
+#dlg { position: absolute; left: 56px; top: 1196px; width: 968px; min-height: 330px; background: #10162F; border: 8px solid #fff; box-shadow: 0 0 0 8px #10162F, 0 0 0 14px #fff, 12px 12px 0 14px rgba(0,0,0,.5); padding: 34px 40px; color: #fff; font-family: 'Pixelify Sans', monospace; font-size: 54px; line-height: 1.22; }
+#dlg b { color: #FFE066; font-weight: 700; }
+#arrow { position: absolute; right: 30px; bottom: 18px; font-family: 'Press Start 2P'; font-size: 30px; color: #FFE066; }
+#rew { position: absolute; left: 70px; top: 120px; font-family: 'Press Start 2P'; font-size: 40px; color: #fff; text-shadow: 4px 4px 0 #000; }
+#sign { position: absolute; left: 140px; width: 800px; top: 600px; text-align: center; }
+#sign .board { background: #8B5A2B; border: 10px solid #4A2C12; box-shadow: inset 0 -12px 0 #6B4220, 10px 10px 0 rgba(0,0,0,.4); padding: 40px 20px; }
+#sign .nm { font-family: 'Press Start 2P'; font-size: 66px; color: #FFE066; text-shadow: 6px 6px 0 #4A2C12; }
+#sign .sb { font-family: 'Pixelify Sans'; font-size: 44px; color: #fff; margin-top: 22px; }
+#scan { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 2px, transparent 2px 4px); }
+#pbar { position: absolute; left: 0; bottom: 0; height: 12px; width: 100%; background: #FFE066; transform-origin: left; }
+</style></head>
+<body><div id="stage">
+  <canvas id="cv" width="270" height="480"></canvas>
+  <div id="hud"><div id="lab" class="ps"></div><div id="year" class="ps"></div><div id="title" class="ps"></div></div>
+  <div id="sign"><div class="board"><div class="sb" style="margin:0 0 18px">CHIEDI A</div><div class="nm">NeuralisAI</div><div class="sb">siti web + automazioni AI</div></div></div>
+  <div id="dlg"><span id="txt"></span><span id="arrow">▼</span></div>
+  <div id="rew">◀◀ REWIND</div>
+  <div id="scan"></div><div id="pbar"></div>
+</div>
+<script src="../tools/lib.js"></script>
+<script>
+// ---------------- Story ----------------
+const ST = [
+  { y: '1950', ti: 'TURING', tx: '<b>«Le macchine possono pensare?»</b> Alan Turing pone la domanda che dà il via a tutto', sky: ['#2B1D14', '#8C5A3C', '#D9A066'] },
+  { y: '1966', ti: 'ELIZA', tx: 'Nasce <b>ELIZA</b>, il primo chatbot: con poche regole imitava una psicoterapeuta', sky: ['#04120A', '#0E3B20', '#1F7A3A'] },
+  { y: '1997', ti: 'DEEP BLUE', tx: 'Il computer <b>Deep Blue</b> di IBM batte a scacchi il campione del mondo Kasparov', sky: ['#0E0B2E', '#2E2370', '#5B4BB7'] },
+  { y: '2011', ti: 'SIRI', tx: "L'assistente vocale <b>Siri</b> arriva nello smartphone: all'AI si parla", sky: ['#06223F', '#0B5E8A', '#33A6C9'] },
+  { y: '2017', ti: 'TRANSFORMER', tx: "Google presenta il <b>Transformer</b>: l'architettura alla base di ChatGPT, Claude e Gemini", sky: ['#1D0B3A', '#5A2A8C', '#B55FD1'] },
+  { y: '2022', ti: 'CHATGPT', tx: 'Arriva <b>ChatGPT</b>: 1 milione di utenti in 5 giorni', sky: ['#14213D', '#E07A5F', '#F2CC8F'] },
+  { y: 'OGGI', ti: 'AI OVUNQUE', tx: "L'AI <b>scrive, disegna, crea video e programma</b>. E tu la stai già usando?", sky: ['#FF6B6B', '#FFB86B', '#FFE29A'] },
+];
+const T0 = 3.5, SD = 4.5, TB = T0 + ST.length * SD;   // milestones end at 35
+const TF = TB + 2.5, TC = TF + 2.5;                   // boomerang → follow → CTA
+window.DURATION = TC + 5;                            // 45 s
+window.SCENE_STARTS = [T0, ...ST.map((_, i) => T0 + i * SD).slice(1), TB, TF, TC];
+const W = 270, H = 480, GY = 300, SP = 300;          // ground y, distance between stations
+const cv = $('cv'), g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+// accepts '#rrggbb' or 'rgb(r,g,b)' (already-mixed colours)
+const hex = h => h[0] === '#' ? [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)] : h.match(/\d+/g).map(Number);
+const mix = (a, b, p) => { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], p))).join(',')})`; };
+const R = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+// sprite from rows of palette chars
+function spr(rows, pal, x, y, s = 1, flip = false) {
+  rows.forEach((r, j) => [...r].forEach((ch, i) => { if (ch !== '.') R(x + (flip ? r.length - 1 - i : i) * s, y + j * s, s, s, pal[ch]); }));
+}
+const HERO = [
+  '.....yy.....', '.....yy.....', '.....gg.....', '..tttttttt..', '.tttttttttt.', '.tkkkkkkkkt.', '.tkwkkkkwkt.', '.tkwkkkkwkt.',
+  '.tkkkmmkkkt.', '.tttttttttt.', '..dttttttd..', '...tttttt...',
+];
+const LEGS = [['...k....k...', '...k....k...', '..kk....kk..'], ['....k..k....', '...k....k...', '..kk.....kk.'], ['...k....k...', '..k......k..', '.kk......kk.']];
+const HPAL = { y: '#FFE066', g: '#9AA5FF', t: '#2EC4B6', k: '#10162F', w: '#FFFFFF', m: '#FF8FAB', d: '#1E8C82' };
+// background layers (deterministic heightmaps)
+const MT = Array.from({ length: 400 }, (_, i) => 40 + Math.sin(i * .09) * 18 + Math.sin(i * .23 + 1) * 9 + rnd(i) * 3);
+const HL = Array.from({ length: 400 }, (_, i) => 18 + Math.sin(i * .15 + 2) * 8 + Math.sin(i * .4) * 3);
+function sky(cols) {
+  // 3-band dithered sky, 16-bit style
+  for (let y = 0; y < GY; y++) {
+    const p = y / GY, band = p < .5 ? [cols[0], cols[1], p / .5] : [cols[1], cols[2], (p - .5) / .5];
+    const q = band[2], lo = Math.floor(q * 4) / 4, hi = Math.min(1, lo + .25), f = (q - lo) * 4;
+    for (let x = 0; x < W; x += 2) R(x, y, 2, 1, mix(band[0], band[1], ((x / 2 + y) % 2) && f > .5 ? hi : lo));
+  }
+}
+function world(d, cols, t) {
+  sky(cols);
+  for (let i = 0; i < 12; i++) { const sx = ((i * 53 - d * .05) % 300 + 300) % 300 - 15, sy = 30 + rnd(i) * 140; if (Math.sin(t * 3 + i) > -.3) R(sx, sy, 1, 1, '#ffffff'); }
+  g.fillStyle = mix(cols[0], '#000000', .25);
+  for (let x = 0; x < W; x++) { const h = MT[Math.floor((x + d * .25) % 400 + 400) % 400]; g.fillRect(x, GY - 30 - h, 1, h + 30); }
+  g.fillStyle = mix(cols[1], '#000000', .45);
+  for (let x = 0; x < W; x++) { const h = HL[Math.floor((x + d * .55) % 400 + 400) % 400]; g.fillRect(x, GY - h, 1, h); }
+  // ground: grass + bricks
+  R(0, GY, W, H - GY, '#5C3A21'); R(0, GY, W, 5, '#3FA34D'); R(0, GY + 5, W, 2, '#2D7A39');
+  const off = Math.floor(d) % 16;
+  for (let y = GY + 10; y < H; y += 10) for (let x = -off - ((y / 10) % 2) * 8; x < W; x += 16) { R(x, y, 15, 1, '#4A2E1A'); R(x, y, 1, 10, '#4A2E1A'); }
+}
+// ---------------- Station objects ----------------
+function station(i, cx, lt, t) {
+  const by = GY;
+  if (i === 0) { // ? block
+    const bump = lt > 1.2 && lt < 1.5 ? -6 * Math.sin((lt - 1.2) / .3 * Math.PI) : 0;
+    const x = cx - 16, y = by - 110 + bump;
+    R(x, y, 32, 32, '#2B1D14'); R(x + 2, y + 2, 28, 28, '#F2B233'); R(x + 2, y + 2, 28, 3, '#FFE066'); R(x + 27, y + 2, 3, 28, '#C27C0E');
+    spr(['.wwww.', 'ww..ww', '....ww', '...ww.', '..ww..', '......', '..ww..'], { w: '#2B1D14' }, x + 10, y + 8, 2);
+    if (lt > 1.3) for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28, r = (lt - 1.3) * 60; if (r < 40) R(cx + Math.cos(a) * r, y + 16 + Math.sin(a) * r, 2, 2, '#FFE066'); }
+  }
+  if (i === 1) { // CRT terminal
+    const x = cx - 40, y = by - 78;
+    R(x - 4, y + 66, 88, 12, '#7A6A55'); R(x, y, 80, 66, '#CFC3A8'); R(x + 3, y + 63, 74, 3, '#9C8E73'); R(x + 7, y + 6, 66, 50, '#06140B');
+    const lines = Math.floor(seg(lt, .6, 3.2) * 6);
+    for (let k = 0; k < lines; k++) R(x + 11, y + 10 + k * 7, [40, 26, 50, 20, 44, 32][k], 3, k % 2 ? '#7CFF8A' : '#2EE85A');
+    if (Math.floor(t * 3) % 2) R(x + 11 + ([40, 26, 50, 20, 44, 32][lines] || 10) + 2, y + 10 + lines * 7, 4, 4, '#7CFF8A');
+    R(x + 34, y + 70, 12, 4, '#5B4F3F');
+  }
+  if (i === 2) { // chessboard + falling king
+    const x = cx - 32, y = by - 70;
+    R(x - 6, y + 64, 76, 6, '#3A2A18');
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) R(x + c * 8, y + r * 8, 8, 8, (r + c) % 2 ? '#3B2F5E' : '#E9E3FF');
+    const fall = E.out3(seg(lt, 1.6, 2.2));
+    const K = ['..w..', '.www.', '..w..', '.kkk.', 'kkkkk', '.kkk.', '.kkk.', 'kkkkk', 'kkkkk'];
+    if (fall < .5) spr(K, { w: '#FFE066', k: '#10162F' }, x + 26, y - 18 + fall * 8, 2);
+    else spr(['....kk...', 'k.kkkkkkw', 'kkkkkkkww', 'k.kkkkkkw', '....kk...'], { w: '#FFE066', k: '#10162F' }, x + 20, y - 10, 2);
+    spr(['.ww.', 'wwww', '.ww.', 'wwww', 'wwww'], { w: '#2EC4B6' }, x + 4, y - 10, 2);
+  }
+  if (i === 3) { // smartphone + voice waves
+    const x = cx - 18, y = by - 92;
+    R(x, y, 36, 70, '#1C1C24'); R(x + 3, y + 7, 30, 54, '#33A6C9'); R(x + 14, y + 64, 8, 3, '#555');
+    R(x + 8, y + 26, 20, 3, '#fff'); R(x + 10, y + 32, 16, 3, '#fff');
+    for (let k = 0; k < 3; k++) { const q = (lt * .9 + k / 3) % 1; const r = 22 + q * 40; g.globalAlpha = 1 - q;
+      for (let a = -0.9; a < 0.9; a += .08) R(cx + 20 + Math.cos(a) * r, y + 34 + Math.sin(a) * r, 2, 2, '#FFFFFF'); g.globalAlpha = 1; }
+  }
+  if (i === 4) { // attention diagram
+    const words = 5, x0 = cx - 75, y = by - 40, sp = 34;
+    for (let k = 0; k < words; k++) { R(x0 + k * sp, y, 28, 18, ['#FFE066', '#7CF5FF', '#FF8FAB', '#B5F57A', '#FFB86B'][k]); R(x0 + k * sp + 4, y + 7, 20, 3, '#10162F'); }
+    const pairs = [[0, 2], [1, 4], [0, 4], [2, 3], [1, 3], [3, 4], [0, 1]];
+    pairs.forEach(([a, b], n) => { const p = seg(lt, .8 + n * .3, 1.3 + n * .3); if (!p) return;
+      const ax = x0 + a * sp + 14, bx = x0 + b * sp + 14, hgt = 18 + (b - a) * 16;
+      for (let s = 0; s <= p; s += .02) { const xx = lerp(ax, bx, s), yy = y - 4 - Math.sin(s * Math.PI) * hgt; R(xx, yy, 2, 2, n % 2 ? '#FFFFFF' : '#FFE066'); } });
+  }
+  if (i === 5) { // chat bubble + crowd of users
+    const x = cx - 40, y = by - 120;
+    R(x, y, 80, 40, '#FFFFFF'); R(x + 10, y + 40, 8, 8, '#FFFFFF'); R(x + 4, y + 4, 72, 2, '#E8E8F0');
+    if (lt < 1.5) for (let k = 0; k < 3; k++) R(x + 26 + k * 10, y + 17 + (Math.floor(t * 6 + k) % 2) * -2, 5, 5, '#888');
+    else for (let k = 0; k < 3; k++) R(x + 8, y + 8 + k * 9, Math.min(64, (lt - 1.5) * 90 - k * 20), 4, '#10162F');
+    const n = Math.floor(E.in3(seg(lt, 1.2, 3.8)) * 60);
+    for (let k = 0; k < n; k++) { const px = 10 + rnd(k) * 250, py = GY - 6 + Math.floor(rnd(k + 9) * 3) * 2, c = ['#FFE066', '#FF8FAB', '#7CF5FF', '#B5F57A'][k % 4];
+      R(px, py - 6, 4, 4, c); R(px, py - 2, 4, 6, '#10162F'); }
+  }
+  if (i === 6) { // icons orbiting a glowing core
+    const cy = by - 80;
+    for (let r = 14; r > 0; r -= 2) { g.globalAlpha = .12; R(cx - r, cy - r, r * 2, r * 2, '#FFFFFF'); } g.globalAlpha = 1;
+    R(cx - 6, cy - 6, 12, 12, '#FFFFFF');
+    const icons = [ // pencil, image, film, code
+      [['....kk', '...kyk', '..kyk.', '.kyk..', 'kkk...', 'kk....'], { k: '#10162F', y: '#FFE066' }],
+      [['kkkkkkk', 'kwwwwwk', 'kwywwwk', 'kwwwgwk', 'kwwgggk', 'kgggggk', 'kkkkkkk'], { k: '#10162F', w: '#7CF5FF', y: '#FFE066', g: '#3FA34D' }],
+      [['kkkkkkk', 'kwkkkwk', 'kkkkkkk', 'krrrrrk', 'kkkkkkk', 'kwkkkwk', 'kkkkkkk'], { k: '#10162F', w: '#FFFFFF', r: '#FF6B6B' }],
+      [['.k...k.', 'k.....k', '..k.k..', 'k.....k', '.k...k.'], { k: '#10162F' }],
+    ];
+    icons.forEach(([rows, pal], k) => { const a = t * 1.4 + k * Math.PI / 2, p = E.back(seg(lt, .5 + k * .3, 1 + k * .3));
+      const ix = cx + Math.cos(a) * 52 * p - 10, iy = cy + Math.sin(a) * 34 * p - 10; R(ix - 3, iy - 3, 26, 26, '#FFFFFF'); spr(rows, pal, ix, iy, 3); });
+  }
+}
+function hero(x, walking, t, flip = false, jump = 0) {
+  const fr = walking ? ((Math.floor(t * 8) % 3) + 3) % 3 : 0, bob = walking ? (fr === 1 ? -1 : 0) : Math.round(Math.sin(t * 4));
+  const y = GY - 45 + bob - jump;
+  spr(HERO, HPAL, x, y, 3, flip); spr(LEGS[fr], { k: '#10162F' }, x, y + 36, 3, flip);
+}
+// ---------------- Text ----------------
+function typeText(html, p) {
+  // reveal characters while keeping <b> tags intact
+  const plain = html.replace(/<[^>]+>/g, ''), n = Math.floor(plain.length * p);
+  let out = '', c = 0;
+  for (const tok of html.split(/(<[^>]+>)/)) { if (tok.startsWith('<')) { out += tok; continue; } const take = Math.max(0, Math.min(tok.length, n - c)); out += tok.slice(0, take); c += tok.length; }
+  return out;
+}
+function dialog(html, lt, speed = 32) {
+  const plain = html.replace(/<[^>]+>/g, '');
+  const p = clamp((lt * speed) / plain.length);
+  $('txt').innerHTML = typeText(html, p);
+  $('arrow').style.opacity = p >= 1 && Math.floor(lt * 3) % 2 ? 1 : 0;
+}
+window.renderAt = function (t) {
+  $('pbar').style.transform = `scaleX(${t / window.DURATION})`;
+  let d, cols, walking = false, heroX = 46, flip = false;
+  $('rew').style.display = 'none'; $('sign').style.display = 'none';
+  $('dlg').style.display = 'block';
+  if (t < T0) { // hook
+    d = 0; cols = ST[0].sky;
+    $('lab').textContent = 'STORIA DELL\'AI'; $('year').textContent = '1950 → OGGI'; $('title').textContent = '';
+    dialog('<b>76 anni</b> di intelligenza artificiale in <b>40 secondi</b>', t - .2, 40);
+    world(d, cols, t);
+    heroX = lerp(-40, 46, E.out3(seg(t, 0, 1.2))); walking = t < 1.2;
+    hero(heroX, walking, t);
+  } else if (t < TB) { // milestones
+    const k = Math.floor((t - T0) / SD), lt = t - T0 - k * SD;
+    const mv = E.io3(seg(lt, 0, .9));
+    d = lerp((k - (k === 0 ? 0 : 1)) * SP, k * SP, k === 0 ? 1 : mv);
+    const cf = k === 0 ? 1 : seg(lt, 0, .9), pc = ST[Math.max(0, k - 1)].sky;
+    cols = ST[k].sky.map((c, i) => k === 0 ? c : mix(pc[i], c, cf));
+    world(d, cols, t);
+    for (let j = 0; j < ST.length; j++) { const cx = j * SP - d + 165; if (cx > -120 && cx < W + 120) station(j, cx, j === k ? lt : (j < k ? 9 : 0), t); }
+    walking = k > 0 && lt < .9;
+    const jump = k === 0 && lt > 1.0 && lt < 1.4 ? Math.sin((lt - 1) / .4 * Math.PI) * 30 : 0;
+    hero(heroX, walking, t, false, jump);
+    $('lab').textContent = 'ANNO'; $('year').textContent = ST[k].y; $('title').textContent = ST[k].ti;
+    const hp = E.back(seg(lt, .1, .5));
+    css('year', { transform: `scale(${hp})` }); css('title', { opacity: seg(lt, .4, .6) });
+    dialog(ST[k].tx, lt - .6);
+  } else if (t < TF) { // boomerang rewind
+    const lt = t - TB, p = E.io3(seg(lt, 0, 2.2));
+    d = lerp((ST.length - 1) * SP, 0, p);
+    const fk = d / SP, k0 = Math.floor(fk), k1 = Math.min(ST.length - 1, k0 + 1);
+    cols = ST[k0].sky.map((c, i) => mix(c, ST[k1].sky[i], fk - k0));
+    world(d, cols, t);
+    for (let j = 0; j < ST.length; j++) { const cx = j * SP - d + 165; if (cx > -120 && cx < W + 120) station(j, cx, 9, t); }
+    hero(heroX, true, -t, true);
+    $('rew').style.display = Math.floor(t * 4) % 2 ? 'block' : 'none';
+    const yr = Math.round(lerp(2026, 1950, p));
+    $('lab').textContent = 'ANNO'; $('year').textContent = String(yr); $('title').textContent = '';
+    css('year', { transform: 'scale(1)' });
+    dialog('E tutto è partito da <b>una domanda</b>', lt - .2, 40);
+  } else if (t < TC) { // follow
+    const lt = t - TF; d = 0; cols = ST[0].sky; world(d, cols, t); station(0, 165, 9, t);
+    hero(heroX, false, t, false, lt > .3 && lt < .7 ? Math.sin((lt - .3) / .4 * Math.PI) * 30 : 0);
+    $('lab').textContent = 'CONTINUA...'; $('year').textContent = 'SEGUI'; $('title').textContent = 'PROSSIMO LIVELLO';
+    css('year', { transform: `scale(${E.back(seg(lt, 0, .4))})` });
+    dialog('<b>Segui</b>: il prossimo capitolo arriva domani', lt - .2, 40);
+  } else { // CTA
+    const lt = t - TC; d = 0; cols = ST[6].sky; world(d + lt * 30, cols, t);
+    hero(heroX, false, t);
+    $('lab').textContent = ''; $('year').textContent = ''; $('title').textContent = '';
+    $('sign').style.display = 'block';
+    css('sign', { transform: `translateY(${(1 - E.back(seg(lt, .2, .8))) * -700}px)` });
+    dialog("Vuoi portare l'AI nella <b>tua attività</b>? <b>Link in bio ▶</b>", lt - .5, 40);
+  }
+};
+</script></body></html>
