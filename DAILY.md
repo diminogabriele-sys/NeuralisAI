@@ -8,6 +8,7 @@ Questo branch (`reel-factory`) è separato dall'app NeuralisAI: contiene solo gl
 - `days/dayNN-<stile>-<tema>.html`: un reel per file. Espone `window.DURATION` e `window.renderAt(t)`, funzione pura del tempo (niente animazioni CSS, niente timer).
 - `tools/render.mjs`: renderizza con Playwright → ffmpeg. `BLUR=3` = motion blur reale (3 sottofotogrammi fusi).
 - `tools/audio.py`: colonna sonora sintetizzata (`python3 tools/audio.py out.wav <durata> <bpm> <cue1,cue2,...>`).
+- `tools/voice.py`: voce fuori campo italiana con OpenAI (richiede `OPENAI_API_KEY`), mixata sopra la musica.
 - `tools/lib.js`: helper (seg, lerp, easing E.*, rnd, css, $).
 
 ## Regole del format
@@ -25,12 +26,26 @@ Questo branch (`reel-factory`) è separato dall'app NeuralisAI: contiene solo gl
 2. Leggi in `library/prompts.json` i prompt che corrispondono allo stile (cerca per titolo).
 3. Scrivi `days/dayNN-....html` (usa `<script src="../tools/lib.js">`).
 4. Controlla almeno 8 fotogrammi: `node tools/render.mjs days/dayNN.html /tmp/stills/dNN 30 --stills t1,t2,...` e guardali. Correggi sovrapposizioni, testi tagliati, scritte illeggibili.
-5. Render finale:
+5. Voce fuori campo (se `OPENAI_API_KEY` è impostata): scrivi `days/dayNN-voice.json` con una frase per scena
+   (`[{"t": inizio_scena + 0.3, "text": "..."}]`), parlato naturale che segue i testi a schermo senza ripeterli parola per parola.
+   Lancia `tools/voice.py`: stampa la durata di ogni frase. Se una frase supera la sua scena, allunga la scena nell'html
+   (o accorcia la frase) e rigenera. Se il modello TTS di default non esiste, scegline uno disponibile da
+   `GET https://api.openai.com/v1/models` (id che contiene "tts") e passalo con `TTS_MODEL=...`.
+   Senza chiave: solo musica, e segnalalo nell'email.
+6. Render finale:
    ```
    python3 tools/audio.py /tmp/aNN.wav <DURATION> <bpm> <inizi-scene>
+   python3 tools/voice.py days/dayNN-voice.json /tmp/aNN.wav /tmp/aNN-vo.wav      # se c'è la chiave
    BLUR=3 node tools/render.mjs days/dayNN.html /tmp/dNN-silent.mp4 30
-   ffmpeg -y -i /tmp/dNN-silent.mp4 -i /tmp/aNN.wav -c:v copy -af loudnorm=I=-14:TP=-1.5:LRA=11 -ar 44100 -c:a aac -b:a 192k -shortest <out>.mp4
+   ffmpeg -y -i /tmp/dNN-silent.mp4 -i /tmp/aNN-vo.wav -c:v copy -c:a aac -b:a 192k -shortest <out>.mp4
+   # senza voce: -i /tmp/aNN.wav e aggiungi -af loudnorm=I=-14:TP=-1.5:LRA=11 -ar 44100
    ```
-6. Marca il giorno ✅ nel calendario, commit (solo html + calendario, **non** gli mp4) e push su `reel-factory`.
-7. Consegna il video all'utente con una didascalia pronta da incollare (testo del post + 5–8 hashtag in italiano).
+7. Marca il giorno ✅ nel calendario, commit (solo html, voice.json e calendario, **non** gli mp4) e push su `reel-factory`.
+8. Consegna:
+   - via **Gmail** (`send_message`) a diminogabriele@gmail.com, oggetto `Reel del giorno NN — <tema>`, mp4 in allegato
+     (base64, mimeType `video/mp4`, deve restare sotto 25 MB; se è più grande ricodifica con `-crf 23`),
+     nel corpo: stile usato, didascalia pronta da incollare (testo del post + 5–8 hashtag in italiano), eventuali note
+     (es. numeri di esempio da verificare);
+   - e anche come file nella sessione.
+   Se qualcosa fallisce, l'email deve dirlo chiaramente.
 8. Quando il calendario finisce, aggiungi altri 30 giorni scegliendo stili non ancora usati dalla libreria.

@@ -4,7 +4,7 @@ Fonti: AI × Leaders (25 prompt) + YouMind Opus 5.5 (508 prompt). Ogni giorno un
 
 | Giorno | Stile (dalla libreria) | Tema |
 |---|---|---|
-| 01 | Explainer stile Kurzgesagt (YouMind · HenryG) | Come fa ChatGPT a risponderti ✅ |
+| 01 | Explainer stile Kurzgesagt (YouMind · HenryG) | Come fa ChatGPT a risponderti ✅ (consegnato in chat, senza voce) |
 | 02 | Pixel art "boomerang" storia degli LLM (YouMind · Plugin Play) | Da ELIZA a ChatGPT: 60 anni di AI in 30 secondi |
 | 03 | Analisi soggetto CCTV / HUD (YouMind · Kōda) | Come l'AI "vede" una foto |
 | 04 | Tipografia cinetica stile After Effects (YouMind) | 5 parole dell'AI che tutti usano male |
