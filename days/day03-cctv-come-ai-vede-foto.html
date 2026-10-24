@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><title>Day 03 CCTV AI vede foto</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=block');
+/* Style: surveillance-camera "subject analysis" (library: Kōda, "Analisi del Soggetto della Telecamera di Sorveglianza").
+   Minimal HUD: white + one accent, monospace, stage progress panel in the emptiest area, glitch loop back to frame 1.
+   The analysis is real: pixel values, Sobel edges and k-means palette are computed from the image itself. */
+:root { --acc: #FFC400; --w: #F2F2F2; --dim: #8A8A8A; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #050505; }
+#stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #050505; color: var(--w); font-family: 'IBM Plex Mono', monospace; }
+#view { position: absolute; left: 90px; top: 300px; width: 900px; height: 900px; }
+#hud { position: absolute; left: 90px; right: 90px; top: 210px; display: flex; justify-content: space-between; font-size: 26px; letter-spacing: .08em; }
+#rec { color: #FF3B30; }
+#panel { position: absolute; left: 90px; right: 90px; top: 1232px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+#panel div { font-size: 17px; letter-spacing: .06em; color: var(--dim); border-top: 6px solid #2A2A2A; padding-top: 10px; }
+#panel div.on { color: var(--acc); border-color: var(--acc); } #panel div.done { color: var(--w); border-color: var(--w); }
+#cap { position: absolute; left: 90px; right: 90px; top: 1320px; }
+#k { font-size: 26px; letter-spacing: .25em; color: var(--acc); }
+#t { font-size: 54px; font-weight: 700; line-height: 1.18; margin-top: 16px; letter-spacing: -.01em; }
+#t i { font-style: normal; color: var(--acc); }
+#hook { position: absolute; left: 90px; right: 90px; top: 1290px; }
+#card { position: absolute; left: 90px; right: 90px; top: 380px; border: 3px solid var(--acc); background: rgba(5,5,5,.92); padding: 46px; }
+#card .l { font-size: 24px; letter-spacing: .25em; color: var(--acc); }
+#card .big { font-size: 60px; font-weight: 700; line-height: 1.15; margin-top: 22px; }
+#card .s { font-size: 34px; color: var(--w); margin-top: 26px; line-height: 1.35; }
+#glitch { position: absolute; inset: 0; pointer-events: none; z-index: 30; }
+#pbar { position: absolute; left: 0; bottom: 0; height: 10px; width: 100%; background: var(--acc); transform-origin: left; }
+</style></head>
+<body><div id="stage">
+  <div id="hud"><span><span id="rec">●</span> REC · CAM-03 · ANALISI</span><span id="tc"></span></div>
+  <canvas id="view" width="900" height="900"></canvas>
+  <div id="panel"></div>
+  <div id="cap"><div id="k"></div><div id="t"></div></div>
+  <div id="hook"><div style="font-size:26px;letter-spacing:.25em;color:var(--acc)">// VISIONE ARTIFICIALE</div><div id="hookT" style="font-size:76px;font-weight:700;line-height:1.1;margin-top:18px">Come fa un'AI a <i style="font-style:normal;color:var(--acc)">vedere</i> una foto?</div></div>
+  <div id="card"></div>
+  <div id="glitch"></div><div id="pbar"></div>
+</div>
+<script src="../tools/lib.js"></script>
+<script>
+// ---------- 1. Paint the "photo" once (cat sleeping on a sofa by a window) ----------
+const S = 900, P = document.createElement('canvas'); P.width = P.height = S; const p = P.getContext('2d');
+function paint() {
+  let gr = p.createLinearGradient(0, 0, 0, S); gr.addColorStop(0, '#E9DCC6'); gr.addColorStop(1, '#C9B79C'); p.fillStyle = gr; p.fillRect(0, 0, S, S);
+  // window with sky and light
+  p.fillStyle = '#6E5A44'; p.fillRect(470, 70, 360, 380);
+  gr = p.createLinearGradient(0, 90, 0, 430); gr.addColorStop(0, '#7EC3F2'); gr.addColorStop(1, '#D7EEFB'); p.fillStyle = gr; p.fillRect(490, 90, 320, 340);
+  p.fillStyle = '#6E5A44'; p.fillRect(645, 90, 12, 340); p.fillRect(490, 255, 320, 12);
+  p.fillStyle = 'rgba(255,255,255,.85)'; p.beginPath(); p.ellipse(560, 160, 50, 18, 0, 0, 7); p.ellipse(600, 150, 40, 22, 0, 0, 7); p.fill();
+  p.fillStyle = 'rgba(255,240,200,.18)'; p.beginPath(); p.moveTo(490, 430); p.lineTo(810, 430); p.lineTo(620, 900); p.lineTo(200, 900); p.fill();
+  // floor
+  p.fillStyle = '#8B6A4A'; p.fillRect(0, 760, S, 140);
+  // sofa
+  p.fillStyle = '#2F6F62'; roundRect(40, 420, 560, 230, 40); roundRect(20, 520, 600, 220, 40);
+  p.fillStyle = '#3B8676'; roundRect(70, 560, 520, 110, 30);
+  p.fillStyle = '#244F46'; roundRect(10, 500, 80, 250, 30); roundRect(550, 500, 80, 250, 30);
+  p.fillStyle = '#1E1E1E'; p.fillRect(60, 740, 20, 40); p.fillRect(560, 740, 20, 40);
+  p.fillStyle = '#E3A64F'; roundRect(400, 470, 140, 110, 30);   // cushion
+  // cat (curled, orange)
+  p.fillStyle = '#E8892E'; p.beginPath(); p.ellipse(270, 575, 140, 62, 0, 0, 7); p.fill();
+  p.beginPath(); p.arc(165, 548, 58, 0, 7); p.fill();
+  p.beginPath(); p.moveTo(122, 512); p.lineTo(128, 455); p.lineTo(162, 498); p.fill();
+  p.beginPath(); p.moveTo(170, 494); p.lineTo(205, 452); p.lineTo(214, 506); p.fill();
+  p.fillStyle = '#F4B46A'; p.beginPath(); p.ellipse(158, 572, 30, 18, 0, 0, 7); p.fill();
+  p.strokeStyle = '#B35F17'; p.lineWidth = 9; p.lineCap = 'round';
+  for (let k = 0; k < 4; k++) { p.beginPath(); p.moveTo(240 + k * 45, 520); p.quadraticCurveTo(250 + k * 45, 560, 238 + k * 45, 600); p.stroke(); }
+  p.strokeStyle = '#E8892E'; p.lineWidth = 34; p.beginPath(); p.moveTo(400, 600); p.quadraticCurveTo(420, 650, 320, 640); p.quadraticCurveTo(220, 635, 190, 615); p.stroke();
+  p.strokeStyle = '#3A2410'; p.lineWidth = 5; p.beginPath(); p.moveTo(135, 545); p.quadraticCurveTo(147, 553, 158, 545); p.moveTo(172, 545); p.quadraticCurveTo(184, 553, 195, 545); p.stroke();
+  p.fillStyle = '#C9655E'; p.beginPath(); p.moveTo(160, 566); p.lineTo(172, 566); p.lineTo(166, 574); p.fill();
+  // plant
+  p.fillStyle = '#B5653A'; p.beginPath(); p.moveTo(700, 640); p.lineTo(800, 640); p.lineTo(785, 770); p.lineTo(715, 770); p.fill();
+  p.fillStyle = '#3E8E41';
+  for (let k = 0; k < 9; k++) { const a = -Math.PI / 2 + (k - 4) * .28; p.beginPath(); p.ellipse(750 + Math.cos(a) * 70, 600 + Math.sin(a) * 90, 22, 70, a + Math.PI / 2, 0, 7); p.fill(); }
+  // side table + mug
+  p.fillStyle = '#5B3E28'; p.fillRect(640, 700, 40, 70); p.fillRect(615, 690, 90, 14);
+  p.fillStyle = '#F5F5F5'; roundRect(637, 640, 46, 52, 8); p.strokeStyle = '#F5F5F5'; p.lineWidth = 8; p.beginPath(); p.arc(688, 664, 14, -1.2, 1.2); p.stroke();
+  // photographic grain + vignette
+  const im = p.getImageData(0, 0, S, S), d = im.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (rnd(i * .37) - .5) * 18; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+  p.putImageData(im, 0, 0);
+  gr = p.createRadialGradient(450, 450, 300, 450, 450, 680); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,.45)'); p.fillStyle = gr; p.fillRect(0, 0, S, S);
+}
+function roundRect(x, y, w, h, r) { p.beginPath(); p.roundRect(x, y, w, h, r); p.fill(); }
+paint();
+const PX = p.getImageData(0, 0, S, S).data;
+// ---------- 2. Real analysis: Sobel edges + k-means palette ----------
+const EDGE = document.createElement('canvas'); EDGE.width = EDGE.height = S;
+(() => {
+  const gray = new Float32Array(S * S);
+  for (let i = 0; i < S * S; i++) gray[i] = .299 * PX[i * 4] + .587 * PX[i * 4 + 1] + .114 * PX[i * 4 + 2];
+  // light blur so the grain does not light up as edges
+  const bl = new Float32Array(S * S);
+  for (let y = 1; y < S - 1; y++) for (let x = 1; x < S - 1; x++) { let s = 0; for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) s += gray[(y + j) * S + x + i]; bl[y * S + x] = s / 9; }
+  const ec = EDGE.getContext('2d'), out = ec.createImageData(S, S);
+  for (let y = 1; y < S - 1; y++) for (let x = 1; x < S - 1; x++) {
+    const g = (a, b) => bl[(y + b) * S + x + a];
+    const gx = -g(-1, -1) - 2 * g(-1, 0) - g(-1, 1) + g(1, -1) + 2 * g(1, 0) + g(1, 1);
+    const gy = -g(-1, -1) - 2 * g(0, -1) - g(1, -1) + g(-1, 1) + 2 * g(0, 1) + g(1, 1);
+    const m = Math.min(255, Math.hypot(gx, gy) * 1.6), v = m > 40 ? m : 0, o = (y * S + x) * 4;
+    out.data[o] = 255; out.data[o + 1] = 196; out.data[o + 2] = 0; out.data[o + 3] = v;
+  }
+  ec.putImageData(out, 0, 0);
+})();
+const PAL = (() => {
+  const pts = []; for (let i = 0; i < 5000; i++) { const x = Math.floor(rnd(i) * S), y = Math.floor(rnd(i + 7e4) * S), o = (y * S + x) * 4; pts.push([PX[o], PX[o + 1], PX[o + 2]]); }
+  let C = [0, 800, 1600, 2400, 3200, 4000].map(i => pts[i].slice());
+  let lab = new Array(pts.length).fill(0);
+  for (let it = 0; it < 12; it++) {
+    pts.forEach((q, i) => { let b = 0, bd = 1e9; C.forEach((c, k) => { const dd = (q[0] - c[0]) ** 2 + (q[1] - c[1]) ** 2 + (q[2] - c[2]) ** 2; if (dd < bd) { bd = dd; b = k; } }); lab[i] = b; });
+    C = C.map((c, k) => { const m = pts.filter((_, i) => lab[i] === k); return m.length ? [0, 1, 2].map(j => m.reduce((s, q) => s + q[j], 0) / m.length) : c; });
+  }
+  const cnt = C.map((_, k) => lab.filter(l => l === k).length);
+  return C.map((c, k) => ({ hex: '#' + c.map(v => Math.round(v).toString(16).padStart(2, '0')).join('').toUpperCase(), pct: Math.round(cnt[k] / pts.length * 100), c })).sort((a, b) => b.pct - a.pct);
+})();
+// ---------- 3. Timeline ----------
+const STAGES = [
+  { k: 'PIXEL', t: 'Per l\'AI una foto è solo una <i>griglia di numeri</i>: rosso, verde e blu per ogni punto' },
+  { k: 'BORDI', t: 'Prima cerca i <i>bordi</i>: i punti dove il colore cambia di colpo' },
+  { k: 'FORME', t: 'Poi unisce i bordi in <i>forme</i>: orecchie, muso, coda' },
+  { k: 'OGGETTI', t: 'Confronta le forme con milioni di esempi e dà una <i>probabilità</i>' },
+  { k: 'COLORI', t: 'Misura anche i <i>colori dominanti</i> e la luce della scena' },
+  { k: 'DESCRIZIONE', t: 'Alla fine mette tutto in parole' },
+];
+const H0 = 3.5, SD = 5, TF = H0 + STAGES.length * SD, TC = TF + 3;
+window.DURATION = TC + 5;   // 41.5 s
+window.SCENE_STARTS = [H0, ...STAGES.map((_, i) => H0 + i * SD).slice(1), TF, TC];
+STAGES.forEach(s => { const d = document.createElement('div'); d.textContent = s.k; $('panel').appendChild(d); });
+const v = $('view').getContext('2d');
+const MONO = w => `${w} 28px "IBM Plex Mono"`;
+function box(x, y, w, h, label, p, col = '#FFC400') {
+  if (p <= 0) return;
+  const s = lerp(1.25, 1, E.out5(p)), cx = x + w / 2, cy = y + h / 2, W = w * s, Hh = h * s;
+  v.globalAlpha = Math.min(1, p * 3); v.strokeStyle = col; v.lineWidth = 4; v.strokeRect(cx - W / 2, cy - Hh / 2, W, Hh);
+  const n = Math.floor(label.length * seg(p, .2, 1)); if (n) {
+    v.font = MONO('700'); const tw = v.measureText(label.slice(0, n)).width;
+    v.fillStyle = col; v.fillRect(cx - W / 2 - 2, cy - Hh / 2 - 42, tw + 20, 40);
+    v.fillStyle = '#050505'; v.fillText(label.slice(0, n), cx - W / 2 + 8, cy - Hh / 2 - 13);
+  }
+  v.globalAlpha = 1;
+}
+function grid(a) { v.strokeStyle = `rgba(242,242,242,${.07 * a})`; v.lineWidth = 1; for (let i = 0; i <= S; i += 45) { v.beginPath(); v.moveTo(i, 0); v.lineTo(i, S); v.moveTo(0, i); v.lineTo(S, i); v.stroke(); } }
+function reticle(x, y, r, a) {
+  v.strokeStyle = `rgba(255,196,0,${a})`; v.lineWidth = 4;
+  for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { v.beginPath(); v.moveTo(x + sx * r, y + sy * (r - 30)); v.lineTo(x + sx * r, y + sy * r); v.lineTo(x + sx * (r - 30), y + sy * r); v.stroke(); }
+  v.beginPath(); v.moveTo(x - 14, y); v.lineTo(x + 14, y); v.moveTo(x, y - 14); v.lineTo(x, y + 14); v.stroke();
+}
+function caption(st, lt) {
+  $('k').textContent = `0${STAGES.indexOf(st) + 1} — ${st.k}`;
+  const plain = st.t.replace(/<[^>]+>/g, ''), n = Math.floor(plain.length * seg(lt, .3, 1.8));
+  let out = '', c = 0; for (const tok of st.t.split(/(<[^>]+>)/)) { if (tok[0] === '<') { out += tok; continue; } out += tok.slice(0, Math.max(0, Math.min(tok.length, n - c))); c += tok.length; }
+  $('t').innerHTML = out + (n < plain.length && Math.floor(lt * 4) % 2 ? '▌' : '');
+  css('cap', { opacity: 1 - seg(lt, SD - .25, SD) });
+}
+const OBJ = [[60, 462, 370, 200, 'GATTO 97%'], [10, 405, 630, 385, 'DIVANO 93%'], [680, 500, 140, 280, 'PIANTA 89%'], [630, 630, 75, 70, 'TAZZA 81%'], [470, 70, 360, 380, 'FINESTRA 95%']];
+const PARTS = [[110, 445, 115, 75, 'ORECCHIE 0.94'], [120, 525, 100, 65, 'MUSO 0.91'], [305, 515, 125, 90, 'STRISCE 0.83'], [190, 615, 230, 55, 'CODA 0.88']];
+window.renderAt = function (t) {
+  $('pbar').style.transform = `scaleX(${t / window.DURATION})`;
+  const f = Math.floor(t * 30);
+  $('tc').textContent = `2026-10-24 · 12:00:${String(Math.floor(t)).padStart(2, '0')}:${String(f % 30).padStart(2, '0')}`;
+  $('rec').style.opacity = Math.floor(t * 2) % 2 ? .25 : 1;
+  v.clearRect(0, 0, S, S);
+  $('card').style.display = 'none'; $('hook').style.display = 'none'; $('cap').style.display = 'none';
+  $('panel').style.opacity = t >= H0 && t < TF ? 1 : 0;
+  const k = Math.floor((t - H0) / SD), lt = t - H0 - k * SD;
+  [...$('panel').children].forEach((d, i) => d.className = i === k ? 'on' : i < k ? 'done' : '');
+  if (t < H0) { // hook: desaturated CCTV feed, reticle searching then locking
+    v.filter = 'grayscale(1) contrast(1.25) brightness(.9)'; v.drawImage(P, 0, 0); v.filter = 'none';
+    const lk = E.out5(seg(t, 1.2, 2.4));
+    reticle(lerp(600 + Math.sin(t * 3) * 120, 230, lk), lerp(300 + Math.cos(t * 2.3) * 90, 560, lk), lerp(110, 190, lk), 1);
+    if (t > 2.4) { v.font = MONO('700'); v.fillStyle = '#FFC400'; v.fillText('SOGGETTO AGGANCIATO', 40, 860); }
+    $('hook').style.display = 'block';
+    [...$('hookT').childNodes].forEach(() => {}); css('hookT', { clipPath: `inset(0 0 ${(1 - E.out5(seg(t, .2, 1.2))) * 100}% 0)` });
+  } else if (k === 0) { // PIXEL: zoom into the eye until single pixels show their RGB values
+    $('cap').style.display = 'block'; caption(STAGES[0], lt);
+    // zoom onto the closed eye; source rect lands on whole pixels at the end (no half cells)
+    const n = 7, z = E.io3(seg(lt, .5, 3.0)), cx = 150, cy = 545, vw = lerp(S, n, z);
+    v.imageSmoothingEnabled = false; v.filter = `grayscale(${1 - seg(lt, 0, .8)})`;
+    v.drawImage(P, cx + .5 - vw / 2, cy + .5 - vw / 2, vw, vw, 0, 0, S, S); v.filter = 'none';
+    if (z > .99) {
+      const cell = S / n, a = seg(lt, 3.0, 3.4);
+      v.strokeStyle = `rgba(5,5,5,${a})`; v.lineWidth = 4;
+      for (let i = 0; i <= n; i++) { v.beginPath(); v.moveTo(i * cell, 0); v.lineTo(i * cell, S); v.moveTo(0, i * cell); v.lineTo(S, i * cell); v.stroke(); }
+      v.font = '700 24px "IBM Plex Mono"'; v.textAlign = 'center';
+      for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+        const x = cx - 3 + i, y = cy - 3 + j, o = (y * S + x) * 4;
+        const q = seg(lt, 3.1 + (i + j) * .04, 3.3 + (i + j) * .04); if (!q) continue;
+        v.fillStyle = `rgba(5,5,5,${.6 * q})`; v.fillRect(i * cell + 14, j * cell + 14, cell - 28, cell - 28);
+        ['R', 'G', 'B'].forEach((ch, m) => { v.fillStyle = m === 0 ? `rgba(255,120,110,${q})` : m === 1 ? `rgba(130,230,140,${q})` : `rgba(130,180,255,${q})`;
+          v.fillText(`${ch} ${PX[o + m]}`, i * cell + cell / 2, j * cell + 44 + m * 30); });
+      }
+      v.textAlign = 'left';
+    }
+    v.imageSmoothingEnabled = true;
+  } else if (k === 1) { // BORDI: scan line turns the photo into its real Sobel edge map
+    $('cap').style.display = 'block'; caption(STAGES[1], lt);
+    const sy = E.io3(seg(lt, .4, 2.8)) * S;
+    v.fillStyle = '#050505'; v.fillRect(0, 0, S, S); grid(1);
+    v.save(); v.beginPath(); v.rect(0, 0, S, sy); v.clip(); v.drawImage(EDGE, 0, 0); v.restore();
+    v.save(); v.beginPath(); v.rect(0, sy, S, S - sy); v.clip(); v.filter = 'grayscale(1) contrast(1.25) brightness(.9)'; v.drawImage(P, 0, 0); v.filter = 'none'; v.restore();
+    if (sy > 0 && sy < S) { v.fillStyle = '#FFC400'; v.fillRect(0, sy - 2, S, 4); }
+  } else if (k === 2) { // FORME: part detections on the edge map
+    $('cap').style.display = 'block'; caption(STAGES[2], lt);
+    v.fillStyle = '#050505'; v.fillRect(0, 0, S, S); grid(1); v.drawImage(EDGE, 0, 0);
+    PARTS.forEach((b, i) => box(b[0], b[1], b[2], b[3], b[4], seg(lt, .8 + i * .6, 1.5 + i * .6), i % 2 ? '#F2F2F2' : '#FFC400'));
+  } else if (k === 3) { // OGGETTI: real colours return, object boxes with confidence
+    $('cap').style.display = 'block'; caption(STAGES[3], lt);
+    v.drawImage(P, 0, 0); v.globalAlpha = 1 - seg(lt, 0, .8); v.fillStyle = '#050505'; v.fillRect(0, 0, S, S); v.drawImage(EDGE, 0, 0); v.globalAlpha = 1;
+    OBJ.forEach((b, i) => box(b[0], b[1], b[2], b[3], b[4], seg(lt, 1.0 + i * .45, 1.6 + i * .45), b[4].startsWith('GATTO') ? '#FFC400' : '#F2F2F2'));
+    v.font = MONO('700'); v.fillStyle = 'rgba(242,242,242,.8)'; v.fillText('percentuali di esempio', 30, 880);
+  } else if (k === 4) { // COLORI: k-means swatches fly from the image into a panel
+    $('cap').style.display = 'block'; caption(STAGES[4], lt);
+    v.drawImage(P, 0, 0); v.fillStyle = `rgba(5,5,5,${.55 * seg(lt, .5, 1)})`; v.fillRect(0, 0, S, S);
+    PAL.forEach((c, i) => {
+      const q = E.out5(seg(lt, .8 + i * .3, 1.6 + i * .3)); if (!q) return;
+      const sx = 200 + (i * 97) % 500, sy = 200 + (i * 151) % 500, tx = 60, ty = 90 + i * 128;
+      const x = lerp(sx, tx, q), y = lerp(sy, ty, q), w = lerp(40, 110, q);
+      v.fillStyle = c.hex; v.fillRect(x, y, w, lerp(40, 100, q)); v.strokeStyle = '#F2F2F2'; v.lineWidth = 3; v.strokeRect(x, y, w, lerp(40, 100, q));
+      if (q > .9) { v.font = '700 34px "IBM Plex Mono"'; v.fillStyle = '#F2F2F2'; v.fillText(c.hex, 200, ty + 48);
+        v.fillStyle = '#FFC400'; v.fillRect(200, ty + 64, 5.4 * c.pct * seg(lt, 2.4 + i * .1, 3.2 + i * .1), 14);
+        v.font = MONO('700'); v.fillStyle = '#F2F2F2'; v.fillText(c.pct + '%', 210 + 5.4 * c.pct, ty + 78); }
+    });
+  } else if (k === 5) { // DESCRIZIONE: target locked → generated caption card
+    $('cap').style.display = 'block'; caption(STAGES[5], lt);
+    v.drawImage(P, 0, 0);
+    box(60, 440, 400, 240, 'SOGGETTO: GATTO', 1, '#FFC400');
+    if (lt > .8) {
+      $('card').style.display = 'block';
+      const txt = 'Un gatto arancione dorme su un divano verde, accanto a una finestra luminosa e a una pianta';
+      const n = Math.floor(txt.length * seg(lt, 1.4, 3.6));
+      $('card').innerHTML = `<div class="l">▣ DESCRIZIONE GENERATA</div><div class="big">${txt.slice(0, n)}${n < txt.length ? '▌' : ''}</div><div class="s" style="opacity:${seg(lt, 3.7, 4.1)}">Non vede come noi: riconosce <span style="color:#FFC400">schemi</span> imparati da milioni di immagini</div>`;
+      css('card', { opacity: seg(lt, .8, 1.1), transform: `translateY(${(1 - E.out5(seg(lt, .8, 1.3))) * 40}px)` });
+    }
+  } else if (t < TC) { // follow: glitch back to frame 1
+    const lt2 = t - TF;
+    v.filter = 'grayscale(1) contrast(1.25) brightness(.9)'; v.drawImage(P, 0, 0); v.filter = 'none';
+    $('card').style.display = 'block'; css('card', { opacity: 1, transform: 'none', top: '1240px' });
+    $('card').innerHTML = `<div class="l">▣ PROSSIMA ANALISI</div><div class="big" style="font-size:56px">Segui per capire l'AI <span style="color:#FFC400">un reel al giorno</span></div>`;
+  } else { // CTA
+    const lt2 = t - TC;
+    v.filter = 'grayscale(1) brightness(.35)'; v.drawImage(P, 0, 0); v.filter = 'none';
+    $('card').style.display = 'block'; css('card', { opacity: seg(lt2, .1, .4), transform: `translateY(${(1 - E.out5(seg(lt2, .1, .6))) * 40}px)`, top: '520px' });
+    $('card').innerHTML = `<div class="l">▣ RICHIESTA</div><div class="big">Vuoi portare l'AI nella tua attività?</div><div class="s">Siti web e automazioni AI su misura</div><div class="big" style="margin-top:40px;color:#FFC400">Chiedi a NeuralisAI</div><div class="s">→ link in bio</div>`;
+  }
+  if (t < TF) css('card', { top: '380px' });
+  // glitch bursts at stage changes and on the loop back
+  const cuts = [H0, ...STAGES.map((_, i) => H0 + i * SD), TF, TC];
+  const gl = cuts.some(c => t >= c - .08 && t < c + .12) || (t >= TF - .4 && t < TF + .2);
+  $('glitch').innerHTML = gl ? Array.from({ length: 7 }, (_, i) => `<div style="position:absolute;left:${(rnd(f * 7 + i) - .5) * 160}px;top:${rnd(f + i * 3) * 1920}px;width:1080px;height:${8 + rnd(i + f) * 60}px;background:${i % 2 ? '#FFC400' : '#F2F2F2'};opacity:.8;mix-blend-mode:difference"></div>`).join('') : '';
+};
+</script></body></html>
