@@ -7,7 +7,7 @@ Fonti: AI × Leaders (25 prompt) + YouMind Opus 5.5 (508 prompt). Ogni giorno un
 | 01 | Explainer stile Kurzgesagt (YouMind · HenryG) | Come fa ChatGPT a risponderti ✅ (consegnato in chat, senza voce) |
 | 02 | Pixel art "boomerang" storia degli LLM (YouMind · Plugin Play) | Da Turing a oggi: 76 anni di AI in 40 secondi ✅ (senza voce: credito OpenAI esaurito) |
 | 03 | Analisi soggetto CCTV / HUD (YouMind · Kōda) | Come l'AI "vede" una foto ✅ (senza voce: credito OpenAI esaurito) |
-| 04 | Tipografia cinetica stile After Effects (YouMind) | 5 parole dell'AI che tutti usano male |
+| 04 | Tipografia cinetica stile After Effects (YouMind) | 5 parole dell'AI che tutti usano male ✅ (senza voce: credito OpenAI esaurito) |
 | 05 | Inchiostro sumi-e (YouMind) | Cos'è davvero un prompt |
 | 06 | Animazione algoritmo stile "Google Indexing" (YouMind) | Come Google trova il tuo sito |
 | 07 | Carta ritagliata / marionette (YouMind) | La storia del primo sito web della storia |

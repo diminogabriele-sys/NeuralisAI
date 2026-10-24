@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><title>Day 04 Kinetic parole AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:opsz,wght@9..40,500;9..40,700;9..40,800&family=DM+Mono:wght@500&display=block');
+/* Style: After Effects-style kinetic typography explainer (library: "Prompt per video esplicativo con testo cinetico
+   in stile After Effects"): bold type, timed reveals, letter-by-letter slams, diagonal colour wipes, marker highlights. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F4EFE6; }
+#stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: 'DM Sans', sans-serif; }
+.scene { position: absolute; inset: 0; display: none; }
+.bg { position: absolute; inset: 0; }
+.idx { position: absolute; left: 90px; top: 290px; font-family: 'DM Mono'; font-size: 30px; letter-spacing: .2em; }
+.word { position: absolute; left: 90px; top: 350px; width: 900px; font-family: 'Anton'; line-height: 1; white-space: nowrap; text-transform: uppercase; }
+.word span { display: inline-block; }
+.lab { font-family: 'DM Mono'; font-size: 26px; letter-spacing: .2em; margin-bottom: 14px; }
+.wrong { position: absolute; left: 90px; top: 760px; width: 900px; }
+.wrong .tx { display: inline; font-size: 50px; font-weight: 700; line-height: 1.25; background-repeat: no-repeat; background-position: 0 58%; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.strike { position: absolute; left: 0; height: 10px; border-radius: 5px; }
+.right { position: absolute; left: 90px; top: 1010px; width: 900px; }
+.right .tx { font-size: 56px; font-weight: 800; line-height: 1.22; letter-spacing: -.01em; }
+.abs { position: absolute; }
+.w { display: inline-block; white-space: pre; position: relative; isolation: isolate; }
+.mk { position: absolute; left: -6px; right: -6px; top: 18%; bottom: 4%; z-index: -1; transform-origin: left; border-radius: 6px; }
+#wipe { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
+#pbar { position: absolute; left: 0; bottom: 0; height: 12px; width: 100%; transform-origin: left; z-index: 50; background: #111; }
+</style></head>
+<body><div id="stage">
+  <div id="scenes"></div>
+  <div id="wipe"></div>
+  <div id="pbar"></div>
+</div>
+<script src="../tools/lib.js"></script>
+<script>
+// Palette per scene: [background, text, accent, marker]
+const PAL = {
+  cream: ['#F4EFE6', '#111111', '#FF4D2E', '#FFD23F'],
+  tomato: ['#FF4D2E', '#FFF6EC', '#111111', '#111111'],
+  blue: ['#2B59FF', '#FFFFFF', '#FFD23F', '#111111'],
+  black: ['#111111', '#F4EFE6', '#FFD23F', '#FF4D2E'],
+  yellow: ['#FFD23F', '#111111', '#2B59FF', '#FFFFFF'],
+};
+const WORDS = [
+  { w: 'Algoritmo', p: 'tomato', bad: "«L'algoritmo» = l'intelligenza artificiale", good: 'È una sequenza di istruzioni, come una *ricetta*. Esistono da *oltre 2000 anni*: non tutti sono AI' },
+  { w: 'Prompt', p: 'blue', bad: 'Una formula magica da copiare e incollare', good: 'È semplicemente la *richiesta* che scrivi. Più è chiara e ricca di *contesto*, migliore è la risposta' },
+  { w: 'Allucinazione', p: 'black', bad: "Un guasto raro dell'AI", good: "È quando l'AI *inventa fatti* con sicurezza. Nasce dal modo in cui genera testo: *verifica sempre*" },
+  { w: 'Addestrare', p: 'yellow', bad: '«Ho addestrato ChatGPT con i miei file»', good: "In chat le stai dando *contesto*. L'addestramento vero *modifica il modello* e lo fa chi lo sviluppa" },
+  { w: 'GPT', p: 'cream', bad: 'GPT e ChatGPT sono la stessa cosa', good: "*GPT* è il modello, il motore. *ChatGPT* è l'app con cui ci parli" },
+];
+const HOOK = 3.6, WD = 6.6, TF = HOOK + WORDS.length * WD, TC = TF + 3.4;
+window.DURATION = TC + 5;  // 45 s
+window.SCENE_STARTS = [HOOK, ...WORDS.map((_, i) => HOOK + i * WD).slice(1), TF, TC];
+const split = s => [...s].map(ch => `<span>${ch === ' ' ? '&nbsp;' : ch}</span>`).join('');
+function words(text, mark) {
+  let hl = false;
+  return text.split(/(\*)/).map(part => {
+    if (part === '*') { hl = !hl; return ''; }
+    return part.split(/(\s+)/).map(w => w.trim() ? `<span class="w${hl ? ' h' : ''}">${hl ? `<i class="mk" style="background:${mark}"></i>` : ''}${w}</span>` : (w ? ' ' : '')).join('');
+  }).join('');
+}
+const SC = [];
+function scene(pal, html) { const el = document.createElement('div'); el.className = 'scene'; el.innerHTML = `<div class="bg" style="background:${pal[0]}"></div>` + html; el.style.color = pal[1]; $('scenes').appendChild(el); return el; }
+// hook
+SC.push({ s: 0, e: HOOK, pal: PAL.cream, el: scene(PAL.cream, `
+  <div class="idx" style="color:#FF4D2E">// DIZIONARIO AI</div>
+  <div class="abs" style="left:90px;top:420px;width:900px">
+    <div class="hk" style="font-family:Anton;font-size:250px;line-height:.95;text-transform:uppercase"><span>5</span> <span>parole</span></div>
+    <div class="hk" style="font-size:96px;font-weight:800;margin-top:30px;letter-spacing:-.03em"><span>dell'AI</span> <span>che</span> <span>tutti</span> <span>usano</span></div>
+    <div id="male" style="display:inline-block;margin-top:40px;font-family:Anton;font-size:300px;line-height:1;background:#FF4D2E;color:#F4EFE6;padding:10px 40px 20px">MALE</div>
+  </div>`) });
+WORDS.forEach((d, i) => {
+  const pal = PAL[d.p];
+  const el = scene(pal, `
+    <div class="idx" style="color:${pal[2]}">${String(i + 1).padStart(2, '0')} / 05</div>
+    <div class="word">${split(d.w)}</div>
+    <div class="wrong"><div class="lab" style="color:${pal[2]}">✕ COME LA USIAMO</div><span class="tx" style="background-image:linear-gradient(${pal[2]},${pal[2]})">${d.bad}</span></div>
+    <div class="right"><div class="lab" style="color:${pal[2]}">✓ COSA SIGNIFICA DAVVERO</div><div class="tx">${words(d.good, pal[3])}</div></div>`);
+  SC.push({ s: HOOK + i * WD, e: HOOK + (i + 1) * WD, pal, el, d });
+});
+SC.push({ s: TF, e: TC, pal: PAL.tomato, el: scene(PAL.tomato, `
+  <div class="abs center" style="left:90px;width:900px;top:520px;flex-direction:column;display:flex;align-items:flex-start">
+    <div style="font-family:'DM Mono';font-size:30px;letter-spacing:.2em">// E TU?</div>
+    <div class="ft" style="font-family:Anton;font-size:190px;line-height:.95;text-transform:uppercase;margin-top:30px"><span>Quale</span> <span>usavi</span> <span>male?</span></div>
+    <div style="font-size:56px;font-weight:800;margin-top:50px" class="fs">Scrivilo nei commenti e <u>segui</u> per il prossimo dizionario</div>
+  </div>`) });
+SC.push({ s: TC, e: window.DURATION, pal: PAL.black, el: scene(PAL.black, `
+  <div class="abs" style="left:90px;width:900px;top:430px">
+    <div style="font-family:'DM Mono';font-size:30px;letter-spacing:.2em;color:#FFD23F">// PER LA TUA ATTIVITÀ</div>
+    <div class="ct" style="font-size:88px;font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-top:30px">Vuoi usare l'AI nel modo giusto?</div>
+    <div class="ct" style="font-size:46px;font-weight:500;margin-top:30px;opacity:.85">Siti web e automazioni AI su misura</div>
+    <div class="ct" style="display:inline-block;margin-top:60px;background:#FFD23F;color:#111;font-family:Anton;font-size:120px;line-height:1;padding:20px 40px 26px">NeuralisAI</div>
+    <div class="ct" style="font-family:'DM Mono';font-size:40px;margin-top:30px;color:#FFD23F">→ link in bio</div>
+  </div>`) });
+// fit each big word to the column width
+let fitted = false;
+// hidden scenes do not trigger font loading: load Anton explicitly, then measure again
+document.fonts.load('320px Anton').then(() => { fitted = false; });
+function fit() {
+  SC.forEach(s => { const w = s.el.querySelector('.word'); if (!w) return; s.el.style.display = 'block'; w.style.width = 'auto'; w.style.display = 'inline-block'; let fs = 340; w.style.fontSize = fs + 'px'; while (w.getBoundingClientRect().width > 900 && fs > 80) { fs -= 4; w.style.fontSize = fs + 'px'; } s.el.style.display = 'none'; });
+  fitted = true;
+}
+window.renderAt = function (t) {
+  if (!fitted) fit();
+  let cur = SC[0]; for (const s of SC) if (t >= s.s) cur = s;
+  SC.forEach(s => s.el.style.display = s === cur ? 'block' : 'none');
+  const lt = t - cur.s, dur = cur.e - cur.s, el = cur.el;
+  $('pbar').style.transform = `scaleX(${t / window.DURATION})`; $('pbar').style.background = cur.pal[2];
+  // diagonal wipe in the new scene's colour, sweeping off to reveal it
+  const wp = cur.s > 0 ? E.io3(seg(lt, 0, .45)) : 1, x = lerp(0, 160, wp);
+  $('wipe').style.background = cur.pal[2];
+  $('wipe').style.clipPath = wp < 1 ? `polygon(${x - 60 + wp * 100}% 0, 160% 0, ${100 + wp * 100}% 100%, ${x - 100 + wp * 100}% 100%)` : 'polygon(0 0,0 0,0 0)';
+  if (cur === SC[0]) {
+    [...el.querySelectorAll('.hk span')].forEach((s, i) => { const p = E.out5(seg(lt, .1 + i * .16, .5 + i * .16)); s.style.display = 'inline-block'; s.style.transform = `translateY(${(1 - p) * 120}px) rotate(${(1 - p) * -8}deg)`; s.style.opacity = p; });
+    const m = E.out5(seg(lt, 1.5, 1.8)); css($('male'), { transform: `scale(${lerp(3, 1, m)}) rotate(${lerp(-14, -4, m)}deg)`, opacity: m });
+  } else if (cur.d) {
+    // big word: letters slam in from alternating sides with overshoot, then a slow push
+    [...el.querySelectorAll('.word span')].forEach((s, i) => { const p = E.back(seg(lt, .25 + i * .05, .6 + i * .05)); s.style.transform = `translateY(${(1 - p) * (i % 2 ? -160 : 160)}px) scale(${.5 + .5 * p})`; s.style.opacity = Math.min(1, p * 2); });
+    const wd = el.querySelector('.word'); wd.style.transform = `scale(${1 + seg(lt, 1, dur) * .04})`; wd.style.transformOrigin = 'left center';
+    el.querySelector('.idx').style.opacity = seg(lt, .2, .5);
+    // wrong usage types in, then gets struck through
+    const wr = el.querySelector('.wrong'), wp2 = E.out5(seg(lt, 1.1, 1.6));
+    css(wr, { opacity: wp2, transform: `translateX(${(1 - wp2) * -80}px)` });
+    const tx = wr.querySelector('.tx');
+    tx.style.backgroundSize = `${E.io3(seg(lt, 2.0, 2.5)) * 100}% 8px`;
+    tx.style.opacity = lt > 2.5 ? .55 : 1;
+    // the real meaning: words rise, highlighted keywords get a marker sweep
+    const rt = el.querySelector('.right'); rt.querySelector('.lab').style.opacity = seg(lt, 2.6, 2.9);
+    const ws = [...rt.querySelectorAll('.w')];
+    ws.forEach((w, i) => { const p = E.out5(seg(lt, 2.8 + i * .07, 3.2 + i * .07)); w.style.opacity = p; w.style.transform = `translateY(${(1 - p) * 40}px)`;
+      const mk = w.querySelector('.mk'); if (mk) mk.style.transform = `scaleX(${E.io3(seg(lt, 3.3 + i * .07, 3.7 + i * .07))})`;
+      if (w.classList.contains('h')) w.style.color = cur.d.p === 'cream' || cur.d.p === 'yellow' ? '#111' : (cur.d.p === 'black' ? '#F4EFE6' : cur.pal[1]); });
+  } else if (cur === SC[SC.length - 2]) {
+    [...el.querySelectorAll('.ft span')].forEach((s, i) => { const p = E.back(seg(lt, .2 + i * .18, .6 + i * .18)); s.style.display = 'inline-block'; s.style.transform = `scale(${p}) rotate(${(1 - p) * 10}deg)`; });
+    el.querySelector('.fs').style.opacity = seg(lt, 1.0, 1.4);
+  } else {
+    [...el.querySelectorAll('.ct')].forEach((c, i) => { const p = E.out5(seg(lt, .2 + i * .25, .7 + i * .25)); c.style.opacity = p; c.style.transform = `translateY(${(1 - p) * 60}px)`; });
+  }
+  // every scene exits with a quick push-up
+  const out = E.in3(seg(lt, dur - .2, dur)); el.style.transform = `translateY(${-out * 80}px)`;
+};
+</script></body></html>
