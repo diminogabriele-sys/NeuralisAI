@@ -45,7 +45,7 @@ Questo branch (`reel-factory`) è separato dall'app NeuralisAI: contiene solo gl
    - via **Gmail** (`send_message`) a diminogabriele@gmail.com, oggetto `Reel del giorno NN — <tema>`, mp4 in allegato
      (base64, mimeType `video/mp4`, deve restare sotto 25 MB; se è più grande ricodifica con `-crf 23`),
      nel corpo: stile usato, didascalia completa pronta da incollare (gancio nella prima riga, 8–15 righe che riassumono
-     e approfondiscono il reel, domanda per i commenti, invito a salvare/seguire, CTA a NeuralisAI, 10–15 hashtag misti
+     e approfondiscono il reel, domanda per i commenti, invito a salvare/seguire, CTA a NeuralisAI, massimo 5 hashtag (limite di Instagram)
      italiano/inglese), eventuali note
      (es. numeri di esempio da verificare);
    - e anche come file nella sessione.
