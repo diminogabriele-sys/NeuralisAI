@@ -1,0 +1,25 @@
+Hai pubblicato il sito… ma Google sa che esiste? 🕷️
+
+Prima di comparire nei risultati, una pagina passa da 3 fasi. Spiegate semplice:
+
+1️⃣ Scansione. Googlebot, il "ragno" di Google, gira il web seguendo i link da una pagina all'altra. Se nessuno ti linka e non hai una sitemap, rischia di non passare mai da te.
+
+2️⃣ Indicizzazione. Google legge testi, titoli e immagini, capisce di cosa parla la pagina e la archivia nel suo indice. Secondo Google stesso, l'indice contiene centinaia di miliardi di pagine e supera i 100 milioni di gigabyte.
+
+3️⃣ Risultati. Quando qualcuno cerca, Google sceglie le pagine più pertinenti e utili, tenendo conto anche di lingua e posizione di chi cerca.
+
+Cosa puoi fare oggi:
+✅ registra il sito su Google Search Console (è gratis) e guarda quali pagine sono indicizzate
+✅ invia la sitemap dalla stessa Search Console
+✅ collega le tue pagine tra loro e fatti citare da altri siti
+
+E una cosa che pochi sanno: per salire nei risultati organici non si paga Google. Gli annunci sono un'altra cosa.
+
+(Pizzeria e risultati nel video sono esempi inventati.)
+
+Il tuo sito è già su Google? Scrivi "sì" o "non lo so" nei commenti 👇
+Salva il reel per quando pubblichi il tuo sito e segui per altre cose dell'AI e del web spiegate semplice.
+
+Vuoi portare l'AI nella tua attività? Neuralis Studio crea siti web e automazioni AI su misura: link in bio.
+
+#sitiweb #webdesign #marketingdigitale #imprenditori #torino

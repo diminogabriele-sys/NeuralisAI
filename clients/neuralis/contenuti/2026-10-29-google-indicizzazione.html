@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><title>Giorno 06 · Come Google trova il tuo sito</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=IM+Fell+English+SC&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=block');
+/* Style: "Google Indexing" anatomical jig (library: "Animazione dell'Indicizzazione di Ricerca Google", Numa):
+   a vintage anatomy plate on parchment, sepia ink drawings with lettered callouts, a playful camera and an extreme
+   zoom-out to show the scale of the index. Agency brand only in the final CTA scene. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #E9DEC3; }
+#stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: 'EB Garamond', serif; color: #2A1D12; }
+#cv { position: absolute; inset: 0; }
+.layer { position: absolute; inset: 0; opacity: 0; }
+#head { position: absolute; left: 80px; right: 80px; top: 262px; display: flex; justify-content: space-between; align-items: baseline;
+  font-family: 'IM Fell English SC', serif; font-size: 34px; letter-spacing: .12em; color: #8E2A1C; border-bottom: 2px solid #2A1D12; padding-bottom: 12px; }
+#head span:last-child { color: #2A1D12; }
+.block { position: absolute; left: 80px; right: 80px; top: 1200px; }
+.tag { font-family: 'IM Fell English SC', serif; font-size: 36px; letter-spacing: .14em; color: #8E2A1C; }
+.h { font-size: 82px; font-weight: 700; line-height: 1.02; margin-top: 10px; }
+.h i { color: #8E2A1C; font-weight: 600; }
+.s { font-size: 44px; font-weight: 500; line-height: 1.18; margin-top: 18px; font-style: italic; }
+.s b { font-style: normal; font-weight: 700; color: #8E2A1C; }
+#hook .h { font-size: 96px; }
+#zoomtxt { position: absolute; left: 80px; right: 80px; top: 1180px; text-align: center; }
+#zoomtxt .n { font-size: 108px; font-weight: 800; line-height: 1; color: #2A1D12; }
+#zoomtxt .u { font-size: 50px; font-style: italic; font-weight: 600; margin-top: 6px; }
+#zoomtxt .src { font-family: 'IM Fell English SC'; font-size: 28px; letter-spacing: .08em; color: #6B5A45; margin-top: 26px; }
+#tips { position: absolute; left: 80px; right: 80px; top: 400px; }
+#tips .tag { text-align: center; }
+.tip { display: flex; gap: 34px; align-items: flex-start; margin-top: 58px; }
+.tip .r { font-family: 'IM Fell English SC'; font-size: 92px; line-height: .9; color: #8E2A1C; width: 120px; text-align: center; flex: none; }
+.tip .t { font-size: 60px; font-weight: 700; line-height: 1.05; }
+.tip .d { font-size: 40px; font-style: italic; line-height: 1.15; margin-top: 8px; }
+#note { position: absolute; left: 80px; right: 80px; top: 1330px; padding: 26px 34px; border: 3px solid #2A1D12; outline: 2px solid #2A1D12; outline-offset: 6px;
+  font-size: 44px; line-height: 1.15; text-align: center; background: rgba(243,235,215,.9); }
+#note b { color: #8E2A1C; }
+#follow { position: absolute; left: 80px; right: 80px; top: 640px; text-align: center; }
+#follow .h { font-size: 100px; }
+#follow .s { margin-top: 40px; font-size: 52px; }
+/* CTA: Neuralis brand, framed as the last plate of the atlas */
+#cta { background: #0F1110; }
+#cta .frame { position: absolute; left: 70px; right: 70px; top: 300px; bottom: 380px; border: 2px solid #2D3230; }
+#cta .lab { position: absolute; left: 110px; right: 110px; top: 340px; display: flex; justify-content: space-between;
+  font-family: 'JetBrains Mono'; font-size: 26px; letter-spacing: .18em; color: #7C8580; }
+#cta .q { position: absolute; left: 110px; right: 110px; top: 560px; font-family: 'Inter Tight'; font-weight: 600; font-size: 96px; line-height: 1.04; color: #E2E8E4; letter-spacing: -.02em; }
+#cta .q i { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; color: #C5FF4D; letter-spacing: 0; }
+#cta .sub { position: absolute; left: 110px; right: 110px; top: 1010px; font-family: 'Inter Tight'; font-size: 44px; line-height: 1.25; color: #E2E8E4; }
+#cta .logo { position: absolute; left: 110px; top: 1300px; display: flex; align-items: baseline; gap: 22px; }
+#cta .logo .dot { width: 30px; height: 30px; border-radius: 50%; background: #C5FF4D; transform: translateY(-8px); }
+#cta .logo .w { font-family: 'Instrument Serif'; font-style: italic; font-size: 120px; color: #E2E8E4; line-height: 1; }
+#cta .logo .m { font-family: 'JetBrains Mono'; font-size: 30px; letter-spacing: .2em; color: #7C8580; }
+#cta .bio { position: absolute; left: 110px; top: 1470px; font-family: 'JetBrains Mono'; font-size: 30px; letter-spacing: .12em; color: #C5FF4D; }
+</style></head>
+<body><div id="stage">
+<canvas id="cv" width="1080" height="1920"></canvas>
+<div id="head"><span id="hl">Tavola I</span><span id="hr">Anatomia di una ricerca</span></div>
+
+<div class="layer" id="hook"><div class="block"><div class="h">Hai pubblicato il sito.<br>Ma Google come fa a <i>trovarlo</i>?</div>
+  <div class="s">Anatomia di una ricerca, in <b>3 fasi</b>.</div></div></div>
+
+<div class="layer" id="crawl"><div class="block"><div class="tag">Fase 1 · Scansione</div>
+  <div class="h">Googlebot gira il web <i>seguendo i link</i></div>
+  <div class="s">Passa da una pagina all'altra. La <b>sitemap</b> gli dà la mappa del tuo sito.</div></div></div>
+
+<div class="layer" id="index"><div class="block"><div class="tag">Fase 2 · Indicizzazione</div>
+  <div class="h">Legge la pagina e <i>la archivia</i></div>
+  <div class="s">Testi, titoli, immagini: capisce di cosa parla e la salva nell'<b>indice</b> di Google.</div></div></div>
+
+<div class="layer" id="zoom"><div id="zoomtxt"><div class="n" id="zn">1 pagina</div><div class="u" id="zu">la tua, in un cassetto</div>
+  <div class="src" id="zs">Fonte: Google · «How Search Works»</div></div></div>
+
+<div class="layer" id="serve"><div class="block"><div class="tag">Fase 3 · Risultati</div>
+  <div class="h">Tu cerchi, <i>Google ordina</i></div>
+  <div class="s">Sceglie le pagine più pertinenti e utili per te, anche in base a <b>lingua</b> e <b>posizione</b>.</div></div></div>
+
+<div class="layer" id="tipsL"><div id="tips"><div class="tag">Cosa puoi fare oggi</div>
+  <div class="tip" id="t1"><div class="r">I</div><div><div class="t">Registra il sito su Google Search Console</div><div class="d">vedi cosa Google ha trovato (e cosa no)</div></div></div>
+  <div class="tip" id="t2"><div class="r">II</div><div><div class="t">Invia la sitemap</div><div class="d">l'elenco delle pagine da visitare</div></div></div>
+  <div class="tip" id="t3"><div class="r">III</div><div><div class="t">Collega le pagine tra loro</div><div class="d">e fatti citare da altri siti</div></div></div>
+  </div>
+  <div id="note">E no: per salire nei risultati <b>non si paga</b> Google.<br><span style="font-size:34px;font-style:italic">(gli annunci sono un'altra cosa)</span></div></div>
+
+<div class="layer" id="follow"><div class="h">Salvalo per quando pubblichi il tuo sito</div>
+  <div class="s">Segui per altre cose dell'AI e del web <b>spiegate semplice</b>.</div></div>
+
+<div class="layer" id="cta"><div class="frame"></div><div class="lab"><span>TAVOLA ULTIMA</span><span>NEURALIS / STUDIO</span></div>
+  <div class="q">Vuoi portare <i>l'AI</i> nella tua attività?</div>
+  <div class="sub">Siti web + automazioni AI su misura</div>
+  <div class="logo"><span class="dot"></span><span class="w">Neuralis</span><span class="m">/STUDIO</span></div>
+  <div class="bio">→ LINK IN BIO</div></div>
+</div>
+<script src="../../../tools/lib.js"></script>
+<script>
+window.DURATION = 43.5;
+const S = [0, 4, 11.5, 18.5, 25, 31.5, 37, 39.5, 43.5]; // scene starts
+const W = 1080, H = 1920, INK = '#2A1D12', RED = '#8E2A1C', WASH = '#5E7C8A', PAPER = '#E9DEC3';
+const cv = $('cv'), ctx = cv.getContext('2d');
+
+// parchment texture, built once (deterministic)
+const paper = document.createElement('canvas'); paper.width = W; paper.height = H;
+(() => {
+  const p = paper.getContext('2d');
+  p.fillStyle = PAPER; p.fillRect(0, 0, W, H);
+  for (let i = 0; i < 9000; i++) {
+    p.fillStyle = `rgba(90,60,30,${rnd(i) * .07})`;
+    p.fillRect(rnd(i + .3) * W, rnd(i + .7) * H, 1 + rnd(i + .9) * 3, 1 + rnd(i + .1) * 3);
+  }
+  const g = p.createRadialGradient(W / 2, H / 2, 400, W / 2, H / 2, 1250);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(70,40,10,.35)');
+  p.fillStyle = g; p.fillRect(0, 0, W, H);
+  p.strokeStyle = INK; p.lineWidth = 3; p.strokeRect(40, 200, W - 80, H - 400);
+  p.lineWidth = 1.2; p.strokeRect(52, 212, W - 104, H - 424);
+})();
+
+// ---------- drawing helpers ----------
+function wob(x1, y1, x2, y2, seed, amp = 2) { // hand-inked line
+  ctx.beginPath(); ctx.moveTo(x1, y1);
+  const n = 6;
+  for (let i = 1; i <= n; i++) {
+    const p = i / n, j = i < n ? (rnd(seed + i) - .5) * amp : 0;
+    ctx.lineTo(lerp(x1, x2, p) + j, lerp(y1, y2, p) + j);
+  }
+  ctx.stroke();
+}
+function hatch(x, y, w, h, gap, seed) {
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+  ctx.lineWidth = 1.2; ctx.strokeStyle = 'rgba(42,29,18,.45)';
+  for (let i = -h; i < w; i += gap) wob(x + i, y + h, x + i + h, y, seed + i, 1.5);
+  ctx.restore();
+}
+function page(x, y, w, h, o = {}) { // a web page as an anatomical specimen
+  ctx.save(); ctx.translate(x, y); if (o.rot) ctx.rotate(o.rot);
+  const f = w * .2;
+  ctx.fillStyle = o.fill || '#F4ECD8'; ctx.strokeStyle = INK; ctx.lineWidth = o.lw || 3;
+  ctx.beginPath(); ctx.moveTo(-w / 2, -h / 2); ctx.lineTo(w / 2 - f, -h / 2); ctx.lineTo(w / 2, -h / 2 + f); ctx.lineTo(w / 2, h / 2); ctx.lineTo(-w / 2, h / 2); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(w / 2 - f, -h / 2); ctx.lineTo(w / 2 - f, -h / 2 + f); ctx.lineTo(w / 2, -h / 2 + f); ctx.stroke();
+  if (w > 50) {
+    ctx.lineWidth = Math.max(1, w / 60);
+    ctx.fillStyle = o.visited ? RED : INK;
+    ctx.fillRect(-w * .38, -h * .36, w * .5, h * .07); // title
+    ctx.strokeStyle = 'rgba(42,29,18,.7)';
+    for (let i = 0; i < 4; i++) wob(-w * .38, -h * .16 + i * h * .09, w * .36 - (i % 2) * w * .12, -h * .16 + i * h * .09, i + (o.seed || 0), 1);
+    ctx.strokeStyle = INK; ctx.strokeRect(-w * .38, h * .2, w * .34, h * .2); // image box
+    ctx.beginPath(); ctx.moveTo(-w * .38, h * .4); ctx.lineTo(-w * .26, h * .28); ctx.lineTo(-w * .16, h * .36); ctx.lineTo(-w * .04, h * .24); ctx.stroke();
+  }
+  ctx.restore();
+}
+function label(x, y, tx, ty, letter, text, a = 1, size = 34) { // lettered callout with leader line
+  if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha = a;
+  ctx.strokeStyle = INK; ctx.lineWidth = 1.6;
+  const p = E.out3(clamp(a * 1.2));
+  ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fillStyle = INK; ctx.fill();
+  ctx.font = `italic 600 ${size}px "EB Garamond"`; ctx.textBaseline = 'middle';
+  const left = tx < x;
+  ctx.textAlign = left ? 'right' : 'left';
+  ctx.fillStyle = RED; ctx.font = `${size}px "IM Fell English SC"`;
+  const lw = ctx.measureText(letter + '. ').width;
+  ctx.font = `italic 600 ${size}px "EB Garamond"`; const tot = lw + ctx.measureText(text).width + 12;
+  ctx.font = `${size}px "IM Fell English SC"`;
+  if (left && tx - tot < 80) tx = 80 + tot;
+  if (!left && tx + tot > 1000) tx = 1000 - tot;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(lerp(x, tx, p), lerp(y, ty, p)); ctx.stroke();
+  if (left) { ctx.fillText(letter + '.', tx - 8 - 0, ty); ctx.fillStyle = INK; ctx.font = `italic 600 ${size}px "EB Garamond"`; ctx.textAlign = 'right'; ctx.fillText(text, tx - 8 - lw, ty); }
+  else { ctx.fillText(letter + '.', tx + 8, ty); ctx.fillStyle = INK; ctx.font = `italic 600 ${size}px "EB Garamond"`; ctx.fillText(text, tx + 8 + lw, ty); }
+  ctx.restore();
+}
+function spider(x, y, s, t, ang = 0) { // Googlebot, drawn as a specimen ("Araneus googlensis")
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.scale(s, s);
+  ctx.strokeStyle = INK; ctx.lineWidth = 3.2; ctx.lineCap = 'round';
+  for (let side = -1; side <= 1; side += 2) for (let i = 0; i < 4; i++) {
+    const ph = Math.sin(t * 18 + i * 1.7 + (side > 0 ? 1.5 : 0)) * .18;
+    const a0 = (-.9 + i * .55 + ph) ;
+    const kx = Math.cos(a0) * 34, ky = Math.sin(a0) * 34;
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    ctx.lineTo(side * (14 + Math.abs(kx) * .9), ky - 22);
+    ctx.lineTo(side * (30 + Math.abs(kx) * 1.4), ky * 1.5 + 8);
+    ctx.stroke();
+  }
+  ctx.fillStyle = INK;
+  ctx.beginPath(); ctx.ellipse(0, 14, 17, 22, 0, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(0, -10, 11, 11, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = RED; ctx.beginPath(); ctx.ellipse(0, 14, 6, 9, 0, 0, 7); ctx.fill();
+  ctx.restore();
+}
+function cabinet(x, y, w, h, open = 0, detail = true) { // card-catalogue cabinet = the index
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = '#D9C9A3'; ctx.strokeStyle = INK; ctx.lineWidth = Math.max(1, w / 140);
+  ctx.fillRect(-w / 2, -h / 2, w, h); ctx.strokeRect(-w / 2, -h / 2, w, h);
+  if (detail) {
+    const cols = 4, rows = 5, dw = w / cols, dh = h / rows;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const isOpen = r === 2 && c === 1 && open > 0;
+      const dx = -w / 2 + c * dw, dy = -h / 2 + r * dh;
+      ctx.strokeRect(dx + dw * .06, dy + dh * .1, dw * .88, dh * .8);
+      ctx.fillStyle = '#F4ECD8'; ctx.fillRect(dx + dw * .36, dy + dh * .3, dw * .28, dh * .18); ctx.strokeRect(dx + dw * .36, dy + dh * .3, dw * .28, dh * .18);
+      ctx.beginPath(); ctx.arc(dx + dw * .5, dy + dh * .66, dw * .05, 0, 7); ctx.fillStyle = INK; ctx.fill();
+      if (isOpen) {
+        const e = open * dh * .9;
+        ctx.fillStyle = '#C8B48A'; ctx.fillRect(dx + dw * .06 - e * .25, dy + dh * .1 + e, dw * .88 + e * .5, dh * .8);
+        ctx.strokeRect(dx + dw * .06 - e * .25, dy + dh * .1 + e, dw * .88 + e * .5, dh * .8);
+        ctx.fillStyle = RED; ctx.fillRect(dx + dw * .3, dy + dh * .1 + e - dh * .25 * open, dw * .4, dh * .3 * open);
+      }
+    }
+  } else hatch(-w / 2, -h / 2, w, h, Math.max(3, w / 8), x * .01 + y);
+  ctx.restore();
+}
+
+// ---------- crawl world ----------
+const NODES = [];
+for (let i = 0; i < 26; i++) {
+  const gx = i % 5, gy = Math.floor(i / 5);
+  NODES.push({ x: 140 + gx * 230 + (rnd(i) - .5) * 120, y: 430 + gy * 190 + (rnd(i + 4) - .5) * 80 });
+}
+NODES[25] = { x: 1150, y: 330 };
+const EDGES = [];
+NODES.forEach((a, i) => NODES.forEach((b, j) => { if (j > i && Math.hypot(a.x - b.x, a.y - b.y) < 290 && rnd(i * 31 + j) > .25) EDGES.push([i, j]); }));
+const PATH = [0, 1, 6, 7, 12, 13, 8, 9, 14, 19, 18, 23, 22, 17, 16, 21, 20, 15, 10, 11, 5, 2, 3, 4];
+
+function sceneCrawl(lt) { // lt: 0..7.5
+  const prog = clamp(lt / 6.4) * (PATH.length - 1);
+  const k = Math.floor(prog), f = E.io3(prog - k);
+  const a = NODES[PATH[Math.min(k, PATH.length - 1)]], b = NODES[PATH[Math.min(k + 1, PATH.length - 1)]];
+  const sx = lerp(a.x, b.x, f), sy = lerp(a.y, b.y, f);
+  // camera: tight on the spider, then a whip zoom-out to the whole web
+  const zo = E.io3(seg(lt, 4.6, 6.6));
+  const z = lerp(1.9, .74, zo);
+  const cx = lerp(sx, 640, zo), cy = lerp(sy, 760, zo);
+  ctx.save();
+  ctx.translate(W / 2, 760); ctx.rotate(lerp(-.06, .02, zo)); ctx.scale(z, z); ctx.translate(-cx, -cy);
+  ctx.strokeStyle = 'rgba(42,29,18,.55)'; ctx.lineWidth = 1.6 / z * 1.4;
+  EDGES.forEach(([i, j], n) => wob(NODES[i].x, NODES[i].y, NODES[j].x, NODES[j].y, n, 3));
+  const visited = new Set(PATH.slice(0, k + 1));
+  // traversed links in red ink
+  ctx.strokeStyle = RED; ctx.lineWidth = 3.4;
+  for (let i = 0; i < k; i++) wob(NODES[PATH[i]].x, NODES[PATH[i]].y, NODES[PATH[i + 1]].x, NODES[PATH[i + 1]].y, 500 + i, 1);
+  if (k < PATH.length - 1) wob(a.x, a.y, sx, sy, 900, 0);
+  NODES.forEach((n, i) => { if (i < 25) page(n.x, n.y, 74, 96, { visited: visited.has(i), seed: i, lw: 2.4 }); });
+  // the sitemap scroll, top-right
+  const sm = NODES[25];
+  ctx.save(); ctx.translate(sm.x, sm.y); ctx.rotate(.08);
+  ctx.fillStyle = '#F1E3BE'; ctx.strokeStyle = INK; ctx.lineWidth = 2.4;
+  ctx.fillRect(-70, -90, 140, 180); ctx.strokeRect(-70, -90, 140, 180);
+  ctx.beginPath(); ctx.ellipse(0, -90, 78, 12, 0, 0, 7); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(0, 90, 78, 12, 0, 0, 7); ctx.fill(); ctx.stroke();
+  for (let i = 0; i < 6; i++) { ctx.beginPath(); ctx.arc(-44, -58 + i * 26, 4, 0, 7); ctx.fillStyle = RED; ctx.fill(); wob(-30, -58 + i * 26, 46, -58 + i * 26, 70 + i, 1); }
+  ctx.restore();
+  ctx.setLineDash([10, 10]); ctx.strokeStyle = RED; ctx.lineWidth = 2;
+  wob(sm.x - 80, sm.y + 40, NODES[4].x + 40, NODES[4].y - 30, 77, 2); ctx.setLineDash([]);
+  const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
+  spider(sx, sy - 6, .85, lt, k < PATH.length - 1 ? ang : 0);
+  ctx.restore();
+  // callouts in screen space
+  const ssx = (sx - cx) * z + W / 2, ssy = (sy - cy) * z + 760;
+  label(ssx + 30, ssy - 20, Math.min(ssx + 150, 760), Math.max(ssy - 150, 420), 'A', 'Googlebot', seg(lt, .4, 1.1) * (1 - seg(lt, 4.3, 4.7)));
+  label(Math.min(ssx + 10, 980), ssy + 70, 130 + 0 * ssx, Math.min(ssy + 230, 1120), 'B', 'un link', seg(lt, 1.6, 2.3) * (1 - seg(lt, 4.3, 4.7)));
+  const smx = (sm.x - cx) * z + W / 2, smy = (sm.y - cy) * z + 760;
+  label(smx - 50, smy - 40, smx - 200, smy - 75, 'C', 'la sitemap', seg(lt, 5.8, 6.5));
+}
+
+// ---------- index (dissection of a page) ----------
+function sceneIndex(lt) { // 0..7
+  const z = lerp(1.06, 1, E.out3(seg(lt, 0, 2)));
+  ctx.save(); ctx.translate(W / 2, 760); ctx.scale(z, z); ctx.translate(-W / 2, -760);
+  const slide = E.io3(seg(lt, 4.2, 5.4)); // page shrinks into the drawer
+  const px = lerp(330, 760, slide), py = lerp(720, 840, slide), ps = lerp(1, .18, slide);
+  // the cabinet
+  const cabIn = E.out3(seg(lt, 1.0, 1.8));
+  const cen = E.io3(seg(lt, 5.5, 6.8));
+  ctx.globalAlpha = cabIn; cabinet(lerp(800, 540, cen), lerp(lerp(860, 800, cabIn), 740, cen), 330, 520, E.io3(seg(lt, 3.6, 4.2)) * (1 - E.io3(seg(lt, 5.6, 6.2)))); ctx.globalAlpha = 1;
+  if (slide < 1) {
+    page(px, py, 380 * ps, 500 * ps, { seed: 3, rot: lerp(-.05, .2, slide) });
+    if (ps > .9) { // headline of the example page
+      ctx.fillStyle = '#F4ECD8'; ctx.fillRect(px - 145, py - 196, 200, 40);
+      ctx.font = 'italic 700 30px "EB Garamond"'; ctx.fillStyle = RED; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText('Pizzeria Da Gino', px - 145, py - 176);
+      ctx.font = 'italic 500 22px "EB Garamond"'; ctx.fillStyle = INK; ctx.fillText('Torino · forno a legna', px - 145, py - 140);
+    }
+  }
+  const lab = (1 - seg(lt, 3.9, 4.3));
+  label(190, 544, 250, 420, 'A', 'titolo', seg(lt, .5, 1.1) * lab, 32);
+  label(440, 680, 470, 470, 'B', 'testo', seg(lt, 1.2, 1.8) * lab, 32);
+  label(250, 870, 150, 1110, 'C', 'immagini', seg(lt, 1.9, 2.5) * lab, 32);
+  label(470, 850, 470, 1110, 'D', 'link', seg(lt, 2.6, 3.2) * lab, 32);
+  // extracted keywords flying to the drawer
+  const kws = ['pizzeria', 'Torino', 'forno a legna'];
+  kws.forEach((w, i) => {
+    const p = seg(lt, 2.9 + i * .25, 4.3 + i * .25), e = E.io3(p);
+    if (p <= 0 || p >= 1) return;
+    const x = lerp(560, 760, e), y = lerp(640 + i * 70, 800, e) - Math.sin(e * Math.PI) * 120;
+    ctx.save(); ctx.globalAlpha = 1 - seg(p, .85, 1); ctx.font = 'italic 700 40px "EB Garamond"'; ctx.textAlign = 'center';
+    const tw = ctx.measureText(w).width + 30;
+    ctx.fillStyle = '#F4ECD8'; ctx.strokeStyle = RED; ctx.lineWidth = 2;
+    ctx.fillRect(x - tw / 2, y - 28, tw, 52); ctx.strokeRect(x - tw / 2, y - 28, tw, 52);
+    ctx.fillStyle = RED; ctx.textBaseline = 'middle'; ctx.fillText(w, x, y);
+    ctx.restore();
+  });
+  label(lerp(800, 540, cen) + 140, lerp(800, 740, cen) - 230, lerp(800, 540, cen) + 240, 420, 'E', "l'indice", seg(lt, 5.6, 6.2), 34);
+  ctx.font = 'italic 500 26px "EB Garamond"'; ctx.fillStyle = '#6B5A45'; ctx.textAlign = 'left';
+  ctx.globalAlpha = seg(lt, .5, 1) * (1 - slide); ctx.fillText('(pagina di esempio)', 200, 1010); ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+// ---------- extreme zoom out ----------
+function sceneZoom(lt) { // 0..6.5
+  const p = E.io3(seg(lt, .4, 5.6));
+  const z = Math.exp(lerp(0, Math.log(1 / 350), p));
+  const cx = 540, cy = 740, rot = lerp(0, .5, p);
+  ctx.save(); ctx.translate(W / 2, 740); ctx.rotate(rot); ctx.scale(z, z); ctx.translate(-cx, -cy);
+  // level 1: cabinets in rows (aisle), spacing 420
+  const sp = 420, half = 0.5 * Math.hypot(W, H) / z;
+  const sz = 330 * z;
+  if (sz > 3) {
+    const n = Math.min(60, Math.ceil(half / sp));
+    for (let gy = -n; gy <= n; gy++) for (let gx = -n; gx <= n; gx++) {
+      const x = cx + gx * sp, y = cy + gy * sp * 1.6;
+      if (gx === 0 && gy === 0) cabinet(x, y, 330, 520, 0, true);
+      else if (sz > 40) cabinet(x, y, 330, 520, 0, sz > 120);
+      else { ctx.fillStyle = 'rgba(42,29,18,.55)'; ctx.fillRect(x - 165, y - 260, 330, 520); }
+    }
+  }
+  // level 2: halls (blocks of 25×15 cabinets) — drawn as hatched blocks once cabinets are tiny
+  const hall = sp * 26, hallH = sp * 1.6 * 16;
+  const a2 = seg(sz, 12, 2);
+  if (a2 > 0) {
+    const n = Math.min(40, Math.ceil(half / hall) + 1);
+    ctx.globalAlpha = a2;
+    for (let gy = -n; gy <= n; gy++) for (let gx = -n; gx <= n; gx++) {
+      if (gx === 0 && gy === 0 && sz > 2) continue;
+      const x = cx + gx * hall - hall * .46, y = cy + gy * hallH - hallH * .46, s = hall * .92 * z;
+      const lit = rnd(gx * 13.1 + gy * 7.7) ;
+      ctx.fillStyle = `rgba(42,29,18,${.25 + lit * .45})`; ctx.fillRect(x, y, hall * .92, hallH * .92);
+      if (s > 30) { ctx.strokeStyle = INK; ctx.lineWidth = 2 / z; ctx.strokeRect(x, y, hall * .92, hallH * .92); }
+    }
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+  // red marker on "your page", always on screen centre
+  const m = seg(lt, 1.2, 1.6) * (1 - seg(lt, 5.8, 6.3));
+  if (m > 0) {
+    ctx.save(); ctx.globalAlpha = m; ctx.strokeStyle = RED; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(W / 2, 740, 26 + Math.max(0, 140 * (1 - p * 3)), 0, 7); ctx.stroke();
+    ctx.restore();
+  }
+  // vignette to keep text readable
+}
+
+// ---------- serving results ----------
+const RES = [
+  { t: 'Pizzeria Da Gino — Torino', r: 1, s: 'forno a legna · aperto ora' },
+  { t: 'Le 10 pizze più strane del mondo', r: 4, s: 'curiosità' },
+  { t: 'Pizzeria a Torino: menù e orari', r: 2, s: 'zona San Salvario' },
+  { t: 'Storia della pizza napoletana', r: 3, s: 'enciclopedia' },
+];
+function sceneServe(lt) { // 0..6.5
+  const q = 'pizzeria torino', typed = q.slice(0, Math.floor(clamp((lt - .3) / 1.4) * q.length));
+  const z = lerp(1.15, 1, E.out3(seg(lt, 0, 1.5)));
+  ctx.save(); ctx.translate(W / 2, 700); ctx.scale(z, z); ctx.rotate(lerp(.03, 0, E.out3(seg(lt, 0, 1.5)))); ctx.translate(-W / 2, -700);
+  // search bar
+  ctx.fillStyle = '#F4ECD8'; ctx.strokeStyle = INK; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.roundRect(120, 410, 840, 96, 48); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.arc(185, 456, 20, 0, 7); ctx.stroke(); wob(199, 470, 216, 487, 3, 0);
+  ctx.font = 'italic 600 48px "EB Garamond"'; ctx.fillStyle = INK; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(typed + (Math.floor(lt * 3) % 2 && lt < 2 ? '|' : ''), 240, 458);
+  // results reorder by relevance
+  const sort = E.io3(seg(lt, 2.4, 3.6));
+  RES.forEach((r, i) => {
+    const appear = E.out3(seg(lt, 1.8 + i * .12, 2.3 + i * .12));
+    if (appear <= 0) return;
+    const y = lerp(540 + i * 128, 540 + (r.r - 1) * 128, sort);
+    ctx.save(); ctx.globalAlpha = appear; ctx.translate(lerp(60, 0, appear), 0);
+    ctx.fillStyle = r.r <= 2 && sort > .5 ? '#F7EFDA' : 'rgba(244,236,216,.7)';
+    ctx.fillRect(120, y, 840, 108); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.strokeRect(120, y, 840, 108);
+    ctx.fillStyle = RED; ctx.font = '40px "IM Fell English SC"'; ctx.fillText(String(Math.round(lerp(i + 1, r.r, sort))), 150, y + 54);
+    ctx.fillStyle = INK; ctx.font = 'italic 700 38px "EB Garamond"'; ctx.fillText(r.t, 200, y + 38);
+    ctx.font = 'italic 500 30px "EB Garamond"'; ctx.fillStyle = '#5A4A38'; ctx.fillText(r.s, 200, y + 78);
+    ctx.restore();
+  });
+  ctx.restore();
+  const lab = seg(lt, 3.8, 4.4);
+  if (lab > 0) {
+    ctx.save(); ctx.globalAlpha = lab; ctx.font = 'italic 600 32px "EB Garamond"'; ctx.textAlign = 'center'; ctx.fillStyle = INK;
+    const tags = ['pertinenza', 'qualità', 'lingua', 'posizione'];
+    tags.forEach((tg, i) => {
+      const x = 205 + i * 223, y = 1100;
+      ctx.strokeStyle = RED; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y, 100, 30, 0, 0, 7); ctx.stroke();
+      ctx.fillText(tg, x, y + 2);
+    });
+    ctx.font = 'italic 500 24px "EB Garamond"'; ctx.fillStyle = '#6B5A45'; ctx.textAlign = 'right'; ctx.fillText('(risultati di esempio)', 960, 385);
+    ctx.restore();
+  }
+}
+
+function sceneHook(lt) { // 0..4: a lone page in an empty plate, then the camera dives in
+  const push = E.in3(seg(lt, 3.2, 4));
+  ctx.save(); ctx.translate(540, 760); ctx.scale(1 + push * 2.5, 1 + push * 2.5); ctx.rotate(Math.sin(lt * 1.3) * .03);
+  const bob = Math.sin(lt * 2.2) * 10;
+  ctx.strokeStyle = 'rgba(42,29,18,.35)'; ctx.setLineDash([6, 12]); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(0, 0, 300 + Math.sin(lt * 1.5) * 6, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+  page(0, bob, 300, 400, { seed: 9, rot: -.04 });
+  // question marks orbit
+  ctx.font = 'italic 700 90px "EB Garamond"'; ctx.fillStyle = RED; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let i = 0; i < 3; i++) {
+    const a = lt * .9 + i * 2.1, op = seg(lt, .6 + i * .3, 1 + i * .3);
+    ctx.globalAlpha = op; ctx.fillText('?', Math.cos(a) * 330, Math.sin(a) * 300);
+  }
+  ctx.globalAlpha = 1; ctx.restore();
+  label(540 + 150, 760 - 120 + bob, 760, 480, 'A', 'il tuo sito', seg(lt, .8, 1.4) * (1 - push), 34);
+}
+
+function draw(i, lt) {
+  ctx.drawImage(paper, 0, 0);
+  ctx.save(); ctx.beginPath(); ctx.rect(62, 345, 956, 820); ctx.clip();
+  if (i === 0) sceneHook(lt);
+  else if (i === 1) sceneCrawl(lt);
+  else if (i === 2) sceneIndex(lt);
+  else if (i === 3) sceneZoom(lt);
+  else if (i === 4) sceneServe(lt);
+  ctx.restore();
+  if (i <= 4) { ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.strokeRect(62, 345, 956, 820); }
+}
+
+const LAYERS = ['hook', 'crawl', 'index', 'zoom', 'serve', 'tipsL', 'follow', 'cta'];
+const HEADS = [['Tavola I', 'Anatomia di una ricerca'], ['Fig. 1', 'Araneus googlensis'], ['Fig. 2', "L'archivio"], ['Fig. 3', 'Scala reale'],
+  ['Fig. 4', 'La risposta'], ['Tavola II', 'Cure consigliate'], ['Tavola III', 'Nota bene'], ['', '']];
+
+window.renderAt = function (t) {
+  t = clamp(t, 0, window.DURATION - 1e-3);
+  let i = 0; while (i < S.length - 2 && t >= S[i + 1]) i++;
+  const lt = t - S[i];
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+  draw(i, lt);
+  // page-turn wipe from the previous scene (not into the zoom, which continues the drawer shot)
+  const wipe = i > 0 && i !== 3 && i < 7 ? seg(lt, 0, .5) : 1;
+  if (wipe < 1) {
+    const e = E.io3(wipe), x = W * (1 - e);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, x, H); ctx.clip(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    draw(i - 1, S[i] - S[i - 1] - .001); ctx.restore();
+    const g = ctx.createLinearGradient(x - 60, 0, x, 0); g.addColorStop(0, 'rgba(60,35,15,0)'); g.addColorStop(1, 'rgba(60,35,15,.35)');
+    ctx.fillStyle = g; ctx.fillRect(x - 60, 0, 60, H);
+  }
+  // text layers
+  LAYERS.forEach((id, k) => {
+    const el = $(id);
+    if (k !== i) { el.style.opacity = 0; return; }
+    const dur = S[k + 1] - S[k];
+    const inn = k === 7 ? seg(lt, 0, .5) : seg(lt, .35, .8), out = k === 7 ? 1 : 1 - seg(lt, dur - .25, dur);
+    el.style.opacity = inn * out;
+    el.style.transform = `translateY(${(1 - E.out3(inn)) * 30}px)`;
+  });
+  if (i === 5) ['t1', 't2', 't3'].forEach((id, j) => {
+    const p = E.out3(seg(lt, .6 + j * .55, 1.1 + j * .55));
+    css(id, { opacity: p, transform: `translateX(${(1 - p) * -60}px)` });
+  });
+  if (i === 5) css('note', { opacity: seg(lt, 2.9, 3.4), transform: `rotate(${lerp(-4, -1.2, E.back(seg(lt, 2.9, 3.4)))}deg) scale(${lerp(1.2, 1, E.back(seg(lt, 2.9, 3.4)))})` });
+  if (i === 3) {
+    const zp = seg(lt, .4, 5.6);
+    const txt = zp < .3 ? ['1 pagina', 'la tua, in un cassetto'] : zp < .62 ? ['milioni di pagine', 'e continua…'] : ['centinaia di miliardi', 'di pagine · oltre 100 milioni di GB'];
+    $('zn').textContent = txt[0]; $('zu').textContent = txt[1];
+    $('zs').style.opacity = seg(zp, .62, .75);
+    $('zn').style.transform = `scale(${1 + .08 * Math.sin(seg(zp, .62, .7) * Math.PI)})`;
+  }
+  if (i === 6) {
+    ctx.save(); ctx.translate(540, 1300); ctx.rotate(Math.sin(lt * 2) * .05); spider(0, 0, 1.3, lt * .2); ctx.restore();
+    ctx.save(); ctx.translate(540, 470); ctx.strokeStyle = RED; ctx.lineWidth = 4;
+    const p = E.back(seg(lt, .3, .8)); ctx.scale(p, p);
+    ctx.beginPath(); ctx.moveTo(-40, -60); ctx.lineTo(40, -60); ctx.lineTo(40, 60); ctx.lineTo(0, 30); ctx.lineTo(-40, 60); ctx.closePath(); ctx.stroke();
+    ctx.restore();
+  }
+  $('head').style.opacity = i === 7 ? 0 : 1;
+  $('hl').textContent = HEADS[i][0]; $('hr').textContent = HEADS[i][1];
+  if (i === 7) { // CTA: logo dot pulses, lines draw in
+    const p = E.out3(seg(lt, .3, 1.1));
+    document.querySelector('#cta .frame').style.clipPath = `inset(0 ${100 - p * 100}% 0 0)`;
+    document.querySelector('#cta .dot').style.transform = `translateY(-8px) scale(${1 + .25 * Math.max(0, Math.sin((lt - 1) * 5)) * seg(lt, 1, 1.3)})`;
+  }
+};
+window.renderAt(0);
+</script>
+</body></html>

@@ -1,0 +1,83 @@
+{
+  "slug": "neuralis",
+  "name": "Neuralis Studio",
+  "language": "it",
+  "brandMode": "cta-only",
+  "brand": {
+    "colors": {
+      "bg": "#0F1110",
+      "fg": "#E2E8E4",
+      "accent": "#C5FF4D",
+      "line": "#2D3230"
+    },
+    "fonts": {
+      "display": "Instrument Serif (italic)",
+      "body": "Inter Tight",
+      "mono": "JetBrains Mono"
+    },
+    "logo": "punto lime + \"Neuralis\" in Instrument Serif corsivo + \"/STUDIO\" in JetBrains Mono (vedi direzione-artistica.md)",
+    "tone": "chiaro, utile, curioso, con un filo di ironia; si dà del tu"
+  },
+  "contacts": {
+    "company": "Neuralis Studio",
+    "city": "Torino",
+    "email": "infoneuralisai@gmail.com",
+    "phone": "+39 391 178 7425",
+    "website": "neuralisai.net",
+    "instagram": "@neuralcore.studio"
+  },
+  "topics": [
+    "notizie utili sull'intelligenza artificiale",
+    "come funzionano davvero gli strumenti AI",
+    "siti web: errori, consigli, come funzionano",
+    "contenuti creati con l'AI: cosa si può fare e come",
+    "automazioni per piccole attività"
+  ],
+  "avoid": [
+    "promesse di risultati garantiti",
+    "affermazioni non verificabili o notizie non confermate",
+    "politica",
+    "citazioni o studi inventati",
+    "lo stile grafico dell'agenzia dentro il reel (solo nella scena finale)"
+  ],
+  "cta": {
+    "text": "Vuoi portare l'AI nella tua attività?",
+    "sub": "Siti web + automazioni AI su misura · link in bio"
+  },
+  "schedule": {
+    "timezone": "Europe/Rome",
+    "reel": {
+      "days": "daily",
+      "time": "12:00"
+    },
+    "post": {
+      "days": [],
+      "time": "18:30"
+    }
+  },
+  "volume": {
+    "reelsPerMonth": 30,
+    "postsPerMonth": 0
+  },
+  "hashtags": {
+    "max": 5,
+    "pool": [
+      "#intelligenzaartificiale",
+      "#ai",
+      "#chatgpt",
+      "#sitiweb",
+      "#webdesign",
+      "#automazione",
+      "#marketingdigitale",
+      "#contenutiai",
+      "#imprenditori",
+      "#torino"
+    ]
+  },
+  "secrets": {
+    "igUserId": "IG_USER_ID (profilo proprio: chiavi senza suffisso)",
+    "igToken": "network secret Bearer su graph.instagram.com (oppure IG_ACCESS_TOKEN)"
+  },
+  "artDirection": "clients/neuralis/direzione-artistica.md",
+  "calendar": "clients/neuralis/calendario.md"
+}
