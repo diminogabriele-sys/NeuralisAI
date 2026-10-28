@@ -2,7 +2,7 @@
   "slug": "neuralis",
   "name": "Neuralis Studio",
   "language": "it",
-  "brandMode": "cta-only",
+  "brandMode": "name-only",
   "brand": {
     "colors": {
       "bg": "#0F1110",
@@ -38,7 +38,7 @@
     "affermazioni non verificabili o notizie non confermate",
     "politica",
     "citazioni o studi inventati",
-    "lo stile grafico dell'agenzia dentro il reel (solo nella scena finale)"
+    "lo stile grafico dell'agenzia dentro il reel, anche nella scena finale (CTA sempre nello stile del reel, solo il nome Neuralis Studio)"
   ],
   "cta": {
     "text": "Vuoi portare l'AI nella tua attività?",

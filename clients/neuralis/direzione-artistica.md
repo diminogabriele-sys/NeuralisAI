@@ -16,18 +16,18 @@
 
 ## 3. Identità visiva
 - **REGOLA PRINCIPALE:** i reel NON usano lo stile dell'agenzia. Ogni giorno uno stile diverso preso dalla libreria
-  `library/prompts.json`, scelto per attirare pubblico (brandMode `cta-only`).
-- **Il brand Neuralis compare solo nella scena finale (CTA):**
-  - colori: sfondo `#0F1110` · testo `#E2E8E4` · accento lime `#C5FF4D` · linee `#2D3230`
-  - font: `Instrument Serif` corsivo per "Neuralis", `Inter Tight` per i testi, `JetBrains Mono` per le etichette
-  - logo: punto pieno lime + "Neuralis" in Instrument Serif corsivo + "/STUDIO" piccolo in JetBrains Mono
-  - nella scena finale la CTA può adattarsi allo stile del reel (es. riquadro pixel, timbro a inchiostro), ma il nome resta "NeuralisAI" o "Neuralis Studio"
+  `library/prompts.json`, scelto per attirare pubblico (brandMode `name-only`).
+- **Scena finale (CTA): SEMPRE nello stile del reel** (stessi colori, font, texture e personaggi del resto del video),
+  mai la grafica scura dell'agenzia. Del brand restano solo il nome "Neuralis Studio" (o "NeuralisAI") e i testi della CTA
+  (es. cartiglio su pergamena, riquadro pixel, timbro a inchiostro).
+- Riferimento brand (solo se servono dettagli del nome, non per lo stile della scena): colori `#0F1110` · `#E2E8E4` · lime `#C5FF4D`;
+  font `Instrument Serif` corsivo, `Inter Tight`, `JetBrains Mono`.
 - **Foto/video propri:** cartella `clients/neuralis/media/` (facoltativo)
 
 ## 4. Stili di animazione
 - **Stili preferiti:** uno diverso ogni giorno dalla libreria, seguendo `calendario.md`. Esempi riusciti: explainer stile Kurzgesagt,
   pixel art, visione CCTV/HUD, tipografia cinetica, inchiostro sumi-e, stickman con movimenti naturali, oggetti 3D.
-- **Stili da NON usare:** lo stile e i colori dell'agenzia dentro il reel; lo stesso stile due volte nello stesso mese.
+- **Stili da NON usare:** lo stile e i colori dell'agenzia dentro il reel, scena finale compresa; lo stesso stile due volte nello stesso mese.
 - **Ritmo:** aggancio nei primi 3 secondi, 35–45 secondi totali, comprensibile anche senza audio.
 - **Musica:** alterna tutti i 10 generi di `tools/music.py` (house, trap, lofi, synthwave, dnb, chiptune, cinematic, funk, ambient, afro),
   scegliendo quello che si sposa con lo stile visivo del giorno. Mai lo stesso genere due giorni di fila

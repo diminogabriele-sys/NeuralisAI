@@ -4,7 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=IM+Fell+English+SC&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=block');
 /* Style: "Google Indexing" anatomical jig (library: "Animazione dell'Indicizzazione di Ricerca Google", Numa):
    a vintage anatomy plate on parchment, sepia ink drawings with lettered callouts, a playful camera and an extreme
-   zoom-out to show the scale of the index. Agency brand only in the final CTA scene. */
+   zoom-out to show the scale of the index. The final CTA stays in the plate style: only the name Neuralis Studio. */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { width: 1080px; height: 1920px; overflow: hidden; background: #E9DEC3; }
 #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: 'EB Garamond', serif; color: #2A1D12; }
@@ -36,19 +36,16 @@ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #E9DEC
 #follow { position: absolute; left: 80px; right: 80px; top: 640px; text-align: center; }
 #follow .h { font-size: 100px; }
 #follow .s { margin-top: 40px; font-size: 52px; }
-/* CTA: Neuralis brand, framed as the last plate of the atlas */
-#cta { background: #0F1110; }
-#cta .frame { position: absolute; left: 70px; right: 70px; top: 300px; bottom: 380px; border: 2px solid #2D3230; }
-#cta .lab { position: absolute; left: 110px; right: 110px; top: 340px; display: flex; justify-content: space-between;
-  font-family: 'JetBrains Mono'; font-size: 26px; letter-spacing: .18em; color: #7C8580; }
-#cta .q { position: absolute; left: 110px; right: 110px; top: 560px; font-family: 'Inter Tight'; font-weight: 600; font-size: 96px; line-height: 1.04; color: #E2E8E4; letter-spacing: -.02em; }
-#cta .q i { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; color: #C5FF4D; letter-spacing: 0; }
-#cta .sub { position: absolute; left: 110px; right: 110px; top: 1010px; font-family: 'Inter Tight'; font-size: 44px; line-height: 1.25; color: #E2E8E4; }
-#cta .logo { position: absolute; left: 110px; top: 1300px; display: flex; align-items: baseline; gap: 22px; }
-#cta .logo .dot { width: 30px; height: 30px; border-radius: 50%; background: #C5FF4D; transform: translateY(-8px); }
-#cta .logo .w { font-family: 'Instrument Serif'; font-style: italic; font-size: 120px; color: #E2E8E4; line-height: 1; }
-#cta .logo .m { font-family: 'JetBrains Mono'; font-size: 30px; letter-spacing: .2em; color: #7C8580; }
-#cta .bio { position: absolute; left: 110px; top: 1470px; font-family: 'JetBrains Mono'; font-size: 30px; letter-spacing: .12em; color: #C5FF4D; }
+/* CTA: the last plate of the atlas, same parchment style; only the name Neuralis Studio */
+#cta .q { position: absolute; left: 80px; right: 80px; top: 420px; text-align: center; font-size: 92px; font-weight: 700; line-height: 1.04; }
+#cta .q i { color: #8E2A1C; font-weight: 600; }
+#cta .sub { position: absolute; left: 80px; right: 80px; top: 680px; text-align: center; font-size: 48px; font-style: italic; font-weight: 500; }
+#cta .cart { position: absolute; left: 150px; right: 150px; top: 860px; padding: 40px 30px 36px; text-align: center; background: rgba(243,235,215,.92);
+  border: 3px solid #2A1D12; outline: 2px solid #2A1D12; outline-offset: 8px; }
+#cta .cart .k { font-family: 'IM Fell English SC'; font-size: 30px; letter-spacing: .16em; color: #8E2A1C; }
+#cta .cart .w { font-size: 118px; font-style: italic; font-weight: 600; line-height: 1.05; margin-top: 6px; }
+#cta .cart .m { font-family: 'IM Fell English SC'; font-size: 40px; letter-spacing: .3em; margin-top: 2px; }
+#cta .bio { position: absolute; left: 80px; right: 80px; top: 1250px; text-align: center; font-family: 'IM Fell English SC'; font-size: 52px; letter-spacing: .1em; color: #8E2A1C; }
 </style></head>
 <body><div id="stage">
 <canvas id="cv" width="1080" height="1920"></canvas>
@@ -82,11 +79,11 @@ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #E9DEC
 <div class="layer" id="follow"><div class="h">Salvalo per quando pubblichi il tuo sito</div>
   <div class="s">Segui per altre cose dell'AI e del web <b>spiegate semplice</b>.</div></div>
 
-<div class="layer" id="cta"><div class="frame"></div><div class="lab"><span>TAVOLA ULTIMA</span><span>NEURALIS / STUDIO</span></div>
+<div class="layer" id="cta">
   <div class="q">Vuoi portare <i>l'AI</i> nella tua attività?</div>
   <div class="sub">Siti web + automazioni AI su misura</div>
-  <div class="logo"><span class="dot"></span><span class="w">Neuralis</span><span class="m">/STUDIO</span></div>
-  <div class="bio">→ LINK IN BIO</div></div>
+  <div class="cart" id="cart"><div class="k">Chiedi a</div><div class="w">Neuralis</div><div class="m">Studio</div></div>
+  <div class="bio" id="bio">Link in bio ☞</div></div>
 </div>
 <script src="../../../tools/lib.js"></script>
 <script>
@@ -422,7 +419,7 @@ function draw(i, lt) {
 
 const LAYERS = ['hook', 'crawl', 'index', 'zoom', 'serve', 'tipsL', 'follow', 'cta'];
 const HEADS = [['Tavola I', 'Anatomia di una ricerca'], ['Fig. 1', 'Araneus googlensis'], ['Fig. 2', "L'archivio"], ['Fig. 3', 'Scala reale'],
-  ['Fig. 4', 'La risposta'], ['Tavola II', 'Cure consigliate'], ['Tavola III', 'Nota bene'], ['', '']];
+  ['Fig. 4', 'La risposta'], ['Tavola II', 'Cure consigliate'], ['Tavola III', 'Nota bene'], ['Tavola ultima', 'Neuralis Studio']];
 
 window.renderAt = function (t) {
   t = clamp(t, 0, window.DURATION - 1e-3);
@@ -431,7 +428,7 @@ window.renderAt = function (t) {
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
   draw(i, lt);
   // page-turn wipe from the previous scene (not into the zoom, which continues the drawer shot)
-  const wipe = i > 0 && i !== 3 && i < 7 ? seg(lt, 0, .5) : 1;
+  const wipe = i > 0 && i !== 3 ? seg(lt, 0, .5) : 1;
   if (wipe < 1) {
     const e = E.io3(wipe), x = W * (1 - e);
     ctx.save(); ctx.beginPath(); ctx.rect(0, 0, x, H); ctx.clip(); ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -444,7 +441,7 @@ window.renderAt = function (t) {
     const el = $(id);
     if (k !== i) { el.style.opacity = 0; return; }
     const dur = S[k + 1] - S[k];
-    const inn = k === 7 ? seg(lt, 0, .5) : seg(lt, .35, .8), out = k === 7 ? 1 : 1 - seg(lt, dur - .25, dur);
+    const inn = seg(lt, .35, .8), out = k === 7 ? 1 : 1 - seg(lt, dur - .25, dur);
     el.style.opacity = inn * out;
     el.style.transform = `translateY(${(1 - E.out3(inn)) * 30}px)`;
   });
@@ -467,12 +464,16 @@ window.renderAt = function (t) {
     ctx.beginPath(); ctx.moveTo(-40, -60); ctx.lineTo(40, -60); ctx.lineTo(40, 60); ctx.lineTo(0, 30); ctx.lineTo(-40, 60); ctx.closePath(); ctx.stroke();
     ctx.restore();
   }
-  $('head').style.opacity = i === 7 ? 0 : 1;
   $('hl').textContent = HEADS[i][0]; $('hr').textContent = HEADS[i][1];
-  if (i === 7) { // CTA: logo dot pulses, lines draw in
-    const p = E.out3(seg(lt, .3, 1.1));
-    document.querySelector('#cta .frame').style.clipPath = `inset(0 ${100 - p * 100}% 0 0)`;
-    document.querySelector('#cta .dot').style.transform = `translateY(-8px) scale(${1 + .25 * Math.max(0, Math.sin((lt - 1) * 5)) * seg(lt, 1, 1.3)})`;
+  if (i === 7) { // CTA: the cartouche is stamped in, Googlebot walks towards the link in bio
+    const st = E.back(seg(lt, .7, 1.2));
+    css('cart', { opacity: seg(lt, .7, .9), transform: `rotate(${lerp(-6, -1.5, st)}deg) scale(${lerp(1.3, 1, st)})` });
+    css('bio', { opacity: seg(lt, 1.4, 1.8) });
+    const w = E.io3(seg(lt, 1.2, 3.2));
+    ctx.save(); ctx.strokeStyle = RED; ctx.lineWidth = 3; ctx.setLineDash([10, 10]);
+    if (w > 0) wob(160, 1440, lerp(160, 760, w), 1440 - Math.sin(w * Math.PI) * 30, 41, 0);
+    ctx.restore();
+    spider(lerp(160, 760, w), 1440 - Math.sin(w * Math.PI) * 30, .9, w * 2, Math.PI / 2);
   }
 };
 window.renderAt(0);
