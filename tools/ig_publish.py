@@ -9,12 +9,14 @@ VERSION = os.environ.get('IG_GRAPH_VERSION', 'v21.0')
 
 
 class IG:
-    def __init__(self, user_id, token, host=None):
+    def __init__(self, user_id, token=None, host=None):
+        # token=None: the token is injected by the environment as an "Authorization: Bearer" header (network secret)
         self.user_id, self.token = user_id, token
-        self.host = host or os.environ.get('IG_API_HOST') or ('graph.instagram.com' if token.startswith('IG') else 'graph.facebook.com')
+        self.host = host or os.environ.get('IG_API_HOST') or ('graph.facebook.com' if token and token.startswith('EA') else 'graph.instagram.com')
 
     def _call(self, method, path, **params):
-        params['access_token'] = self.token
+        if self.token:
+            params['access_token'] = self.token
         url = f'https://{self.host}/{VERSION}/{path}'
         data = None
         if method == 'GET':

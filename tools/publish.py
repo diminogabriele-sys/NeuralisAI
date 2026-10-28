@@ -7,7 +7,7 @@
   python3 tools/publish.py --type carousel --files out/s1.jpg out/s2.jpg ... --caption-file cap.txt [--dry-run]
 
 Credentials come from the environment (never from files or chat):
-  IG_USER_ID / IG_ACCESS_TOKEN          (own profile)    or  IG_USER_ID_<SLUG> / IG_ACCESS_TOKEN_<SLUG> with --account SLUG
+  IG_USER_ID (+ IG_ACCESS_TOKEN, or the token as a network secret "Authorization: Bearer" on graph.instagram.com)    or  IG_USER_ID_<SLUG> / IG_ACCESS_TOKEN_<SLUG> with --account SLUG
   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, R2_PUBLIC_URL
 Flow: validate → upload to R2 → check public URL → publish → delete from R2 → append to the log.
 """
@@ -23,9 +23,10 @@ MAX_HASHTAGS, MAX_CAPTION = 5, 2200
 def creds(account):
     sfx = f'_{account.upper()}' if account else ''
     uid, tok = os.environ.get('IG_USER_ID' + sfx), os.environ.get('IG_ACCESS_TOKEN' + sfx)
-    if not uid or not tok:
-        raise RuntimeError(f'Mancano IG_USER_ID{sfx} e/o IG_ACCESS_TOKEN{sfx} nelle variabili d\'ambiente')
-    return uid, tok
+    if not uid:
+        raise RuntimeError(f'Manca IG_USER_ID{sfx} nelle variabili d\'ambiente')
+    # no IG_ACCESS_TOKEN: the token comes from a network secret (Authorization: Bearer header added by the environment)
+    return uid, tok or None
 
 
 def validate(kind, files, caption):
