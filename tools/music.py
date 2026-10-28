@@ -133,6 +133,13 @@ class Song:
 
     # ---- tonal ----
     def osc(self, kind, m, L, **o):
+        """Every note ends with a short fade, so cutting a sound never leaves a click."""
+        sig = self._osc(kind, m, L, **o)
+        k = min(len(sig) // 4, int(.012 * SR))
+        if k > 1: sig = sig.copy(); sig[-k:] *= np.linspace(1, 0, k)
+        return sig
+
+    def _osc(self, kind, m, L, **o):
         f = mtof(m)
         if kind == 'pad':
             x, e = adsr(L, a=o.get('a', .5), d=.5, s=.8, r=o.get('r', .8))
@@ -152,9 +159,12 @@ class Song:
             x = tt(L + .6); return (np.sin(2 * np.pi * f * x) * np.exp(-x * 6) + .35 * np.sin(2 * np.pi * 4 * f * x) * np.exp(-x * 22)) * np.minimum(x / .002, 1) * .5
         if kind == 'pluck':  # Karplus-Strong
             P = max(2, int(SR / f)); buf = self.rng.uniform(-1, 1, P); out = []; dec = o.get('dec', .994)
+            for _ in range(6): buf = .5 * (buf + np.roll(buf, 1))  # soften the excitation: a pluck, not a burst of white noise
+            buf /= np.abs(buf).max() + 1e-9
             for _ in range(int((L + .5) * SR / P) + 1):
                 out.append(buf); buf = dec * .5 * (buf + np.roll(buf, 1))
-            return np.concatenate(out) * .5
+            x = np.concatenate(out)[:int((L + .5) * SR)]
+            return x * np.minimum(np.arange(len(x)) / (.002 * SR), 1) * .5
         if kind == 'organ':
             x, e = adsr(L, a=.01, d=.05, s=.9, r=.08)
             return sum(a * np.sin(2 * np.pi * f * h * x) for h, a in ((1, 1), (2, .6), (3, .4), (4, .25))) * e * .22
@@ -377,6 +387,7 @@ def build(S, cues):
                 t = b * bar + k * B / 4
                 if S.play_on(t): S.put('bass', S.osc('pluck', S.note(S.chord(b)[0] + (7 if k % 4 == 3 else 0), 2), B / 4, dec=.985), t, .6)
         S.cfg['perc']['rev'] = .45; S.cfg['bass']['duck'] = 0
+        S.cfg['bass']['lp'] = 2200; S.cfg['chords']['lp'] = 5000; S.cfg['lead']['lp'] = 6000  # warm, no fizz from raw saws
         pad_chords('strings', 3, .7); S.melody(nb, 5, .2, 'strings', 'lead', start_bar=4, step=1, g=.6)
     elif s == 'funk':
         for b in range(nb):
