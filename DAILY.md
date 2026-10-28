@@ -10,6 +10,7 @@ Questo branch (`reel-factory`) è separato dall'app NeuralisAI: contiene solo gl
 - `tools/audio.py`: colonna sonora sintetizzata (`python3 tools/audio.py out.wav <durata> <bpm> <cue1,cue2,...>`).
 - `tools/voice.py`: voce fuori campo italiana con OpenAI (richiede `OPENAI_API_KEY`), mixata sopra la musica.
 - `tools/lib.js`: helper (seg, lerp, easing E.*, rnd, css, $).
+- `tools/publish.py`: pubblica su Instagram (reel, immagine, carosello) passando da Cloudflare R2 (`r2_upload.py`) e dall'API ufficiale (`ig_publish.py`). `--check` verifica chiavi e archivio, `--dry-run` controlla senza pubblicare.
 
 ## Regole del format
 1. Verticale 1080×1920, 35–45 s, italiano, comprensibile **senza audio** (ogni concetto scritto a schermo).
@@ -41,7 +42,13 @@ Questo branch (`reel-factory`) è separato dall'app NeuralisAI: contiene solo gl
    # senza voce: -i /tmp/aNN.wav e aggiungi -af loudnorm=I=-14:TP=-1.5:LRA=11 -ar 44100
    ```
 7. Marca il giorno ✅ nel calendario, commit (solo html, voice.json e calendario, **non** gli mp4) e push su `reel-factory`.
-8. Consegna:
+8. Pubblicazione automatica (se le chiavi `IG_*` e `R2_*` sono impostate):
+   - scrivi la didascalia completa in `days/dayNN-caption.txt` (max 5 hashtag);
+   - `python3 tools/publish.py --check` → se fallisce NON pubblicare e segnala il problema;
+   - `python3 tools/publish.py --type reel --files <out>.mp4 --caption-file days/dayNN-caption.txt --log publish-log.json`;
+   - riporta il permalink nella consegna e fai commit di `publish-log.json` e della didascalia.
+   Senza chiavi: salta questo passaggio e consegna il video con la didascalia da incollare.
+9. Consegna:
    - via **Gmail** (`send_message`) a diminogabriele@gmail.com, oggetto `Reel del giorno NN — <tema>`, mp4 in allegato
      (base64, mimeType `video/mp4`, deve restare sotto 25 MB; se è più grande ricodifica con `-crf 23`),
      nel corpo: stile usato, didascalia completa pronta da incollare (gancio nella prima riga, 8–15 righe che riassumono
@@ -50,4 +57,4 @@ Questo branch (`reel-factory`) è separato dall'app NeuralisAI: contiene solo gl
      (es. numeri di esempio da verificare);
    - e anche come file nella sessione.
    Se qualcosa fallisce, l'email deve dirlo chiaramente.
-8. Quando il calendario finisce, aggiungi altri 30 giorni scegliendo stili non ancora usati dalla libreria.
+10. Quando il calendario finisce, aggiungi altri 30 giorni scegliendo stili non ancora usati dalla libreria.

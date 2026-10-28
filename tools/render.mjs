@@ -9,9 +9,11 @@ const [, , html, out, fpsArg, flag, stillArg] = process.argv;
 const fps = Number(fpsArg || 30);
 const blur = Number(process.env.BLUR || 1);
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
+const page = await browser.newPage({ viewport: { width: Number(process.env.WIDTH || 1080), height: Number(process.env.HEIGHT || 1920) } });
 const [file, query] = html.split('?');
 await page.goto('file://' + path.resolve(file) + (query ? '?' + query : ''));
+// pages may build their scene asynchronously (ES modules, CDN libraries): wait until they expose the API
+await page.waitForFunction(() => typeof window.renderAt === 'function' && window.DURATION > 0, null, { timeout: 60000 });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(500);
 const dur = await page.evaluate(() => window.DURATION);
