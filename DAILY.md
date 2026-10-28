@@ -7,7 +7,9 @@ Questo branch (`reel-factory`) è separato dall'app NeuralisAI: contiene solo gl
 - `library/prompts.json`: le due librerie complete (YouMind Opus 5.5 + AI × Leaders), 533 prompt. Usale come riferimento di stile.
 - `days/dayNN-<stile>-<tema>.html`: un reel per file. Espone `window.DURATION` e `window.renderAt(t)`, funzione pura del tempo (niente animazioni CSS, niente timer).
 - `tools/render.mjs`: renderizza con Playwright → ffmpeg. `BLUR=3` = motion blur reale (3 sottofotogrammi fusi).
-- `tools/audio.py`: colonna sonora sintetizzata (`python3 tools/audio.py out.wav <durata> <bpm> <cue1,cue2,...>`).
+- `tools/music.py`: colonna sonora sintetizzata in 10 generi (house, trap, lofi, synthwave, dnb, chiptune, cinematic, funk, ambient, afro),
+  con tonalità, accordi e melodia diversi a ogni run. Con `--style auto --log library/music-log.json` sceglie un genere
+  non usato negli ultimi 6 reel. `tools/audio.py` resta solo per compatibilità: non usarlo più.
 - `tools/voice.py`: voce fuori campo italiana con OpenAI (richiede `OPENAI_API_KEY`), mixata sopra la musica.
 - `tools/lib.js`: helper (seg, lerp, easing E.*, rnd, css, $).
 - `tools/publish.py`: pubblica su Instagram (reel, immagine, carosello) passando da Cloudflare R2 (`r2_upload.py`) e dall'API ufficiale (`ig_publish.py`). `--check` verifica chiavi e archivio, `--dry-run` controlla senza pubblicare.
@@ -35,7 +37,8 @@ Questo branch (`reel-factory`) è separato dall'app NeuralisAI: contiene solo gl
    Senza chiave: solo musica, e segnalalo nell'email.
 6. Render finale:
    ```
-   python3 tools/audio.py /tmp/aNN.wav <DURATION> <bpm> <inizi-scene>
+   python3 tools/music.py /tmp/aNN.wav <DURATION> --style auto --log library/music-log.json --cues <inizi-scene>
+   # scegli tu il genere (--style ...) se uno si sposa meglio con lo stile visivo del giorno; mai lo stesso due giorni di fila
    python3 tools/voice.py days/dayNN-voice.json /tmp/aNN.wav /tmp/aNN-vo.wav      # se c'è la chiave
    BLUR=3 node tools/render.mjs days/dayNN.html /tmp/dNN-silent.mp4 30
    ffmpeg -y -i /tmp/dNN-silent.mp4 -i /tmp/aNN-vo.wav -c:v copy -c:a aac -b:a 192k -shortest <out>.mp4
