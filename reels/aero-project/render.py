@@ -586,7 +586,7 @@ def sc_full(ctx, lf, M):
     words = ['PROGETTATA.', 'STAMPATA.', 'MONTATA.']
     for i, w_ in enumerate(words):
         col = (255, 255, 255) if i < 2 else (64, 230, 255)
-        text(ctx, w_, 64, 236 + i * 118, F_HEAD, 116, ramp(lf, 4 + 7 * i, 14 + 7 * i), col)
+        text(ctx, w_, 64, 236 + i * 118, F_HEAD, 116, ramp(lf, 7.5 * i, 8 + 7.5 * i), col)
     sub(ctx, lf, 'Prossimo step: dati in pista.', 'Il beneficio si misura, non si immagina.', start=32)
     # end card
     e = ramp(lf, 70, 82)
