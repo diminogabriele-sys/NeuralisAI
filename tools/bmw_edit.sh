@@ -15,15 +15,16 @@ ENC="-c:v libx264 -preset slow -tune film -crf 14 -pix_fmt yuv420p"
 MATTE="curves=r='0/0.07 0.5/0.47 1/0.9':g='0/0.08 0.5/0.49 1/0.91':b='0/0.085 0.5/0.49 1/0.9',eq=saturation=0.5:contrast=1.05"
 LIFT_D="hqdn3d=4:3:8:6,curves=master='0/0 0.065/0.03 0.11/0.17 0.25/0.50 0.5/0.76 0.8/0.93 1/1'"
 LIFT_A="hqdn3d=2:2:4:4,curves=master='0/0 0.1/0.06 0.3/0.33 0.6/0.68 1/1'"
-SHARP="cas=strength=0.55,unsharp=5:5:0.7:5:5:0"
+SHARP="cas=strength=0.7,unsharp=5:5:0.9:5:5:0"
 # nome:inizio:durata sorgente:velocità:durata output:fade in:fade out
 SHOTS=${SHOTS:-"A:0.20:2.10:1:2.07:0.5:0.15 B:3.45:1.17:0.6:1.95:0.15:0.15 C:5.50:1.95:1:1.95:0.15:0.15 D:7.75:2.20:1.3:1.70:0.15:0.4 E:11.75:1.95:1:1.95:0.3:0.15 F:15.55:1.37:0.4:3.43:0.2:1.2"}
 : > list.txt
 for s in $SHOTS; do IFS=: read n a sd sp od fi fo <<< "$s"
   lift=$LIFT_D; [ $n = A ] && lift=$LIFT_A
   echo "Inquadratura $n…"
-  # 1) velocità + interpolazione di movimento a 48 fps (un solo passaggio, file intermedio quasi senza perdite)
-  ffmpeg -y -v error -ss $a -t $sd -i "$F" -an -vf "setpts=(PTS-STARTPTS)/$sp,$MI" -c:v libx264 -preset veryfast -crf 8 i_$n.mp4
+  # 1) velocità + interpolazione di movimento a 48 fps (un solo passaggio, file intermedio quasi senza perdite);
+  #    0.2 s di sorgente in più così ogni inquadratura ha tutti i fotogrammi e i tagli restano sulle battute
+  ffmpeg -y -v error -ss $a -t $(echo "$sd+0.2"|bc) -i "$F" -an -vf "setpts=(PTS-STARTPTS)/$sp,$MI" -c:v libx264 -preset veryfast -crf 8 i_$n.mp4
   # 2) stabilizzazione sull'interpolato
   ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabdetect=shakiness=6:accuracy=15:result=$n.trf" -f null -
   # 3) grade, push-in in 4K riscalato (movimento sub-pixel), nitidezza, fade
