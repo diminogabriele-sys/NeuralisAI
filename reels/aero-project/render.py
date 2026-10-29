@@ -490,30 +490,40 @@ def sc_lean(ctx, lf, M, th, P, s):
         ctx.arc(P[0], P[1], 170, -math.pi / 2 - math.radians(th), -math.pi / 2); ctx.stroke()
         ctx.set_dash([10, 8]); ctx.set_source_rgba(1, 1, 1, 0.45)
         ctx.move_to(P[0], P[1]); ctx.line_to(P[0], P[1] - 260); ctx.stroke(); ctx.set_dash([])
-    # wings force vectors (fixed to bike frame)
-    wp = ramp(lf, 4, 18)
-    Lw = 190 * eo(wp)
-    for (bx, by) in [(240, 760), (860, 760)]:
+    # corner sidepods: force vectors fixed to the bike frame, mostly lateral when upright.
+    # In lean the inner one turns towards vertical and works close to the asphalt (ground effect).
+    sp = ramp(lf, 4, 18)
+    gpw = clamp((th - 12) / 36.0)
+    sa = math.radians(70)
+    for side, (bx, by) in ((-1, (240, 760)), (1, (860, 760))):
         x, y = bike_pt(M, bx, by)
-        if wp > 0:
-            radial(ctx, x, y, 60, HOT, 0.35 * wp)
-            arrow(ctx, x, y, x + down_b[0] * Lw, y + down_b[1] * Lw, HOT, 8, 1.0, 32)
-            if th > 3:
-                vy = Lw * c
-                a = clamp(th / 12.0)
-                arrow(ctx, x, y, x, y + vy, (1, 1, 1), 3.5, 0.85 * a, 20, glow=False, dash=[12, 9])
-                ctx.set_dash([4, 6]); ctx.set_source_rgba(1, 1, 1, 0.4 * a); ctx.set_line_width(2)
-                ctx.move_to(x, y + vy); ctx.line_to(x + down_b[0] * Lw, y + down_b[1] * Lw); ctx.stroke(); ctx.set_dash([])
+        if sp <= 0:
+            continue
+        vb = (side * math.sin(sa), math.cos(sa))
+        v = (c * vb[0] + sn * vb[1], -sn * vb[0] + c * vb[1])
+        if side < 0:
+            L = (110 + 110 * eo(gpw)) * eo(sp); a = 1.0
+            if v[1] > 0.1:
+                L = min(L, (P[1] - 14 - y) / v[1])
+        else:
+            L = 110 * (1 - 0.45 * gpw) * eo(sp); a = 1 - 0.7 * gpw
+        radial(ctx, x, y, 60, HOT, 0.35 * sp * a)
+        rgba(ctx, HOT, a); ctx.arc(x, y, 7, 0, 2 * math.pi); ctx.fill()
+        arrow(ctx, x, y, x + v[0] * L, y + v[1] * L, HOT, 8, a, 32)
+        if side < 0 and th > 3:
+            vy = L * v[1]
+            k = clamp(th / 12.0)
+            arrow(ctx, x, y, x, y + vy, (1, 1, 1), 3.5, 0.85 * k, 20, glow=False, dash=[12, 9])
+            ctx.set_dash([4, 6]); ctx.set_source_rgba(1, 1, 1, 0.4 * k); ctx.set_line_width(2)
+            ctx.move_to(x, y + vy); ctx.line_to(x + v[0] * L, y + v[1] * L); ctx.stroke(); ctx.set_dash([])
     lx, ly = bike_pt(M, 860, 760)
-    text(ctx, 'ALI', lx + 28, ly - 60, F_LAB, 30, ramp(lf, 10, 22), (255, 120, 70), 0.16)
-    # inner lower appendix: ground effect in the gap
-    ax_, ay_ = bike_pt(M, 310, 1010)
-    gpw = clamp((th - 18) / 30.0)
+    text(ctx, 'SIDEPOD', lx + 28, ly - 60, F_LAB, 30, ramp(lf, 10, 22), (255, 120, 70), 0.16)
+    # inner sidepod: ground effect in the gap with the asphalt
+    ax_, ay_ = bike_pt(M, 240, 760)
     if gpw > 0:
         gap_y = (ay_ + P[1]) / 2
         pulse = 0.85 + 0.15 * math.sin(lf * 0.3)
         radial(ctx, ax_, gap_y + 10, 230, (0.15, 0.45, 1.0), 0.55 * gpw * pulse)
-        # compressed fast streaks in the gap
         ctx.set_line_cap(cairo.LINE_CAP_ROUND)
         for k in range(9):
             q = ((lf * 0.07) + k / 9.0) % 1.0
@@ -522,44 +532,36 @@ def sc_lean(ctx, lf, M, th, P, s):
             ctx.set_source_rgba(0.75, 0.95, 1, 0.8 * gpw * math.sin(q * math.pi))
             ctx.set_line_width(3)
             ctx.move_to(xx0, yv); ctx.line_to(xx0 + 70, yv); ctx.stroke()
-        La = 150 * eo(gpw)
-        arrow(ctx, ax_ + 40, ay_ - 150, ax_ + 40, ay_ - 150 + La, HOT, 8, 1.0, 30)
-        text(ctx, 'EFFETTO SUOLO', 72, P[1] - 250 - 10, F_LAB, 30, ramp(lf, 70, 84), (120, 190, 255), 0.16)
-        text(ctx, 'APPENDICE LATO INTERNO', 72, P[1] - 210 - 10, F_LAB, 24, ramp(lf, 74, 88), (200, 210, 222), 0.14)
+        text(ctx, 'EFFETTO SUOLO', 72, P[1] + 30, F_LAB, 30, ramp(lf, 70, 84), (120, 190, 255), 0.16)
+        text(ctx, 'SIDEPOD LATO INTERNO', 72, P[1] + 72, F_LAB, 24, ramp(lf, 74, 88), (200, 210, 222), 0.14)
     # angle readout
     rp = ramp(lf, 12, 24)
     text(ctx, 'ANGOLO DI PIEGA', 72, 560, F_LAB, 26, rp, (200, 210, 222), 0.18)
     if rp > 0:
         text(ctx, f'{int(round(th)):02d}°', 64, 596, F_HEAD, 150, 1.0, (255, 255, 255), 0.0, alpha=eo(rp))
-    # qualitative chart
+    # qualitative chart: vertical load from the inner sidepod vs lean
     cp = ramp(lf, 84, 100)
     if cp > 0:
         x0, y0, cw, ch = 620, 640, 390, 260
         ctx.set_source_rgba(0.02, 0.03, 0.05, 0.55 * cp); ctx.rectangle(x0 - 24, y0 - 92, cw + 48, ch + 150); ctx.fill()
         text(ctx, 'CARICO VERTICALE', x0, y0 - 78, F_LAB, 24, cp, (255, 255, 255), 0.16)
-        text(ctx, 'schema qualitativo', x0, y0 - 44, F_BODY, 22, cp, (150, 160, 175))
+        text(ctx, 'sidepod · schema qualitativo', x0, y0 - 44, F_BODY, 22, cp, (150, 160, 175))
         ctx.set_source_rgba(1, 1, 1, 0.35 * cp); ctx.set_line_width(2)
         ctx.move_to(x0, y0); ctx.line_to(x0, y0 + ch); ctx.line_to(x0 + cw, y0 + ch); ctx.stroke()
         text(ctx, '0°', x0 - 6, y0 + ch + 8, F_LAB, 20, cp, (150, 160, 175))
         text(ctx, '50°', x0 + cw, y0 + ch + 8, F_LAB, 20, cp, (150, 160, 175), align='r')
         th_s = np.linspace(0, 50, 60)
-        wing = np.cos(np.radians(th_s))
-        app = 0.5 * np.clip((th_s - 18) / 30.0, 0, 1) ** 1.4
-        tot = wing + app
+        r_ = np.radians(th_s)
+        ge = np.clip((th_s - 12) / 36.0, 0, 1)
+        side_v = (np.sin(sa) * np.sin(r_) + np.cos(sa) * np.cos(r_)) * (1 + ge * ge * (3 - 2 * ge))
         sx = lambda t: x0 + t / 50.0 * cw
-        sy = lambda v: y0 + ch - v / 1.25 * ch
+        sy = lambda v: y0 + ch - v / 2.1 * ch
         dp = eo(ramp(lf, 88, 120))
         m = max(2, int(60 * dp))
-        for arr, col, dash, lab in ((wing, HOT, None, 'ALI'), (app, (0.4, 0.7, 1.0), None, 'APPENDICI'), (tot, (1, 1, 1), [8, 6], 'TOTALE')):
-            pts = [(sx(th_s[i]), sy(arr[i])) for i in range(m)]
-            if dash:
-                ctx.set_dash(dash)
-            glow_line(ctx, pts, col, 3.5, cp, glow=dash is None)
-            ctx.set_dash([])
-        lg = ramp(lf, 110, 122)
-        text(ctx, 'ALI', x0 + 12, y0 + 72, F_LAB, 20, lg, (255, 120, 70), 0.14)
-        text(ctx, 'APPENDICI', x0 + cw - 10, y0 + ch - 70, F_LAB, 20, lg, (120, 190, 255), 0.14, align='r')
-        text(ctx, 'TOTALE', x0 + 12, y0 - 2, F_LAB, 20, lg, (255, 255, 255), 0.14)
+        glow_line(ctx, [(sx(th_s[i]), sy(side_v[i])) for i in range(m)], HOT, 3.5, cp)
+        mx = sx(min(th, 50)); ctx.set_source_rgba(1, 1, 1, 0.5 * cp); ctx.set_line_width(1.5)
+        ctx.set_dash([5, 5]); ctx.move_to(mx, y0); ctx.line_to(mx, y0 + ch); ctx.stroke(); ctx.set_dash([])
+        text(ctx, 'SIDEPOD INTERNO', x0 + cw - 10, y0 + 10, F_LAB, 20, ramp(lf, 110, 122), (255, 120, 70), 0.14, align='r')
     # headlines: two beats
     headline(ctx, lf, '04 — IN PIEGA', ['LA FORZA RUOTA', 'CON LA MOTO.'], start=2, size=104, out=78, col2=(255, 110, 60))
     if lf >= 80:
