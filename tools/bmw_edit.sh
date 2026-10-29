@@ -3,34 +3,37 @@
 # transizioni al nero, stabilizzazione vidstab per inquadratura.
 #   tools/bmw_edit.sh prova.mov musica.(wav|mp3|mp4) edit_bmw.mp4
 # I tempi delle inquadrature (SHOTS) sono tarati su prova.mov e sulla musica del video di riferimento.
+# Fluidità: ogni inquadratura è interpolata col movimento a 48 fps (anche i rallenty), il push-in è calcolato
+# in 4K e riscalato (niente scatti di un pixel). Nitidezza: denoise leggero, poi CAS + unsharp sulla luma.
 set -e
 F="$(realpath "$1")"; M="$(realpath "$2")"; OUT="$(realpath -m "${3:-edit_bmw.mp4}")"
 WORK=$(mktemp -d); trap 'rm -rf "$WORK"' EXIT; cd "$WORK"
-# look: ombre aperte (dettagli della carena), alte smorzate, saturazione ridotta, tinta fredda
-MATTE="curves=r='0/0.025 0.25/0.27 0.5/0.54 0.75/0.8 1/0.96':g='0/0.03 0.25/0.28 0.5/0.56 0.75/0.81 1/0.97':b='0/0.035 0.25/0.29 0.5/0.56 0.75/0.79 1/0.96',eq=saturation=0.7:contrast=1.04"
-LIFT_D="hqdn3d=7:6:9:7,curves=master='0/0 0.058/0.02 0.07/0.12 0.09/0.3 0.13/0.45 0.25/0.63 0.5/0.8 0.8/0.94 1/1'"
-LIFT_A="hqdn3d=4:3:6:5,curves=master='0/0 0.06/0.02 0.075/0.11 0.1/0.26 0.15/0.4 0.25/0.57 0.5/0.78 0.8/0.93 1/1'"
+FPS=48
+MI="minterpolate=fps=$FPS:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:me=epzs:vsbmc=1:scd=none:mb_size=16:search_param=32"
+ENC="-c:v libx264 -preset slow -tune film -crf 14 -pix_fmt yuv420p"
+# matte: neri sollevati e grigi, alte smorzate, poca saturazione, tinta fredda verde-grigia
+MATTE="curves=r='0/0.07 0.5/0.47 1/0.9':g='0/0.08 0.5/0.49 1/0.91':b='0/0.085 0.5/0.49 1/0.9',eq=saturation=0.5:contrast=1.05"
+LIFT_D="hqdn3d=4:3:8:6,curves=master='0/0 0.065/0.03 0.11/0.17 0.25/0.50 0.5/0.76 0.8/0.93 1/1'"
+LIFT_A="hqdn3d=2:2:4:4,curves=master='0/0 0.1/0.06 0.3/0.33 0.6/0.68 1/1'"
+SHARP="cas=strength=0.55,unsharp=5:5:0.7:5:5:0"
 # nome:inizio:durata sorgente:velocità:durata output:fade in:fade out
-SHOTS="A:0.40:1.66:0.8:2.07:0.5:0.15 B:3.45:1.17:0.6:1.95:0.15:0.15 C:5.65:1.56:0.8:1.95:0.15:0.15 D:7.67:1.22:0.72:1.70:0.08:0.4 E:11.85:1.56:0.8:1.95:0.3:0.15 F:15.55:1.37:0.4:3.43:0.2:1.2"
+SHOTS=${SHOTS:-"A:0.20:2.10:1:2.07:0.5:0.15 B:3.45:1.17:0.6:1.95:0.15:0.15 C:5.50:1.95:1:1.95:0.15:0.15 D:7.75:2.20:1.3:1.70:0.15:0.4 E:11.75:1.95:1:1.95:0.3:0.15 F:15.55:1.37:0.4:3.43:0.2:1.2"}
 : > list.txt
 for s in $SHOTS; do IFS=: read n a sd sp od fi fo <<< "$s"
-  # A: stabilizzazione leggera e poco crop; D (panoramica voluta verso la gomma, scritta Akrapovič sul bordo alto): niente stabilizzazione
-  lift=$LIFT_D; stab="smoothing=40:optzoom=1"; push=0.07
-  [ $n = A ] && lift=$LIFT_A
-  [ $n = A ] && { stab="smoothing=10:optzoom=0:zoom=3"; push=0.03; }
-  [ $n = D ] && { stab=""; push=0.02; }
-  # rallenty: interpolazione di movimento (fluida), prima della stabilizzazione
-  slow="setpts=(PTS-STARTPTS)/$sp"
-  [ "$(echo "$sp < 1"|bc)" = 1 ] && slow="$slow,minterpolate=fps=24:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:me=epzs:vsbmc=1:scd=none:mb_size=16:search_param=32"
-  ffmpeg -y -v error -ss $a -t $sd -i "$F" -an -vf "$slow,vidstabdetect=shakiness=8:accuracy=15:stepsize=4:result=$n.trf" -f null -
-  zoom="scale=w='trunc(1920*(1+$push*t/$od)/2)*2':h=-2:eval=frame,crop=1920:1080"
-  ffmpeg -y -v error -ss $a -t $sd -i "$F" -an -vf "$slow,${stab:+vidstabtransform=input=$n.trf:$stab:interpol=bicubic,}fps=24,$lift,$MATTE,$zoom,unsharp=7:7:0.8,vignette=PI/7,fade=t=in:st=0:d=$fi,fade=t=out:st=$(echo "$od-$fo"|bc):d=$fo,format=yuv420p" -frames:v $(printf %.0f $(echo "$od*24"|bc)) -r 24 -c:v libx264 -preset slow -crf 16 s_$n.mp4
+  lift=$LIFT_D; [ $n = A ] && lift=$LIFT_A
+  echo "Inquadratura $n…"
+  # 1) velocità + interpolazione di movimento a 48 fps (un solo passaggio, file intermedio quasi senza perdite)
+  ffmpeg -y -v error -ss $a -t $sd -i "$F" -an -vf "setpts=(PTS-STARTPTS)/$sp,$MI" -c:v libx264 -preset veryfast -crf 8 i_$n.mp4
+  # 2) stabilizzazione sull'interpolato
+  ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabdetect=shakiness=6:accuracy=15:result=$n.trf" -f null -
+  # 3) grade, push-in in 4K riscalato (movimento sub-pixel), nitidezza, fade
+  zoom="scale=w='trunc(3840*(1+0.07*t/$od)/2)*2':h=-2:eval=frame:flags=bicubic,crop=3840:2160,scale=1920:1080:flags=lanczos"
+  ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabtransform=input=$n.trf:smoothing=36:optzoom=1:interpol=bicubic,$lift,$MATTE,$zoom,$SHARP,vignette=PI/5,fade=t=in:st=0:d=$fi,fade=t=out:st=$(echo "$od-$fo"|bc):d=$fo" -frames:v $(printf %.0f $(echo "$od*$FPS"|bc)) -r $FPS $ENC s_$n.mp4
   echo "file 's_$n.mp4'" >> list.txt
   # pausa della musica (7.0-7.9 s): resta sul nero fino al colpo delle 7.92
-  [ $n = D ] && { ffmpeg -y -v error -f lavfi -i color=black:s=1920x1080:r=24 -frames:v 6 -c:v libx264 -crf 16 -pix_fmt yuv420p black.mp4; echo "file 'black.mp4'" >> list.txt; }
+  [ $n = D ] && { ffmpeg -y -v error -f lavfi -i color=black:s=1920x1080:r=$FPS -frames:v 12 $ENC black.mp4; echo "file 'black.mp4'" >> list.txt; }
 done
-# grana leggera: nasconde le bande nelle ombre aperte
-ffmpeg -y -v error -f concat -safe 0 -i list.txt -vf "noise=c0s=5:c0f=t+u,format=yuv420p" -c:v libx264 -preset slow -crf 16 video.mp4
+ffmpeg -y -v error -f concat -safe 0 -i list.txt -c copy video.mp4
 T=$(ffprobe -v error -show_entries format=duration -of csv=p=0 video.mp4)
 ffmpeg -y -v error -i video.mp4 -i "$M" -map 0:v -map 1:a:0 -c:v copy -af "atrim=0:$T,afade=t=out:st=$(echo "$T-0.8"|bc):d=0.8" -c:a aac -b:a 256k -shortest -movflags +faststart "$OUT"
 echo "Fatto: $OUT ($T s)"
