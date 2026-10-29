@@ -7,7 +7,8 @@ La cartella deve contenere 7 clip; l'ordine è quello alfabetico dei nomi, quind
   1_frontale.mp4  2_ala_luce.mp4  3_laterale.mp4  4_scarichi_gomma.mp4
   5_sidepod_luce.mp4  6_ala_fumo.mp4  7_chiusura_frontale.mp4
 
-- Formato verticale 1080x1920 a 30 fps (crop centrale), grade scuro e contrastato, vignettatura.
+- Formato orizzontale 1920x1080 a 30 fps (--verticale per 1080x1920 da Reels, crop centrale),
+  grade scuro e contrastato, vignettatura.
 - Rallenty vero sulle scene 1, 3, 7 se la clip è girata a 50/60/120 fps; con clip a 24/30 fps
   le scene restano a velocità normale (o usa --slow 0.5 per un rallenty interpolato, più lento da calcolare).
 - Tagli netti, dissolvenza solo tra la scena 3 e la 4, fade in all'inizio e fade out sul finale.
@@ -18,7 +19,7 @@ Serve solo ffmpeg nel PATH (https://ffmpeg.org/download.html).
 """
 import argparse, json, os, re, shutil, subprocess, sys, tempfile
 
-W, H, FPS = 1080, 1920, 30
+W, H, FPS = 1920, 1080, 30
 # durata finale di ogni scena (s) e se va al rallentatore
 SCENES = [(3.0, True), (2.5, False), (3.2, True), (2.6, False), (2.5, False), (2.7, False), (3.5, True)]
 XFADE = 0.7  # dissolvenza tra scena 3 e 4
@@ -76,8 +77,12 @@ def main():
     ap.add_argument('--out', default='reel_moto.mp4')
     ap.add_argument('--music', help='brano audio da usare (mp3/wav/m4a)')
     ap.add_argument('--starts', default='', help='secondo di partenza per scena, es. 1.5,,4,,,,0')
+    ap.add_argument('--verticale', action='store_true', help='1080x1920 invece di 1920x1080')
     ap.add_argument('--slow', type=float, default=1.0, help='rallenty interpolato per clip a 24/30 fps, es. 0.5')
     a = ap.parse_args()
+    global W, H
+    if a.verticale:
+        W, H = 1080, 1920
     if not shutil.which('ffmpeg') or not shutil.which('ffprobe'):
         sys.exit('ffmpeg non trovato: installalo e riapri il terminale.')
 
