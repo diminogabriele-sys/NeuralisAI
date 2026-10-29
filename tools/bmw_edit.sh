@@ -29,7 +29,8 @@ for s in $SHOTS; do IFS=: read n a sd sp od fi fo <<< "$s"
   # pausa della musica (7.0-7.9 s): resta sul nero fino al colpo delle 7.92
   [ $n = D ] && { ffmpeg -y -v error -f lavfi -i color=black:s=1920x1080:r=24 -frames:v 6 -c:v libx264 -crf 16 -pix_fmt yuv420p black.mp4; echo "file 'black.mp4'" >> list.txt; }
 done
-ffmpeg -y -v error -f concat -safe 0 -i list.txt -c copy video.mp4
+# grana leggera: nasconde le bande nelle ombre aperte
+ffmpeg -y -v error -f concat -safe 0 -i list.txt -vf "noise=c0s=5:c0f=t+u,format=yuv420p" -c:v libx264 -preset slow -crf 16 video.mp4
 T=$(ffprobe -v error -show_entries format=duration -of csv=p=0 video.mp4)
 ffmpeg -y -v error -i video.mp4 -i "$M" -map 0:v -map 1:a:0 -c:v copy -af "atrim=0:$T,afade=t=out:st=$(echo "$T-0.8"|bc):d=0.8" -c:a aac -b:a 256k -shortest -movflags +faststart "$OUT"
 echo "Fatto: $OUT ($T s)"
