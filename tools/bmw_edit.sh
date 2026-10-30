@@ -17,10 +17,12 @@ LIFT_D="hqdn3d=4:3:8:6,curves=master='0/0 0.065/0.03 0.11/0.17 0.25/0.50 0.5/0.7
 LIFT_A="hqdn3d=2:2:4:4,curves=master='0/0 0.1/0.06 0.3/0.33 0.6/0.68 1/1'"
 SHARP="cas=strength=0.7,unsharp=5:5:0.9:5:5:0"
 # nome:inizio:durata sorgente:velocità:durata output:fade in:fade out
-SHOTS=${SHOTS:-"A:0.20:2.10:1:2.07:0.5:0.15 B:3.45:1.17:0.6:1.95:0.15:0.15 C:5.50:1.95:1:1.95:0.15:0.15 D:7.75:2.20:1.3:1.70:0.15:0.4 E:11.75:1.95:1:1.95:0.3:0.15 F:15.55:1.37:0.4:3.43:0.2:1.2"}
+# la frontale (A1-A3) è spezzata in tre pezzi consecutivi molto rallentati e ripresa a metà video;
+# tagli su battute e mezze battute: 0, 2.07, 4.02, 5.0, 5.97, (nero 7.67), 7.92, 9.87, 10.85
+SHOTS=${SHOTS:-"A1:0.20:0.83:0.4:2.07:0.5:0.15 B:3.45:1.17:0.6:1.95:0.15:0.15 C:5.50:0.98:1:0.975:0.15:0.15 A2:1.03:0.39:0.4:0.975:0.15:0.15 D:7.75:2.20:1.3:1.70:0.15:0.4 E:11.75:1.95:1:1.95:0.3:0.15 A3:1.42:0.39:0.4:0.975:0.15:0.15 F:15.55:1.37:0.55:2.48:0.2:1.2"}
 : > list.txt
 for s in $SHOTS; do IFS=: read n a sd sp od fi fo <<< "$s"
-  lift=$LIFT_D; [ $n = A ] && lift=$LIFT_A
+  lift=$LIFT_D; [[ $n == A* ]] && lift=$LIFT_A
   echo "Inquadratura $n…"
   # 1) velocità + interpolazione di movimento a 48 fps (un solo passaggio, file intermedio quasi senza perdite);
   #    0.2 s di sorgente in più così ogni inquadratura ha tutti i fotogrammi e i tagli restano sulle battute
