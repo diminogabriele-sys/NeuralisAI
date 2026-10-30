@@ -9,6 +9,8 @@ set -e
 F="$(realpath "$1")"; M="$(realpath "$2")"; OUT="$(realpath -m "${3:-edit_bmw.mp4}")"
 WORK=$(mktemp -d); trap 'rm -rf "$WORK"' EXIT; cd "$WORK"
 FPS=48
+# calcolo decimale con lo zero iniziale (bc scrive ".98", che ffmpeg rifiuta)
+c() { awk "BEGIN{printf \"%.4f\", $1}"; }
 MI="minterpolate=fps=$FPS:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:me=epzs:vsbmc=1:scd=none:mb_size=16:search_param=32"
 ENC="-c:v libx264 -preset slow -tune film -crf 14 -pix_fmt yuv420p"
 # matte: neri sollevati e grigi, alte smorzate, poca saturazione, tinta fredda verde-grigia
@@ -27,12 +29,12 @@ for s in $SHOTS; do IFS=: read n a sd sp od fi fo nero <<< "$s"
   echo "Inquadratura $n…"
   # 1) velocità + interpolazione di movimento a 48 fps (un solo passaggio, file intermedio quasi senza perdite);
   #    0.2 s di sorgente in più così ogni inquadratura ha tutti i fotogrammi e i tagli restano sulle battute
-  ffmpeg -y -v error -ss $a -t $(echo "$sd+0.2"|bc) -i "$F" -an -vf "setpts=(PTS-STARTPTS)/$sp,$MI" -c:v libx264 -preset veryfast -crf 8 i_$n.mp4
+  ffmpeg -y -v error -ss $a -t $(c "$sd+0.2") -i "$F" -an -vf "setpts=(PTS-STARTPTS)/$sp,$MI" -c:v libx264 -preset veryfast -crf 8 i_$n.mp4
   # 2) stabilizzazione sull'interpolato
   ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabdetect=shakiness=6:accuracy=15:result=$n.trf" -f null -
   # 3) grade, push-in in 4K riscalato (movimento sub-pixel), nitidezza, fade
   zoom="scale=w='trunc(3840*(1+0.07*t/$od)/2)*2':h=-2:eval=frame:flags=bicubic,crop=3840:2160,scale=1920:1080:flags=lanczos"
-  ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabtransform=input=$n.trf:smoothing=36:optzoom=1:interpol=bicubic,$lift,$MATTE,$zoom,$SHARP,vignette=PI/5,fade=t=in:st=0:d=$fi,fade=t=out:st=$(echo "$od-$fo"|bc):d=$fo" -frames:v $(printf %.0f $(echo "$od*$FPS"|bc)) -r $FPS $ENC s_$n.mp4
+  ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabtransform=input=$n.trf:smoothing=36:optzoom=1:interpol=bicubic,$lift,$MATTE,$zoom,$SHARP,vignette=PI/5,fade=t=in:st=0:d=$fi,fade=t=out:st=$(c "$od-$fo"):d=$fo" -frames:v $(printf %.0f $(c "$od*$FPS")) -r $FPS $ENC s_$n.mp4
   echo "file 's_$n.mp4'" >> list.txt
   # pause della musica: resta sul nero fino al colpo successivo
   [ -n "$nero" ] && { ffmpeg -y -v error -f lavfi -i color=black:s=1920x1080:r=$FPS -frames:v $nero $ENC black_$n.mp4; echo "file 'black_$n.mp4'" >> list.txt; }
@@ -41,5 +43,5 @@ ffmpeg -y -v error -f concat -safe 0 -i list.txt -c copy video.mp4
 T=$(ffprobe -v error -show_entries format=duration -of csv=p=0 video.mp4)
 # musica allungata a ~19 s: brano fino a 11.82 s, poi ripresa da 5.97 s alla fine (13.30 s);
 # entrambi i punti sono inizi di battuta, quindi la giunta resta a tempo (e torna la pausa prima del drop)
-ffmpeg -y -v error -i video.mp4 -i "$M" -filter_complex "[1:a:0]asplit[m1][m2];[m1]atrim=0:11.82,asetpts=N/SR/TB[p1];[m2]atrim=5.97:13.30,asetpts=N/SR/TB[p2];[p1][p2]acrossfade=d=0.02:c1=tri:c2=tri,atrim=0:$T,afade=t=out:st=$(echo "$T-0.8"|bc):d=0.8[a]" -map 0:v -map "[a]" -c:v copy -c:a aac -b:a 256k -shortest -movflags +faststart "$OUT"
+ffmpeg -y -v error -i video.mp4 -i "$M" -filter_complex "[1:a:0]asplit[m1][m2];[m1]atrim=0:11.82,asetpts=N/SR/TB[p1];[m2]atrim=5.97:13.30,asetpts=N/SR/TB[p2];[p1][p2]acrossfade=d=0.02:c1=tri:c2=tri,atrim=0:$T,afade=t=out:st=$(c "$T-0.8"):d=0.8[a]" -map 0:v -map "[a]" -c:v copy -c:a aac -b:a 256k -shortest -movflags +faststart "$OUT"
 echo "Fatto: $OUT ($T s)"
