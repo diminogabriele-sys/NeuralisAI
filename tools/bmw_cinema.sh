@@ -16,7 +16,7 @@ FLASH=${FLASH:-"1.0*max(0\,1-abs(T-8.0)/0.15)+1.0*max(0\,1-abs(T-13.85)/0.15)+0.
 TITLEF=""
 if [ -n "$TITLE" ]; then
   TT=${TITLE_T:-21.9}; FONT=${FONT:-/usr/share/fonts/opentype/inter/InterDisplay-ExtraLight.otf}
-  TITLEF=",drawtext=fontfile=$FONT:text='$TITLE':fontsize=64:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2:alpha='clip((t-$TT)/0.6\\,0\\,1)'"
+  TITLEF=",drawtext=fontfile=$FONT:text='$TITLE':fontsize=${TITLE_SIZE:-96}:fontcolor=white:x=(w-text_w)/2:y=h*0.74-text_h/2:alpha='clip((t-$TT)/0.6\\,0\\,1)'"
 fi
 FC="[0:v]format=gbrp,huesaturation=saturation=0.55:colors=r+y,split=3[b][h][s];
 [h]curves=all='0/0 0.5/0 1/1',gblur=sigma=22,colorchannelmixer=rr=1.0:gg=0.42:bb=0.22[hal];

@@ -20,7 +20,7 @@ SHARP="cas=strength=0.4"
 SHOTS=${SHOTS:-"A1:9336:1.50:1.04:0.5:2.07:0.6:0.15
 B:9324:2.90:0.98:0.5:1.95:0.15:0.15
 A2:9336:2.60:0.98:0.5:1.95:0.15:0.15
-D:9360:3.00:2.61:1.6:1.63:0.1:0.4:15:r
+D:9360:5.00:0.90:0.55:1.63:0.1:0.4:15
 E1:9347:1.20:0.78:0.8:0.975:0.08:0.08
 E2:9359:1.20:0.78:0.8:0.975:0.08:0.08
 E3:9365:2.00:0.78:0.8:0.975:0.08:0.08
@@ -29,7 +29,7 @@ S1:9371:0.50:0.98:0.5:1.95:0.15:0.15
 A3:9336:4.00:0.98:0.5:1.95:0.15:0.15
 L:9357:5.60:0.95:0.6:1.58:0.15:0.5:18
 F1:9370:2.30:0.78:0.8:0.975:0.08:0.08
-F2:9361:6.00:0.78:0.8:0.975:0.08:0.08
+F2:9361:6.30:0.78:0.8:0.975:0.08:0.08
 G:9352:1.00:1.31:0.67:1.95:0.2:0.3
 H:9338:2.50:1.34:0.9:1.48:0.15:1.0"}
 : > list.txt
@@ -40,9 +40,10 @@ for s in $SHOTS; do IFS=: read n clip a sd sp od fi fo nero rev <<< "$s"
   ffmpeg -y -v error -ss $a -t $(c "$sd+0.2") -i "$DIR/DN7A$clip.MP4" -an -vf "$pre,setpts=(PTS-STARTPTS)/$sp,$MI" -c:v libx264 -preset veryfast -crf 8 i_$n.mp4
   # 2) stabilizzazione
   ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabdetect=shakiness=6:accuracy=15:result=$n.trf" -f null -
-  # 3) grade, push-in in 4K riscalato, nitidezza, fade
+  # 3) grade, push-in in 4K riscalato, nitidezza, fade (tpad: se la clip è corta tiene l'ultimo fotogramma,
+  #    così ogni inquadratura ha esattamente i suoi fotogrammi e i tagli restano sulle battute)
   zoom="scale=w='trunc(3840*(1+0.06*t/$od)/2)*2':h=-2:eval=frame:flags=bicubic,crop=3840:2160,scale=1920:1080:flags=lanczos"
-  ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabtransform=input=$n.trf:smoothing=30:optzoom=1:interpol=bicubic,$LIFT,$MATTE,$zoom,$SHARP,vignette=PI/5,fade=t=in:st=0:d=$fi,fade=t=out:st=$(c "$od-$fo"):d=$fo" -frames:v $(printf %.0f $(c "$od*$FPS")) -r $FPS $ENC s_$n.mp4
+  ffmpeg -y -v error -i i_$n.mp4 -vf "vidstabtransform=input=$n.trf:smoothing=30:optzoom=1:interpol=bicubic,tpad=stop_mode=clone:stop_duration=0.5,$LIFT,$MATTE,$zoom,$SHARP,vignette=PI/5,fade=t=in:st=0:d=$fi,fade=t=out:st=$(c "$od-$fo"):d=$fo" -frames:v $(printf %.0f $(c "$od*$FPS")) -r $FPS $ENC s_$n.mp4
   echo "file 's_$n.mp4'" >> list.txt
   [ -n "$nero" ] && { ffmpeg -y -v error -f lavfi -i color=black:s=1920x1080:r=$FPS -frames:v $nero $ENC black_$n.mp4; echo "file 'black_$n.mp4'" >> list.txt; }
 done
