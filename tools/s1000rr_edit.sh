@@ -9,7 +9,8 @@ DIR="$(realpath "$1")"; M="$(realpath "$2")"; OUT="$(realpath -m "${3:-edit_s100
 WORK=$(mktemp -d); trap 'rm -rf "$WORK"' EXIT; cd "$WORK"
 FPS=48
 c() { awk "BEGIN{printf \"%.4f\", $1}"; }
-MI="minterpolate=fps=$FPS:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:me=epzs:vsbmc=1:scd=none:mb_size=16:search_param=32"
+# ricerca del movimento ampia (96): sulle panoramiche veloci con 32 l'interpolazione falliva e il movimento andava a scatti
+MI="minterpolate=fps=$FPS:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:me=epzs:vsbmc=1:scd=none:mb_size=16:search_param=${SEARCH:-96}"
 ENC="-c:v libx264 -preset slow -tune film -crf 14 -pix_fmt yuv420p"
 MATTE="curves=r='0/0.07 0.5/0.47 1/0.9':g='0/0.08 0.5/0.49 1/0.91':b='0/0.085 0.5/0.49 1/0.9',eq=saturation=0.5:contrast=1.05"
 LIFT="hqdn3d=2:2:3:3,curves=master='0/0 0.065/0.03 0.11/0.17 0.25/0.50 0.5/0.76 0.8/0.93 1/1'"
