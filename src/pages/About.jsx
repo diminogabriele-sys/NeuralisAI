@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 

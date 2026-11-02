@@ -6,8 +6,9 @@ export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json();
-    const name = (body?.name || "").toString().slice(0, 80).trim();
-    const email = (body?.email || "").toString().slice(0, 120).trim();
+    // Name and email end up in the email subject/headers: strip line breaks.
+    const name = (body?.name || "").toString().replace(/[\r\n]+/g, " ").slice(0, 80).trim();
+    const email = (body?.email || "").toString().replace(/[\r\n]+/g, "").slice(0, 120).trim();
     const project = (body?.project || "").toString().slice(0, 2000).trim();
 
     if (!name || !email || !project) {
@@ -35,6 +36,8 @@ export default async function(req) {
 
     return Response.json({ ok: true });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    // Public endpoint: log details server-side, return a generic message.
+    console.error("submitContact failed:", error);
+    return Response.json({ error: "Invio non riuscito, riprova più tardi" }, { status: 500 });
   }
 }
