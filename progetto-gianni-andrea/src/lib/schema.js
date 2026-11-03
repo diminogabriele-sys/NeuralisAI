@@ -12,7 +12,7 @@ export function businessSchema(lang) {
     slogan: 'Orion. Beyond the Ordinary.',
     description: t.meta.home.description,
     url: new URL(path('home', lang), site.url).href,
-    logo: `${site.url}/favicon.svg`,
+    logo: `${site.url}/icon-512.png`,
     image: `${site.url}/og-image.jpg`,
     email: site.email,
     sameAs: Object.values(site.social).filter(Boolean),

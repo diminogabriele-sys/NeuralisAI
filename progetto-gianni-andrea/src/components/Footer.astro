@@ -1,5 +1,7 @@
 ---
 import Logo from './Logo.astro';
+import { Image } from 'astro:assets';
+import logoImg from '../assets/brand/logo-orion.png';
 import { dictionaries, path } from '../i18n/index.js';
 import { site } from '../config/site.js';
 interface Props { lang: string }
@@ -12,7 +14,7 @@ const home = path('home', lang);
 <footer class="footer">
   <div class="container">
     <div class="footer-top">
-      <a href={home} aria-label={t.nav.home} class="f-brand"><Logo /></a>
+      <a href={home} aria-label={t.nav.home} class="f-brand"><Logo height={76} /></a>
       <p class="f-tag">{t.footer.tagline}</p>
       <a class="btn" href={`${home}#contact`}>{t.cta}</a>
     </div>
@@ -26,13 +28,12 @@ const home = path('home', lang);
       </ul>
     </div>
   </div>
-  <p class="f-watermark" aria-hidden="true">ORION</p>
+  <div class="f-watermark" aria-hidden="true"><Image src={logoImg} alt="" width={1270} widths={[640, 1270]} sizes="90vw" loading="lazy" /></div>
 </footer>
 
 <style>
   .footer { position: relative; overflow: hidden; padding: 5rem 0 2rem; background: var(--black); border-top: 1px solid var(--line); }
   .footer-top { display: grid; gap: 1.5rem; justify-items: start; margin-bottom: 3rem; }
-  .f-brand :global(.logo) { height: 40px; }
   .f-tag { font-family: var(--font-display); font-size: 1.6rem; font-style: italic; color: var(--muted); margin: 0; }
   .footer-bottom { position: relative; z-index: 1; display: grid; gap: 1rem; padding-top: 2rem; font-size: 0.8rem; color: var(--muted); }
   .footer-bottom p { margin: 0; }
@@ -40,19 +41,15 @@ const home = path('home', lang);
   .footer-bottom a, .footer-bottom button { display: inline-block; line-height: 1.5; font-family: var(--font-body); color: var(--muted); background: none; border: 0; padding: 0.5rem 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-size: 0.8rem; }
   .footer-bottom a:hover, .footer-bottom button:hover { color: var(--gold); }
   .f-watermark {
-    margin: 2rem 0 0;
-    text-align: center;
-    font-family: var(--font-display);
-    font-size: clamp(6rem, 30vw, 22rem);
-    line-height: 0.75;
-    letter-spacing: 0.1em;
-    background: linear-gradient(180deg, rgba(201, 164, 92, 0.16), transparent 85%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    user-select: none;
+    margin: 3rem auto 0;
+    width: min(90%, 1100px);
+    opacity: 0.07;
     pointer-events: none; /* decorativa: non deve coprire i link del footer */
+    user-select: none;
+    -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 95%);
+    mask-image: linear-gradient(180deg, #000 30%, transparent 95%);
   }
+  .f-watermark :global(img) { width: 100%; height: auto; }
   @media (min-width: 900px) {
     .footer-top { grid-template-columns: auto 1fr auto; align-items: center; gap: 3rem; }
     .footer-bottom { grid-template-columns: 1fr auto; align-items: center; }

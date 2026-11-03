@@ -28,7 +28,7 @@ npm run wing         # converte models/ala.stl per la scena 3D dell'hero
 | Email, social, dominio, P.IVA | `src/config/site.js` (un solo file) |
 | Testi nelle 5 lingue (progetti, recensioni, FAQ…) | `src/i18n/it.js`, `en.js`, `es.js`, `de.js`, `fr.js` |
 | Progetti | sezione `projects.items` nei file `src/i18n/*.js` + foto `progetto-1.jpg` … `progetto-5.jpg` |
-| Logo | `src/components/Logo.astro` (sostituisci l'SVG) + `public/favicon.svg` + `public/apple-touch-icon.png` (180×180) |
+| Logo | sostituisci `models/logo-orion-originale.jpg` (logo chiaro su fondo nero) e lancia `node scripts/make-logo.mjs`: rigenera logo trasparente, favicon, icone e immagine social |
 | Foto | `src/assets/images/`: sovrascrivi i file **con lo stesso nome** (`servizio-*.jpg`, `progetto-*.jpg`, `chi-siamo.jpg`). Consigliato: almeno 1600 px di larghezza, 4:3 (laboratorio 4:5) |
 | Immagine per le condivisioni social | `public/og-image.jpg` (1200×630) |
 | Informativa privacy | testo segnaposto in `privacy` dentro ogni file `src/i18n/*.js` |
