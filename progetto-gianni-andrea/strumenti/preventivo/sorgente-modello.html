@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preventivo Orion</title>
+<style>
+/*FONTS*/
+  :root { --black:#0a0a0b; --line:rgba(201,164,92,.28); --gold:#c9a45c; --gold-light:#e6c77f; --gold-deep:#8a6a2f; --white:#f4f1ea; --muted:#a39e94; }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html { background: #2a2a2d; }
+  body { margin: 0; color: var(--white); font-family: 'Manrope', Arial, sans-serif; font-size: 9.6pt; line-height: 1.55; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: .18em; text-transform: uppercase; font-size: 7pt; }
+
+  /* barra comandi (non stampata) */
+  .toolbar { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; padding: 10px 16px; background: #141416; border-bottom: 1px solid #333; font-size: 13px; }
+  .toolbar button { font: inherit; font-weight: 600; padding: 9px 16px; border-radius: 2px; border: 1px solid var(--gold); background: transparent; color: var(--gold); cursor: pointer; }
+  .toolbar button.primary { background: var(--gold); color: var(--black); }
+  .toolbar button:hover { background: var(--gold-light); color: var(--black); }
+  .toolbar .hint { color: var(--muted); font-size: 12px; margin-left: 8px; }
+
+  .page { width: 210mm; height: 297mm; margin: 24px auto; padding: 13mm 17mm 10mm; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,.5);
+          background: radial-gradient(90mm 60mm at 100% 0%, rgba(201,164,92,.10), transparent 70%), var(--black); }
+
+  /* campi compilabili */
+  [contenteditable] { outline: none; border-radius: 2px; min-width: 2ch; }
+  [contenteditable]:empty::before { content: attr(data-ph); color: rgba(230,199,127,.45); font-style: italic; }
+  [contenteditable]:hover, [contenteditable]:focus { background: rgba(201,164,92,.08); box-shadow: 0 0 0 2px rgba(201,164,92,.18); }
+  input.cell { width: 100%; background: transparent; border: 0; color: inherit; font: inherit; text-align: right; padding: 1mm; border-radius: 2px; font-variant-numeric: tabular-nums; }
+  input.cell:hover, input.cell:focus { outline: none; background: rgba(201,164,92,.08); box-shadow: 0 0 0 2px rgba(201,164,92,.18); }
+  input.cell::placeholder { color: rgba(230,199,127,.45); }
+  input.cell::-webkit-outer-spin-button, input.cell::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input.cell[type=number] { -moz-appearance: textfield; }
+
+  header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 7mm; border-bottom: 1px solid var(--line); }
+  .logo { height: 22mm; }
+  .doc { text-align: right; }
+  .doc .mono { color: var(--gold); }
+  .doc h1 { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 34pt; line-height: 1; margin: 2.5mm 0 3mm; white-space: nowrap; }
+  .doc dl { display: grid; grid-template-columns: auto minmax(30mm, auto); gap: 1mm 5mm; margin: 0; justify-content: end; }
+  .doc dt { color: var(--muted); } .doc dd { margin: 0; text-align: right; }
+
+  .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 10mm; padding: 6mm 0; }
+  .parties .mono { color: var(--gold); margin: 0 0 2mm; }
+  .parties .name { color: var(--white); font-weight: 600; font-size: 10.5pt; margin-bottom: 1mm; }
+  .parties .sub { color: var(--muted); }
+
+  .intro { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13.5pt; margin: 0 0 5mm; line-height: 1.35; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { text-align: left; font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 6.8pt; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); padding: 0 3mm 3mm; border-bottom: 1px solid var(--gold-deep); }
+  tbody td { padding: 2.6mm 3mm; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:nth-child(odd) td { background: rgba(255,255,255,.018); }
+  .n { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15pt; color: var(--gold); width: 12mm; }
+  .desc { font-size: 10.5pt; font-weight: 500; }
+  .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  th.num { text-align: right; }
+  .qty { width: 16mm; } th.qty, td.qty input { text-align: center; }
+  .price { width: 34mm; } .amount { width: 30mm; }
+  .del { width: 6mm; padding-left: 0; padding-right: 0; }
+  .del button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 0 2px; }
+  .del button:hover { color: #f0a08f; }
+  .pv { display: none; }
+  td.qty { text-align: center; }
+  .addrow { margin-top: 3mm; border: 1px dashed var(--gold-deep); background: none; color: var(--gold); font: inherit; font-size: 8.5pt; padding: 2mm 4mm; cursor: pointer; border-radius: 2px; }
+  .addrow:hover { background: rgba(201,164,92,.08); }
+
+  .totals { display: flex; flex-direction: column; align-items: flex-end; gap: 3mm; margin-top: 5mm; }
+  .totals dl { width: 82mm; margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 2mm 6mm; align-items: center; font-variant-numeric: tabular-nums; }
+  .totals dt { color: var(--muted); } .totals dd { margin: 0; text-align: right; }
+  .vat input { width: 10mm; text-align: center; display: inline-block; }
+  .totals dl.grand { border-top: 1px solid var(--gold-deep); padding-top: 3mm; align-items: end; }
+  .totals .grand dt { color: var(--white); font-family: 'JetBrains Mono', monospace; font-size: 7.5pt; letter-spacing: .18em; text-transform: uppercase; }
+  .totals .grand dd { font-family: 'Cormorant Garamond', serif; font-size: 24pt; line-height: 1; background: linear-gradient(115deg,#8a6a2f,#e6c77f 45%,#c9a45c 60%,#8a6a2f); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  .terms { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm 10mm; margin-top: 7mm; padding-top: 5mm; border-top: 1px solid var(--line); }
+  .terms h2 { font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 7pt; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin: 0 0 1.5mm; }
+  .terms .t { color: var(--muted); font-size: 8.8pt; min-height: 1.5em; }
+
+  .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 14mm; margin-top: auto; padding-top: 9mm; }
+  .sign div { border-top: 1px solid var(--muted); padding-top: 2mm; color: var(--muted); font-size: 8pt; }
+  footer { margin-top: 7mm; padding-top: 4mm; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; color: var(--muted); }
+  footer .claim { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 11pt; color: var(--white); }
+
+  @media print {
+    html { background: var(--black); }
+    .toolbar, .addrow, .del button { display: none !important; }
+    .page { margin: 0; box-shadow: none; }
+    [contenteditable]:empty::before, input.cell::placeholder { color: transparent; }
+    [contenteditable]:not(td), input.cell { background: none !important; box-shadow: none !important; }
+    td[contenteditable] { box-shadow: none !important; }
+    tbody tr:nth-child(odd) td { background: rgba(255,255,255,.018) !important; }
+    input.cell { display: none; }
+    .pv { display: inline; }
+    tr.is-empty, .is-empty { display: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <button class="primary" type="button" id="pdf">Salva PDF / Stampa</button>
+    <button type="button" id="reset">Nuovo preventivo vuoto</button>
+    <span class="hint">Clicca sui testi in oro per compilare. Nel salvataggio scegli “Salva come PDF” e attiva “Grafica di sfondo”.</span>
+  </div>
+
+  <div class="page">
+    <header>
+      <img class="logo" src="{{LOGO}}" alt="Orion">
+      <div class="doc">
+        <div class="mono">Preventivo</div>
+        <h1>N. <span contenteditable data-f="numero" data-ph="ORN-P-2026-000"></span></h1>
+        <dl>
+          <dt>Data</dt><dd contenteditable data-f="data" data-ph="gg mese aaaa"></dd>
+          <dt>Validità</dt><dd contenteditable data-f="validita" data-ph="30 giorni"></dd>
+        </dl>
+      </div>
+    </header>
+
+    <section class="parties">
+      <div>
+        <p class="mono">Da</p>
+        <div class="name">Orion</div>
+        <div class="sub">Bespoke motorcycle design</div>
+      </div>
+      <div>
+        <p class="mono">Cliente</p>
+        <div class="name" contenteditable data-f="cliente" data-ph="Nome e cognome"></div>
+        <div class="sub" contenteditable data-f="moto" data-ph="Moto (marca, modello, anno)"></div>
+      </div>
+    </section>
+
+    <p class="intro" contenteditable data-f="intro" data-ph="Breve descrizione del lavoro (facoltativa)"></p>
+
+    <table>
+      <thead><tr><th>N.</th><th>Descrizione</th><th class="qty">Q.tà</th><th class="num price">Prezzo unitario</th><th class="num amount">Importo</th><th class="del"></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div><button class="addrow" type="button" id="add">+ Aggiungi voce</button></div>
+
+    <div class="totals">
+      <dl>
+        <dt>Imponibile</dt><dd id="sub">€ 0,00</dd>
+        <dt class="vat">IVA <input class="cell" type="number" min="0" step="1" id="vat" value="22"><span class="pv" id="vatPv"></span>%</dt><dd id="vatAmt">€ 0,00</dd>
+      </dl>
+      <dl class="grand"><dt>Totale</dt><dd id="tot">€ 0,00</dd></dl>
+    </div>
+
+    <section class="terms">
+      <div><h2>Tempi di realizzazione</h2><div class="t" contenteditable data-f="tempi" data-ph="—"></div></div>
+      <div><h2>Pagamento</h2><div class="t" contenteditable data-f="pagamento" data-ph="—"></div></div>
+      <div><h2>Validità</h2><div class="t" contenteditable data-f="validita2" data-ph="—"></div></div>
+      <div><h2>Note</h2><div class="t" contenteditable data-f="note" data-ph="—"></div></div>
+    </section>
+
+    <div class="sign"><div>Orion</div><div>Per accettazione, data e firma del cliente</div></div>
+    <footer><span class="claim">Orion. Beyond the Ordinary.</span><span class="mono" id="foot">Preventivo</span></footer>
+  </div>
+
+<script>
+  const KEY = 'orion-preventivo-bozza';
+  const rows = document.getElementById('rows');
+  const eur = (n) => '€ ' + n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const num = (v) => { const n = parseFloat(String(v).replace(',', '.')); return isFinite(n) ? n : 0; };
+
+  function addRow(d = {}) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="n"></td>
+      <td class="desc" contenteditable data-ph="Descrizione della voce"></td>
+      <td class="qty"><input class="cell" type="number" min="0" step="1" placeholder="1"><span class="pv"></span></td>
+      <td class="num price"><input class="cell" inputmode="decimal" placeholder="0,00"><span class="pv"></span></td>
+      <td class="num amount"></td>
+      <td class="del"><button type="button" title="Rimuovi voce" aria-label="Rimuovi voce">✕</button></td>`;
+    tr.children[1].textContent = d.desc || '';
+    tr.querySelector('.qty input').value = d.qty ?? '';
+    tr.querySelector('.price input').value = d.price ?? '';
+    tr.querySelector('.del button').onclick = () => { tr.remove(); update(); };
+    rows.append(tr);
+    update();
+    return tr;
+  }
+
+  function update() {
+    let sub = 0;
+    [...rows.children].forEach((tr, i) => {
+      tr.children[0].textContent = String(i + 1).padStart(2, '0');
+      const q = tr.querySelector('.qty input').value === '' ? 1 : num(tr.querySelector('.qty input').value);
+      const pRaw = tr.querySelector('.price input').value;
+      const p = num(pRaw);
+      const amount = q * p;
+      tr.children[4].textContent = pRaw === '' ? '' : eur(amount);
+      tr.querySelector('.qty .pv').textContent = pRaw === '' ? '' : String(q).replace('.', ',');
+      tr.querySelector('.price .pv').textContent = pRaw === '' ? '' : eur(p);
+      // le righe senza descrizione e senza prezzo non vengono stampate
+      tr.classList.toggle('is-empty', !tr.children[1].textContent.trim() && pRaw === '');
+      sub += amount;
+    });
+    const vat = num(document.getElementById('vat').value);
+    document.getElementById('vatPv').textContent = String(vat).replace('.', ',');
+    document.getElementById('sub').textContent = eur(sub);
+    document.getElementById('vatAmt').textContent = eur(sub * vat / 100);
+    document.getElementById('tot').textContent = eur(sub * (1 + vat / 100));
+    // nel PDF si nascondono le voci lasciate vuote (data, validità, condizioni)
+    document.querySelectorAll('.doc dd[data-f]').forEach((dd) => {
+      const empty = !dd.textContent.trim();
+      dd.classList.toggle('is-empty', empty);
+      dd.previousElementSibling.classList.toggle('is-empty', empty);
+    });
+    document.querySelectorAll('.terms > div').forEach((d) => d.classList.toggle('is-empty', !d.querySelector('.t').textContent.trim()));
+    const terms = document.querySelector('.terms');
+    terms.classList.toggle('is-empty', [...terms.children].every((d) => d.classList.contains('is-empty')));
+    const n = document.querySelector('[data-f=numero]').textContent.trim();
+    document.getElementById('foot').textContent = n ? 'Preventivo ' + n : 'Preventivo';
+    save();
+  }
+
+  // bozza salvata in questo browser, così non si perde se chiudi la pagina
+  function save() {
+    try {
+      const data = { fields: {}, vat: document.getElementById('vat').value, rows: [...rows.children].map((tr) => ({
+        desc: tr.children[1].textContent, qty: tr.querySelector('.qty input').value, price: tr.querySelector('.price input').value })) };
+      document.querySelectorAll('[data-f]').forEach((el) => (data.fields[el.dataset.f] = el.innerText));
+      localStorage.setItem(KEY, JSON.stringify(data));
+    } catch {}
+  }
+  function load() {
+    let data = null;
+    try { data = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch {}
+    rows.innerHTML = '';
+    document.querySelectorAll('[data-f]').forEach((el) => (el.textContent = data?.fields?.[el.dataset.f] || ''));
+    document.getElementById('vat').value = data?.vat ?? 22;
+    (data?.rows?.length ? data.rows : [{}, {}, {}]).forEach(addRow);
+    update();
+  }
+
+  // incolla solo testo semplice nei campi
+  document.addEventListener('paste', (e) => {
+    if (!e.target.isContentEditable) return;
+    e.preventDefault();
+    document.execCommand('insertText', false, e.clipboardData.getData('text/plain'));
+  });
+  document.addEventListener('input', () => {
+    document.querySelectorAll('[contenteditable]').forEach((el) => { if (!el.textContent.trim() && el.innerHTML) el.innerHTML = ''; });
+    update();
+  });
+  document.getElementById('add').onclick = () => addRow().children[1].focus();
+  document.getElementById('reset').onclick = () => {
+    if (!confirm('Svuotare tutti i campi e iniziare un nuovo preventivo?')) return;
+    try { localStorage.removeItem(KEY); } catch {}
+    load();
+  };
+  document.getElementById('pdf').onclick = () => {
+    const n = document.querySelector('[data-f=numero]').textContent.trim();
+    const c = document.querySelector('[data-f=cliente]').textContent.trim();
+    const old = document.title;
+    document.title = ['Preventivo Orion', n, c].filter(Boolean).join(' - ');
+    window.print();
+    document.title = old;
+  };
+  load();
+</script>
+</body>
+</html>
